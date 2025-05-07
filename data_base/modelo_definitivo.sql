@@ -31,7 +31,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- Table `iweb_proy`.`zona`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `iweb_proy`.`zona` (
-  `idzona` INT NOT NULL,
+  `idzona` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`idzona`))
 ENGINE = InnoDB
@@ -43,7 +43,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- Table `iweb_proy`.`distritos`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `iweb_proy`.`distritos` (
-  `iddistritos` INT NOT NULL,
+  `iddistritos` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NULL DEFAULT NULL,
   `zona_idzona` INT NOT NULL,
   PRIMARY KEY (`iddistritos`, `zona_idzona`),
@@ -60,7 +60,8 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- Table `iweb_proy`.`formulario`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `iweb_proy`.`formulario` (
-  `idformulario` INT NOT NULL,
+  `idformulario` INT NOT NULL AUTO_INCREMENT,
+  `nombre` VARCHAR(100) NOT NULL, -- Título o nombre descriptivo del formulario
   `fecha_creacion` DATE NOT NULL,
   `fecha_limite` DATE NOT NULL,
   `estado` TINYINT NOT NULL DEFAULT '1',
@@ -166,6 +167,7 @@ CREATE TABLE IF NOT EXISTS `iweb_proy`.`usuario_has_formulario` (
   `formulario_idformulario` INT NOT NULL,
   `respuesta_idrespuesta` INT NOT NULL,
   `codigo` VARCHAR(45) NOT NULL,
+  `asignado_por` INT NOT NULL, -- ID del coordinador que asignó el formulario
   `fecha_asignacion` DATE NOT NULL,
   `estado_rpta` CHAR(1) NOT NULL,
   `fecha_registro` DATE NULL DEFAULT NULL,
@@ -181,7 +183,10 @@ CREATE TABLE IF NOT EXISTS `iweb_proy`.`usuario_has_formulario` (
     REFERENCES `iweb_proy`.`respuesta` (`idrespuesta`),
   CONSTRAINT `fk_usuario_has_formulario_usuario1`
     FOREIGN KEY (`usuario_idusuario`)
-    REFERENCES `iweb_proy`.`usuario` (`idusuario`))
+    REFERENCES `iweb_proy`.`usuario` (`idusuario`)),
+  CONSTRAINT `fk_usuario_has_formulario_asignado_por`
+	FOREIGN KEY (`asignado_por`)
+    REFERENCES `usuario` (`idusuario`)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
