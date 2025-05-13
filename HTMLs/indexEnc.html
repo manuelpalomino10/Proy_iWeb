@@ -81,7 +81,7 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Seleccione:</h6>
-                        <a class="collapse-item" href="historicForms.html#completadossSection">Completados</a>
+                        <a class="collapse-item" href="historicForms.html#completadosSection">Completados</a>
                         <a class="collapse-item" href="historicForms.html#borradoresSection">Borradores</a>
                     </div>
                 </div>
@@ -92,15 +92,8 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Preferencias
+                Personal
             </div>
-
-            <!-- Nav Item - Configuracion -->
-            <li class="nav-item">
-                <a class="nav-link" href="configuraciones.html">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Configuración</span></a>
-            </li>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
@@ -148,67 +141,6 @@
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
-                        <!-- Nav Item - Alerts -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">2</span>
-                            </a>
-                            <!-- Dropdown - Alerts -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">Notificaciones</h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">24 de marzo, 2025</div>
-                                        <span class="font-weight-bold">Alerta 1!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">9 de abril, 2025</div>
-                                        Alerta 2!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Mostrar todas las notificaciones</a>
-                            </div>
-                        </li>
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
@@ -226,11 +158,6 @@
                                 <a class="dropdown-item" href="perfilEnc.html">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Perfil
-                                </a>
-                               
-                                <a class="dropdown-item" href="configuraciones.html">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Configuración
                                 </a>
                                 
                                 <a class="dropdown-item" href="indexEnc.html#">
@@ -262,7 +189,7 @@
                     <div class="row">
 
                         <!-- Cantidad de formularios asignados -->
-                        <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="col-4">
                             <div class="card border-left-primary shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
@@ -280,7 +207,7 @@
                         </div>
 
                         <!-- Cantidad de formularios completados -->
-                        <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="col-4">
                             <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
@@ -298,7 +225,7 @@
                         </div>
                         
                         <!-- Cantidad de formularios como borradores -->
-                        <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="col-4">
                             <div class="card border-left-warning shadow h-100 py-2">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
@@ -315,41 +242,62 @@
                             </div>
                         </div>
                     </div>
-
+                    <br>
                     <!-- Content Row -->
-
                     <div class="row">
                         
-                        <!-- Area Chart -->
-                        <div class="col-xl-8 col-lg-7">
+                        <!-- Desempeño -->
+                        <div class="col-xl-4 col-lg-4">
                             <div class="card shadow mb-4">
                                 <!-- Card Header - Dropdown -->
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Area 1</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Progreso en desempeño esperado</h6>
                                     
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <div class="chart-area">
-                                        
+                                    <div class="mb-1 small">Última semana</div>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar" role="progressbar" style="width: 65%"
+                                            aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    
+                                    <div class="mb-1 small">Último mes</div>
+                                    <div class="progress mb-4">
+                                        <div class="progress-bar" role="progressbar" style="width: 30%"
+                                            aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Pie Chart -->
-                        <div class="col-xl-4 col-lg-5">
+                        <!-- Por formulario -->
+                        <div class="col-xl-5 col-lg-5">
                             <div class="card shadow mb-4">
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Area 2</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Progreso por formulario</h6>
                                     
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        
+                                    <div class="mb-1 small">Formulario 1</div>
+                                    <div class="progress progress-sm mb-2 bg-secondary">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: 75%"
+                                            aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    
+                                    <div class="mb-1 small">Formulario 2</div>
+                                    <div class="progress progress-sm mb-2 bg-secondary">
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 15%"
+                                            aria-valuenow="15" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+
+                                    <div class="mb-1 small">Formulario 3</div>
+                                    <div class="progress progress-sm mb-2 bg-secondary">
+                                        <div class="progress-bar bg-gray" role="progressbar" style="width: 50%"
+                                            aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
                             </div>
