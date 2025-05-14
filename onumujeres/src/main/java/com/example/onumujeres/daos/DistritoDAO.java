@@ -33,7 +33,7 @@ public class DistritoDAO {
         return distritos;
     }
 
-    // Obtener Distrito por ID (Opcional, depende de tus necesidades)
+    // Obtener Distrito por ID
     public Distrito obtenerDistritoPorId(int idDistrito) throws SQLException {
         Distrito distrito = null;
         String sql = "SELECT iddistritos, nombre, zona_idzona FROM distritos WHERE iddistritos = ?"; // Added zona_idzona
