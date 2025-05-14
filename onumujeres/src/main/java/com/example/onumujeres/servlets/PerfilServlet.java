@@ -33,7 +33,7 @@ public class PerfilServlet extends HttpServlet {
         Integer idUsuario = (Integer) session.getAttribute("idUsuario"); // Obtén el ID del usuario de la sesión
 
         if (idUsuario == null) {
-            response.sendRedirect("perfilEnc.jsp"); // Redirige al login si no hay sesión
+            response.sendRedirect("perfilEnc.jsp"); // Redirige al login si no hay sesión // antes response.sendRedirect("login.jsp"), falta modelar el login.jsp y error.jsp
             return;
         }
 
