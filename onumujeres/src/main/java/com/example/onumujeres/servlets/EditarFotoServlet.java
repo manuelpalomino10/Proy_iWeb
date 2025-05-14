@@ -1,6 +1,6 @@
 package com.example.onumujeres.servlets;
 
-import com.example.onumujeres.daos.UsuarioDAO;  // Asegúrate de que esta línea esté presente
+import com.example.onumujeres.daos.UsuarioDAO;  
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
