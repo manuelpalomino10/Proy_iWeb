@@ -48,6 +48,7 @@ public class RegistroEncuestadorServlet extends HttpServlet {
         String distritoParam = req.getParameter("distrito"); // "iddistritos-idzona"
         String correo        = req.getParameter("correo");
         String password      = req.getParameter("password");
+        System.out.println( password);
 
         // 2) Recargar listas para re-pintar el form si hay errores
         try {
@@ -138,7 +139,7 @@ public class RegistroEncuestadorServlet extends HttpServlet {
 
         // **Hasheo la contraseña y la asigno**
         String hashed = dao.hashPassword(password);
-        u.setContraseña(hashed);
+        u.setContrasena(hashed);
         u.setCod_enc(dao.generarCodigoUnico());
         u.setEstado((byte)1);
         u.setRoles_idroles(3);

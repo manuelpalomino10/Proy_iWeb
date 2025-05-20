@@ -7,7 +7,7 @@ public class Usuario {
     private int idusuario;
     private String nombres;
     private String apellidos;
-    private String contraseña;
+    private String contrasena;
     private int DNI;
     private String correo;
     private String direccion;
@@ -47,12 +47,12 @@ public class Usuario {
         this.apellidos = apellidos;
     }
     //-------------------------------------------------
-    public String getContraseña() {
-        return contraseña;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
     //-------------------------------------------------
     public int getDNI() {
