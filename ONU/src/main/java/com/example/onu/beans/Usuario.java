@@ -1,5 +1,7 @@
 package com.example.onu.beans;
 
+import java.sql.Date;
+
 public class Usuario {
 
     private int idusuario;
