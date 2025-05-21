@@ -256,6 +256,51 @@ public class VerFormulariosServlet extends HttpServlet {
 
         switch (action) {
 
+            case "editar":
+                String acto1 = request.getParameter("acto");
+
+                String nuevoEstado1;
+                if (Objects.equals(acto1, "borrador")) {
+                    nuevoEstado1 = "B";
+                } else if (Objects.equals(acto1, "completado")) {
+                    nuevoEstado1 = "C";
+                } else {
+                    // Valor por defecto o generar error
+                    nuevoEstado1 = "B";
+                }
+
+                int idReg = Integer.parseInt(request.getParameter("idregistro_respuestas"));
+                registroDAO.updateState(idReg,nuevoEstado1);
+                System.out.println("Se ha actualizado el registro con id: " + idReg + "al estado: " + nuevoEstado1 + " en" + nuevoEstado1.getClass().getSimpleName());
+
+                Map<String, String[]> parametroMap = request.getParameterMap();
+                // Itera sobre los parámetros para identificar elementos que comiencen con "respuesta_"
+                for (String paramName : parametroMap.keySet()) {
+                    if (paramName.startsWith("respuesta_")) {
+                        // Extrae el id de la pregunta del nombre del input (por ejemplo, "respuesta_45")
+                        String idStr = paramName.substring("respuesta_".length());
+                        try {
+                            int idPregunta = Integer.parseInt(idStr);
+                            // Obtiene el valor del input
+                            String nuevaRespuesta = request.getParameter(paramName);
+                            if (nuevaRespuesta != null) {
+                                nuevaRespuesta = nuevaRespuesta.trim();
+                            }
+                            // Actualiza la respuesta para esa pregunta en el registro de respuestas
+                            respuestaDAO.updateResponse(idReg, idPregunta, nuevaRespuesta);
+
+                            System.out.println("Se actualizo una respuesta con id: " + idPregunta + "con el texto: " + nuevaRespuesta);
+
+                        } catch (NumberFormatException e) {
+                            System.err.println("ID de pregunta inválido en el parámetro: " + paramName);
+                        }
+                    }
+                }
+
+                response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet?action=historial");
+
+                break;
+
             case "guardar":
                 System.out.println("se hace en dopost: " +action);
                 String acto = request.getParameter("acto");

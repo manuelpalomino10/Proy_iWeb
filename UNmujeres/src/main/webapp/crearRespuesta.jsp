@@ -82,9 +82,8 @@
                                 <option value="">-- Seleccione --</option>
                                 <%
                                     if (opciones != null) {
-                                        System.out.println("opciones existen");
+
                                         for (OpcionPregunta opcion : opciones) {
-                                            System.out.println("llego opcion" + opcion.getIdOpcionPregunta());
                                             // Se filtran las opciones correspondientes a la pregunta actual
                                             if (opcion.getPregunta().getIdPregunta() == pregunta.getIdPregunta()) {
                                 %>
@@ -136,7 +135,7 @@
 
     <!-- Botones de acción -->
     <div class="text-center mt-4">
-        <button type="button" class="btn btn-success btn-icon-split mr-2" data-toggle="modal" data-target="#SaveRegModal">
+        <button id="completadoBtn" type="button" class="btn btn-success btn-icon-split mr-2" >
         <span class="icon text-white-50">
             <i class="fas fa-check"></i>
         </span>
@@ -162,5 +161,26 @@
 </div>
 
 <jsp:include page="footer.jsp" />
+
+    <script>
+        document.getElementById("completadoBtn").addEventListener("click", function(event) {
+            // Recoger todos los inputs cuya id empiece por "pregunta_"
+            var inputs = document.querySelectorAll("input[id^='pregunta_'], select[id^='pregunta_']");
+            var mensajeError = "";
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
+                    mensajeError += "La pregunta con id " + input.id + " no tiene respuesta.\n";
+                }
+            });
+            if(mensajeError !== ""){
+                event.preventDefault();
+                alert("Complete todas las respuestas:\n" + mensajeError);
+            } else {
+                // Si la validación pasa, se muestra el modal manualmente.
+                $('#SaveRegModal').modal('show');
+            }
+        });
+    </script>
 </body>
 </html>
+

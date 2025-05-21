@@ -166,13 +166,22 @@ public class EstadisticasDAO extends BaseDAO {
     }
 
     //--------------------- NOVENO CRUD ---------------------------------------
-    public int contarTotalRespuestasRegistradas() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM iweb_proy.respuesta";
+    public int contarTotalRespuestasRegistradas(int encIdUsuario) throws SQLException {
+        String sql = "SELECT COUNT(*) " +
+                "FROM respuesta r " +
+                "INNER JOIN registro_respuestas reg " +
+                "    ON r.idregistro_respuestas = reg.idregistro_respuestas " +
+                "INNER JOIN enc_has_formulario ehf " +
+                "    ON reg.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "WHERE ehf.enc_idusuario = ?";
+
         try (Connection con = this.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1);
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, encIdUsuario);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
             return 0;
         }

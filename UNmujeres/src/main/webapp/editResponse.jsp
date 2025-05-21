@@ -172,7 +172,7 @@
 
 
             <div class="text-center mt-4">
-                <button type="button" class="btn btn-success btn-icon-split mr-2" data-toggle="modal" data-target="#SaveRegModal">
+                <button id="completadoBtn" type="button" class="btn btn-success btn-icon-split mr-2">
                         <span class="icon text-white-50">
                             <i class="fas fa-check"></i>
                         </span>
@@ -202,6 +202,26 @@
     </div>
     <!-- End of Page Wrapper -->
     <jsp:include page="footer.jsp" />
+
+    <script>
+        document.getElementById("completadoBtn").addEventListener("click", function(event) {
+            // Recoger todos los inputs cuya id empiece por "respuesta_"
+            var inputs = document.querySelectorAll("input[id^='respuesta_'], select[id^='respuesta_']");
+            var mensajeError = "";
+            inputs.forEach(function(input) {
+                if (!input.value.trim()) {
+                    mensajeError += "La pregunta con id " + input.id + " no tiene respuesta.\n";
+                }
+            });
+            if(mensajeError !== ""){
+                event.preventDefault();
+                alert("Complete todas las respuestas:\n" + mensajeError);
+            } else {
+                // Si la validación pasa, se muestra el modal manualmente.
+                $('#SaveRegModal').modal('show');
+            }
+        });
+    </script>
 </body>
 
 </html>

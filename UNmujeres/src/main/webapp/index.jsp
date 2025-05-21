@@ -234,8 +234,12 @@
                             },
                             scales: {
                                 x: {
-                                    beginAtZero: true
+                                    beginAtZero: true,
+                                    type: 'linear',
+
+                                    ticks: { stepSize: 1,} // Incrementa en 1, mostrando solo números enteros
                                 }
+
                             }
                         }
                     });

@@ -48,7 +48,7 @@ public class DashboardServlet extends HttpServlet {
             // --------- NUEVAS estadísticas ---------
             String ultimoFormularioRegistrado = estadisticasDAO.obtenerUltimoFormularioRegistrado();
             int formulariosPorVencer = estadisticasDAO.contarFormulariosPorVencerPronto();
-            int totalRespuestas = estadisticasDAO.contarTotalRespuestasRegistradas();
+            int totalRespuestas = estadisticasDAO.contarTotalRespuestasRegistradas(idUsuario);
             int formulariosAsignadosHoy = estadisticasDAO.contarFormulariosAsignadosHoy();
 
             //-------------------------------------------------
