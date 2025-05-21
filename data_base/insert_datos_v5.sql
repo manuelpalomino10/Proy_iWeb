@@ -56,7 +56,9 @@ INSERT INTO formulario (idformulario,nombre,fecha_creacion,fecha_limite,estado,r
 (2, 'Formulario 2', '2025-01-20', '2025-03-20', 1, 50, 102),
 (3, 'Formulario 3', '2025-03-10', '2025-04-10', 0, 200, 101),
 (4, 'Formulario 4', '2025-04-05', '2025-05-05', 1, 100, 103),
-(5, 'Formulario 5', '2025-05-01', '2025-07-01', 1, 50, 102);
+(5, 'Formulario 5', '2025-05-01', '2025-07-01', 1, 50, 102),
+
+(6,'Ficha de necesidades ciudadanas','2025-01-01','2025-06-01',1,150,101);
 
 INSERT INTO enc_has_formulario (idenc_has_formulario,enc_idusuario,idformulario,codigo,fecha_asignacion) VALUES
 -- encuestador 7 con 3 formularios asignados
@@ -73,7 +75,14 @@ INSERT INTO enc_has_formulario (idenc_has_formulario,enc_idusuario,idformulario,
 (8, 10, 3, '45932183', '2025-03-11'),
 (9, 10, 5, '45641238', '2025-05-05'),
 -- encuestador 11 con 1 formulario asignado
-(10, 11, 5, '95637815', '2025-05-02');
+(10, 11, 5, '95637815', '2025-05-02'),
+
+(11, 7, 6, '75318777', '2025-02-07'),
+(12, 8, 6, '75318888', '2025-02-08'),
+(13, 9, 6, '75318999', '2025-02-09'),
+(14, 10, 6, '75318000', '2025-02-10'),
+(15, 11, 6, '75318111', '2025-02-11');
+
 
 INSERT INTO registro_respuestas (idregistro_respuestas, fecha_registro, estado, idenc_has_formulario) VALUES
 -- encuestador 7 con 2 registros por formulario asignado
@@ -120,7 +129,13 @@ INSERT INTO seccion (idseccion, nombre_sec,idformulario) VALUES
 (13, 'seccion C', 4),
 -- form 5 con 2 secciones
 (14, 'seccion A', 5),
-(15, 'seccion B', 5);
+(15, 'seccion B', 5),
+
+-- form 6 con 4 secciones
+(16, 'Datos de la entrevista', 6),
+(17, 'Datos del territorio', 6),
+(18, 'Datos de la persona entrevistada', 6),
+(19, 'Datos sobre niñas y niños', 6);
 
 INSERT INTO pregunta (idpregunta, enunciado, tipo_dato, idseccion) VALUES
 -- form 1
@@ -154,22 +169,24 @@ INSERT INTO pregunta (idpregunta, enunciado, tipo_dato, idseccion) VALUES
 (25, 'pregunta1_4', 'combobox', 12),
 (26, 'pregunta2_4', 'int', 13),
 -- form 5
-(27, 'pregunta1_5', DEFAULT, 11),
-(28, 'pregunta2_5', DEFAULT, 11),
-(29, 'pregunta1_5', 'combobox', 12),
-(30, 'pregunta2_5', 'int', 12),
-(31, 'Fecha de la entrevista',               'date',     1),
-(32, 'Nombres y apellidos de la persona que encuesta', 'char', 1),
-(33, 'Nombre del asentamiento humano',       'char',     2),
-(34, 'Sector',                               'char',     2),
-(35, 'Nombres y apellidos',                  'char',     3),
-(36, 'Edad',                                 'int',      3),
-(37, 'Dirección',                            'char',     3),
-(38, 'Celular (opcional)',                   'char',     3),
-(39, '¿Hay niños/niñas de 0 a 5 años en el hogar?',       'combobox', 4),
-(40, '¿Cuántos niños/niñas de 0 a 5 años hay en el hogar?', 'int',    4),
-(41, '¿Asisten a una guardería o preescolar?',           'combobox', 4),
-(42, '¿Por qué no usa guarderías o centros de cuidado?',  'combobox', 4);
+(27, 'pregunta1_5', DEFAULT, 14),
+(28, 'pregunta2_5', DEFAULT, 14),
+(29, 'pregunta1_5', 'combobox', 15),
+(30, 'pregunta2_5', 'int', 15),
+
+-- form 6
+(31, 'Fecha de la entrevista',               'date',     16),
+(32, 'Nombres y apellidos de la persona que encuesta', 'char', 16),
+(33, 'Nombre del asentamiento humano',       'char',     17),
+(34, 'Sector',                               'char',     17),
+(35, 'Nombres y apellidos',                  'char',     18),
+(36, 'Edad',                                 'int',      18),
+(37, 'Dirección',                            'char',     18),
+(38, 'Celular (opcional)',                   'int',     18),
+(39, '¿Hay niños/niñas de 0 a 5 años en el hogar?',       'combobox', 19),
+(40, '¿Cuántos niños/niñas de 0 a 5 años hay en el hogar?', 'int',    19),
+(41, '¿Asisten a una guardería o preescolar?',           'combobox', 19),
+(42, '¿Por qué no usa guarderías o centros de cuidado?',  'combobox', 19);
 
 
 INSERT INTO opcion_pregunta (idopcion_pregunta, opcion, idpregunta) VALUES
@@ -314,5 +331,3 @@ INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) V
 (99, 'f5_in4_respuesta2', 28, 17),
 (100, null, 29, 17),  -- 'f5_in4_respuesta3'  respuesta vacia  tipo combobox
 (101, 544, 30, 17); --  tipo int
-
-
