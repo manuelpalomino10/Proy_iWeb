@@ -1,0 +1,1 @@
+SELECT * FROM iweb_proy.opcion_pregunta;
