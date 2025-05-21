@@ -206,19 +206,22 @@ public class VerFormulariosServlet extends HttpServlet {
                 break;
 
             case "editar":
+                int idForm = Integer.parseInt(request.getParameter("id_form"));
                 int idReg = Integer.parseInt(request.getParameter("id"));
-                System.out.println("Se consulto el editor del registro con id: " + idReg);
+                System.out.println("Se consulto el editor del registro id: " + idReg+" para form "+idForm);
 
                 RegistroRespuestas registro = registroDAO.getById(idReg);
 
                 if (registro == null) {
                     response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet");
+
                 } else {
                     request.setAttribute("registro", registro);
 
-                    ArrayList<OpcionPregunta> opciones = opcionDAO.getByReg(idReg);
+                    ArrayList<OpcionPregunta> opciones = opcionDAO.getByForm(idForm);
+                    System.out.println("opciones: "+opciones);
                     request.setAttribute("opciones", opciones);
-
+                    for (OpcionPregunta opcion : opciones) {System.out.println("Opcion es: "+opcion.getIdOpcionPregunta()+" con idpregunta: "+opcion.getIdOpcionPregunta());}
 
                     ArrayList<Respuesta> respuestas = respuestaDAO.listaRespuestas(idReg);
                     request.setAttribute("respuestas", respuestas);
@@ -334,10 +337,10 @@ public class VerFormulariosServlet extends HttpServlet {
                     Map<Integer, List<Integer>> respuestasOpciones = new HashMap<>();
 
                     for (String paramName : parametros.keySet()) {
-                        if (paramName.startsWith("respuesta_")) {
+                        if (paramName.startsWith("pregunta_")) {
+
                             String[] parts = paramName.split("_");
                             int idPregunta = Integer.parseInt(parts[1]);
-
 
                             System.out.println("Id pregunta es " + idPregunta);
 
@@ -352,9 +355,10 @@ public class VerFormulariosServlet extends HttpServlet {
                                 }
                             } else {
                                 String valor = request.getParameter(paramName);
+//                                respuestasTexto.put(idPregunta, (valor != null) ? valor.trim() : " ");
                                 if (valor != null && !valor.trim().isEmpty()) {
                                     respuestasTexto.put(idPregunta, valor.trim());
-                                }
+                                } else {respuestasTexto.put(idPregunta, null);}
                             }
                         }
                     }
@@ -377,7 +381,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     request.setAttribute("error", "Error al guardar las respuestas");
                     request.getRequestDispatcher("/error.jsp").forward(request, response);
                 }
-                break;
+            break;
 
         }
     }

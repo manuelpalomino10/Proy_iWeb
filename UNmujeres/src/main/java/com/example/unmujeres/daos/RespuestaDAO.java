@@ -115,7 +115,11 @@ public class RespuestaDAO extends BaseDAO{
             con.setAutoCommit(false); // Iniciar transacción
 
             for (Map.Entry<Integer, String> entry : respuestas.entrySet()) {
-                ps.setString(1, entry.getValue());
+                if (entry.getValue() == null) {
+                    ps.setNull(1, java.sql.Types.VARCHAR);
+                } else {
+                    ps.setString(1, entry.getValue());
+                }
                 ps.setInt(2, entry.getKey());
                 ps.setInt(3, idRegistro);
                 ps.addBatch();
