@@ -1,3 +1,4 @@
+USE iweb_proy;
 INSERT INTO roles (idroles,nombre) VALUES
 (1, 'Administrador'),
 (2, 'Coordinador Interno'),
@@ -15,19 +16,24 @@ INSERT INTO zona (idzona,nombre) VALUES
 (3, 'ESTE'),
 (4, 'OESTE');
 
-INSERT INTO distritos (iddistritos,nombre,idzona) VALUES
-(1, 'Ancon', 1),
-(2, 'Comas', 1),
-(3, 'Los Olivos', 1),
-(4, 'SJM', 2),
-(5, 'VMT', 2),
-(6, 'Lurin', 2),
-(7, 'Ate', 3),
-(8, 'SJL', 3),
-(9, 'La Molina', 3),
-(10, 'Rimac', 4),
-(11, 'Breña', 4),
-(12, 'Lince', 4);
+-- distritos completos según proyecto
+INSERT INTO distritos(iddistritos,nombre,idzona) VALUES
+-- NORTE
+(1,'Ancon',1),(2,'Santa Rosa',1),(3,'Carabayllo',1),(4,'Puente Piedra',1),
+(5,'Comas',1),(6,'Los Olivos',1),(7,'San Martin de Porres',1),(8,'Independencia',1),
+-- SUR
+(9,'San Juan de Miraflores',2),(10,'Villa Maria del Triunfo',2),(11,'Villa el Salvador',2),
+(12,'Pachacamac',2),(13,'Lurin',2),(14,'Punta Hermosa',2),(15,'Punta Negra',2),
+(16,'San Bartolo',2),(17,'Santa Maria del Mar',2),(18,'Pucusana',2),
+-- ESTE
+(19,'San Juan de Lurigancho',3),(20,'Lurigancho/Chosica',3),(21,'Ate',3),
+(22,'El Agustino',3),(23,'Santa Anita',3),(24,'La Molina',3),(25,'Cieneguilla',3),
+-- OESTE
+(26,'Rimac',4),(27,'Cercado de Lima',4),(28,'Brena',4),(29,'Pueblo Libre',4),
+(30,'Magdalena',4),(31,'Jesus Maria',4),(32,'La Victoria',4),(33,'Lince',4),
+(34,'San Isidro',4),(35,'San Miguel',4),(36,'Surquillo',4),(37,'San Borja',4),
+(38,'Santiago de Surco',4),(39,'Barranco',4),(40,'Chorrillos',4),(41,'San Luis',4),
+(42,'Miraflores',4);
 
 INSERT INTO usuario (idusuario,nombres,apellidos,contraseña,DNI,correo,direccion,estado,idroles,idzona,iddistritos,fecha_incorporacion,foto,cod_enc) VALUES
 -- admins
@@ -151,25 +157,54 @@ INSERT INTO pregunta (idpregunta, enunciado, tipo_dato, idseccion) VALUES
 (27, 'pregunta1_5', DEFAULT, 11),
 (28, 'pregunta2_5', DEFAULT, 11),
 (29, 'pregunta1_5', 'combobox', 12),
-(30, 'pregunta2_5', 'int', 12);
+(30, 'pregunta2_5', 'int', 12),
+(31, 'Fecha de la entrevista',               'date',     1),
+(32, 'Nombres y apellidos de la persona que encuesta', 'char', 1),
+(33, 'Nombre del asentamiento humano',       'char',     2),
+(34, 'Sector',                               'char',     2),
+(35, 'Nombres y apellidos',                  'char',     3),
+(36, 'Edad',                                 'int',      3),
+(37, 'Dirección',                            'char',     3),
+(38, 'Celular (opcional)',                   'char',     3),
+(39, '¿Hay niños/niñas de 0 a 5 años en el hogar?',       'combobox', 4),
+(40, '¿Cuántos niños/niñas de 0 a 5 años hay en el hogar?', 'int',    4),
+(41, '¿Asisten a una guardería o preescolar?',           'combobox', 4),
+(42, '¿Por qué no usa guarderías o centros de cuidado?',  'combobox', 4);
 
-INSERT INTO opcion_pregunta (idopcion_pregunta,opcion,idpregunta) VALUES
-(1, 'opcion1_p5', 5),
-(2, 'opcion2_p5', 5),
-(3, 'opcion3_p5', 5),
-(4, 'opcion1_p8', 8),
-(5, 'opcion2_p8', 8),
-(6, 'opcion3_p8', 8),
-(7, 'opcion1_p13', 13),
-(8, 'opcion2_p13', 13),
-(9, 'opcion1_p14', 14),
+
+INSERT INTO opcion_pregunta (idopcion_pregunta, opcion, idpregunta) VALUES
+(1,  'opcion1_p5', 5),
+(2,  'opcion2_p5', 5),
+(3,  'opcion3_p5', 5),
+(4,  'opcion1_p8', 8),
+(5,  'opcion2_p8', 8),
+(6,  'opcion3_p8', 8),
+(7,  'opcion1_p13', 13),
+(8,  'opcion2_p13', 13),
+(9,  'opcion1_p14', 14),
 (10, 'opcion2_p14', 14),
 (11, 'opcion1_p17', 17),
 (12, 'opcion2_p17', 17),
 (13, 'opcion1_p25', 25),
 (14, 'opcion2_p25', 25),
 (15, 'opcion1_p29', 29),
-(16, 'opcion2_p29', 29);
+(16, 'opcion2_p29', 29),
+
+-- Opciones Sí/No para pregunta 39
+(17, 'Sí', 39),
+(18, 'No', 39),
+
+-- Opciones Sí/No para pregunta 41
+(19, 'Sí', 41),
+(20, 'No', 41),
+
+-- Motivos para pregunta 42
+(21, 'No hay guardería cerca',             42),
+(22, 'Prefiere cuidador familiar',          42),
+(23, 'No puedo costear',                    42),
+(24, 'No confío en guarderías',             42),
+(25, 'Cuidador en casa',                    42),
+(26, 'Otro motivo',                         42);
 
 
 INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) VALUES
@@ -183,7 +218,6 @@ INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) V
 (7, 'f1_in1_respuesta7', 7, 1),
 (8, null, 8, 1), -- (8, 'f1_in1_respuesta8', 8, 1),	tipo combobox 
 (9, null, 9, 1), -- (9, 'f1_in1_respuesta9', 9, 1),	-- respuesta vacia
-
 (10, 'f1_in2_respuesta1', 1, 2),		-- borrador de enc 7
 (11, '2025-02-07', 2, 2), -- 'f1_in2_respuesta2' tipo date
 (12, 'f1_in2_respuesta3', 3, 2),
@@ -193,7 +227,6 @@ INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) V
 (16, 'f1_in2_respuesta7', 7, 2),
 (17, null, 8, 2), -- (17, 'f1_in2_respuesta8', 8, 2),  tipo combobox
 (18, 'f1_in2_respuesta9', 9, 2),
-
 (19, 'f1_in3_respuesta1', 1, 11),		-- completado de enc 9
 (20, '2025-01-09', 2, 11), -- 'f1_in3_respuesta2' tipo date
 (21, 'f1_in3_respuesta3', 3, 11),
@@ -211,7 +244,6 @@ INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) V
 (32, 'opcion2_p14', 14, 3),	--  tipo combobox
 (33, 'f2_in1_respuesta6', 15, 3),
 (34, 'f2_in1_respuesta7', 16, 3),
-
 (35, 221, 10, 4), --  tipo int	-- completado de enc 7
 (36, '2024-02-07', 11, 4), --  tipo date
 (37, 'f2_in2_respuesta3', 12, 4),
@@ -219,7 +251,6 @@ INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) V
 (39, 'opcion1_p14', 14, 4),	--  tipo combobox
 (40, 'f2_in2_respuesta6', 15, 4),
 (41, 'f2_in2_respuesta7', 16, 4),
-
 (42, 231, 10, 7), --  tipo int	-- completado de enc 8
 (43, '2024-01-08', 11, 7), --  tipo date
 (44, 'f2_in3_respuesta3', 12, 7),
@@ -227,7 +258,6 @@ INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) V
 (46, 'opcion1_p14', 14, 7),	--  tipo combobox
 (47, 'f2_in3_respuesta6', 15, 7),
 (48, 'f2_in3_respuesta7', 16, 7),
-
 (49, 241, 10, 8), --  tipo int		-- borrador de enc 8
 (50, null, 11, 8),	-- 'f2_in4_respuesta2' respuesta vacia --  tipo date
 (51, 'f2_in4_respuesta3', 12, 8),
@@ -242,14 +272,12 @@ INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) V
 (59, 'f3_in1_respuesta4', 20, 9),
 (60, '2023-01-08', 21, 9), --  tipo date
 (61, null, 22, 9),	--  'f3_in1_respuesta6'  respuesta vacia
-
 (62, 'opcion1_p17', 17, 10),		-- completado de enc 8
 (63, 'f3_in2_respuesta2', 18, 10),
 (64, 323, 19, 10),
 (65, 'f3_in2_respuesta4', 20, 10),
 (66, '2023-02-08', 21, 10), --  tipo date
 (67, 'f3_in2_respuesta6', 22, 10),
-
 (68, 'opcion1_p17', 17, 14),		-- completado de enc 10
 (69, 'f3_in3_respuesta2', 18, 14),
 (70, 333, 19, 14),
@@ -261,12 +289,10 @@ INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) V
 (75, 'f4_in1_respuesta2', 24, 5),
 (76, 'opcion1_p25', 25, 5), --  tipo combobox
 (77, 414, 26, 5), --  tipo int
-
 (78, 'f4_in2_respuesta1', 23, 6),		-- borrador de enc 7
 (79, 'f4_in2_respuesta2', 24, 6),
 (80, null, 25, 6),	-- 'f4_in2_respuesta3'  respuesta vacia --  tipo combobox
 (81, null, 26, 6),	-- 'f4_in2_respuesta4'  respuesta vacia
-
 (82, 'f4_in3_respuesta1', 23, 12),		-- completado de enc 7
 (83, 'f4_in3_respuesta2', 24, 12),
 (84, 'opcion1_p25', 25, 12), --  tipo combobox
@@ -276,17 +302,14 @@ INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) V
 (87, 'f5_in1_respuesta2', 28, 13),
 (88, 'opcion2_p29', 29, 13), --  tipo combobox
 (89, 514, 30, 13), --  tipo int
-
 (90, 'f5_in2_respuesta1', 27, 15),		-- completado de enc 11
 (91, 'f5_in2_respuesta2', 28, 15),
 (92, 'opcion1_p29', 29, 15), --  tipo combobox
 (93, 524, 30, 15), --  tipo int
-
 (94, 'f5_in3_respuesta1', 27, 16),		-- completado de enc 11
 (95, 'f5_in3_respuesta2', 28, 16),
 (96, 'opcion2_p29', 29, 16), --  tipo combobox
 (97, 534, 30, 16), --  tipo int
-
 (98, 'f5_in4_respuesta1', 27, 17),		-- borrador de enc 11
 (99, 'f5_in4_respuesta2', 28, 17),
 (100, null, 29, 17),  -- 'f5_in4_respuesta3'  respuesta vacia  tipo combobox
