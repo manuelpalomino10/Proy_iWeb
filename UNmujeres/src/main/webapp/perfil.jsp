@@ -33,7 +33,7 @@
                         <div id="messageContainer"></div>
 
                         <!-- FORMULARIO DE ACTUALIZACIÓN DE FOTO -->
-                        <form action="subirFoto" method="post" enctype="multipart/form-data" id="fotoForm" class="text-center">
+                        <form action="editarFoto" method="post" enctype="multipart/form-data" id="fotoForm" class="text-center">
                             <div id="imageContainer">
                                 <c:choose>
                                     <c:when test="${not empty usuario.fotoBytes}">
