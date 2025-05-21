@@ -60,21 +60,6 @@ public class VerFormulariosServlet extends HttpServlet {
 
         switch (action) {
 
-            case "lista2":
-                try {
-                    System.out.println("Se consulto lista de asignados metodo 2");
-                    //FormularioDAO formularioDAO = new FormularioDAO();
-
-                    ArrayList<EncHasFormulario> data = formularioDAO.listarFormulariosAsignados(idEnc);
-
-                    request.setAttribute("datos", data);
-                    view = request.getRequestDispatcher("/showAssignedForms.jsp");
-                    view.forward(request, response);
-
-                } catch (ServletException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
 
             case "lista":
                 try {
