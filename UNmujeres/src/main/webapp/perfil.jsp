@@ -41,7 +41,7 @@
                                              class="profile-img" alt="Foto de perfil"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <img id="currentProfileImage" src="path/to/default/image.jpg"
+                                        <img id="currentProfileImage" src="img/perfil-del-usuario.png"
                                              class="profile-img" alt="Foto de perfil por defecto"/>
                                     </c:otherwise>
                                 </c:choose>
