@@ -109,6 +109,7 @@
 
                         <!-- Datos del usuario -->
                         <div class="row">
+                            <br>
                             <div class="col-md-6 form-group">
                                 <div class="text">Nombre</div>
                                 <input type="text" class="form-control" id="username" value="${usuario.nombres}" readonly>
