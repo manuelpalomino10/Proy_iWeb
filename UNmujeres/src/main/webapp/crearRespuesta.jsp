@@ -164,17 +164,22 @@
 
     <script>
         document.getElementById("completadoBtn").addEventListener("click", function(event) {
-            // Recoger todos los inputs cuya id empiece por "pregunta_"
-            var inputs = document.querySelectorAll("input[id^='pregunta_'], select[id^='pregunta_']");
-            var mensajeError = "";
+            // Recoger todos los inputs cuya id empieza por "respuesta_"
+            var inputs = document.querySelectorAll("input[id^='respuesta_'], select[id^='respuesta_']");
+            var faltantes = [];
+
             inputs.forEach(function(input) {
                 if (!input.value.trim()) {
-                    mensajeError += "La pregunta con id " + input.id + " no tiene respuesta.\n";
+                    faltantes.push(input); // Guarda los campos incompletos
+                    input.classList.add("falta-respuesta"); // Aplica estilo
+                } else {
+                    input.classList.remove("falta-respuesta"); // Remueve el estilo si está completo
                 }
             });
-            if(mensajeError !== ""){
+
+            if (faltantes.length > 0) {
                 event.preventDefault();
-                alert("Complete todas las respuestas:\n" + mensajeError);
+                alert("Complete todas las respuestas antes de continuar.");
             } else {
                 // Si la validación pasa, se muestra el modal manualmente.
                 $('#SaveRegModal').modal('show');

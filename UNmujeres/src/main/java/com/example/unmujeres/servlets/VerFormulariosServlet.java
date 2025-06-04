@@ -59,11 +59,9 @@ public class VerFormulariosServlet extends HttpServlet {
         RequestDispatcher view;
 
         switch (action) {
-
-
             case "lista":
                 try {
-                    System.out.println("Se consulto lista de asignados metodo 1");
+                    System.out.println("Se consulto lista de asignados");
 
                     // 2. Inicializa arreglo de datos para vista
                     ArrayList<Map<String, Object>> datos = new ArrayList<>();

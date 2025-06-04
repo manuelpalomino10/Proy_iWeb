@@ -38,7 +38,7 @@ public class DashboardServlet extends HttpServlet {
             //-------------------------------------------------
 
             Map<String, Object> avance = estadisticasDAO.calcularAvance(idUsuario);
-            int borradores = estadisticasDAO.contarBorradores();
+            int borradores = estadisticasDAO.contarBorradores(idUsuario);
             int completados = estadisticasDAO.contarFormulariosCompletados(idUsuario);
             int completadosUltimos7Dias = estadisticasDAO.contarCompletadosUltimos7Dias();
             int formulariosAsignados = estadisticasDAO.contarFormulariosAsignados(idUsuario);

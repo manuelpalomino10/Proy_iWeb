@@ -70,11 +70,11 @@
                                         <td><%= item.get("nombre_formulario") %></td>
                                         <td><%= item.get("registros_completados") %></td>
                                         <td><%= item.get("registros_esperados") %></td>
-                                        <td>
+                                        <td style="white-space: nowrap;">
                                             <%= new java.text.SimpleDateFormat("dd-MM-yyyy")
                                                     .format((java.util.Date) item.get("fecha_asignacion")) %>
                                         </td>
-                                        <td>
+                                        <td style="white-space: nowrap;">
                                             <%= new java.text.SimpleDateFormat("dd-MM-yyyy")
                                                     .format((java.util.Date) item.get("fecha_limite")) %>
                                         </td>

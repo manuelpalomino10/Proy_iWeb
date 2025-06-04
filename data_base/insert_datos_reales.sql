@@ -441,8 +441,10 @@ INSERT INTO opcion_pregunta (idopcion_pregunta, opcion, idpregunta) VALUES
     (96, 'Sí', 126), (97, 'No', 126),
 	-- Pregunta 127:
     (98, 'Sí', 127), (99, 'No', 127),
-	-- Pregunta 129:
-    (100, 'Sí', 129), (101, 'No', 129),
+	-- Pregunta 128:
+    (100, 'Sí', 128), (101, 'No', 128),
+    -- Pregunta 132:
+    (121, 'Sí, cada año', 132), (122, 'Sí, pero con demasiado tiempo', 132), (123, 'No', 132),
 	-- Pregunta 133:
     (102, 'Alta', 133),
 	(103, 'Media', 133),

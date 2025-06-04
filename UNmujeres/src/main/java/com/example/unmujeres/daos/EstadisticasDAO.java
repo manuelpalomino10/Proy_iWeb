@@ -68,15 +68,21 @@ public class EstadisticasDAO extends BaseDAO {
     }
 
     //--------------------- TERCER CRUD ---------------------------------------
-    public int contarBorradores() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM iweb_proy.registro_respuestas WHERE estado = 'B'";
+    public int contarBorradores(int idUsuario) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM iweb_proy.registro_respuestas rr " +
+                "INNER JOIN iweb_proy.enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "WHERE estado = 'B' AND ehf.enc_idusuario = ?";;
+
         try (Connection con = this.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                int count = rs.getInt(1);
-                System.out.println("Total borradores: " + count);
-                return count;
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    System.out.println("Total borradores: " + count);
+                    return count;
+                }
             }
             return 0;
         }
