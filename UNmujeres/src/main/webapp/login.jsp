@@ -94,7 +94,7 @@
                                     <input type="password" class="form-control form-control-user"
                                            id="contraseña" name="contraseña" placeholder="Contraseña" required>
                                 </div>
-                                
+
                                 <button type="submit" class="btn btn-primary btn-user btn-block">
                                     Iniciar Sesión
                                 </button>
