@@ -153,21 +153,43 @@
 
         <!-- Contraseña -->
         <div class="form-group">
-          <label for="password" class="required-label">
+          <label for="password" class="required-label" style="margin-bottom:2px;">
             Contraseña
             <c:if test="${errores['password'] != null}">
               <span class="required-asterisk">*</span>
             </c:if>
           </label>
-          <input id="password" name="password" type="password" class="form-control form-control-user" required/>
-          <div class="nota-password">
-            Debe ingresar una contraseña que contenga al menos 8 caracteres,
-            incluyendo al menos una mayúscula, una minúscula, un número y un carácter especial.
-          </div>
-          <c:if test="${errores['password'] != null}">
-            <div class="campo-error">${errores['password']}</div>
-          </c:if>
+
+          <ul style="list-style: none; padding-left: 0; margin: 1px 0 16px 0;">
+            <li style="color: #6c757d; font-size: 13px; font-weight:600; margin-bottom: 2px;">La contraseña debe tener:</li>
+            <c:set var="reqs" value="${requisitosPwd}" />
+            <li style="color: ${reqs['len'] == null ? '#888' : (reqs['len'] ? '#388e3c' : '#d32f2f')}; font-size: 12px;">
+              Mínimo 8 caracteres
+            </li>
+            <li style="color: ${reqs['may'] == null ? '#888' : (reqs['may'] ? '#388e3c' : '#d32f2f')}; font-size: 12px;">
+              Al menos una mayúscula
+            </li>
+            <li style="color: ${reqs['min'] == null ? '#888' : (reqs['min'] ? '#388e3c' : '#d32f2f')}; font-size: 12px;">
+              Al menos una minúscula
+            </li>
+            <li style="color: ${reqs['num'] == null ? '#888' : (reqs['num'] ? '#388e3c' : '#d32f2f')}; font-size: 12px;">
+              Al menos un número
+            </li>
+            <li style="color: ${reqs['spec'] == null ? '#888' : (reqs['spec'] ? '#388e3c' : '#d32f2f')}; font-size: 12px;">
+              Al menos un carácter especial
+            </li>
+          </ul>
+
+          <input id="password" name="password" type="password"
+                 class="form-control form-control-user"
+                 required/>
+
         </div>
+
+
+
+
+
 
         <button type="submit" class="btn btn-primary btn-user btn-block" style="font-size:1.1rem;">
           Registrarme

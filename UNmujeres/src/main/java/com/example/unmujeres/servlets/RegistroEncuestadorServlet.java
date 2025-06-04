@@ -65,17 +65,38 @@ public class RegistroEncuestadorServlet extends HttpServlet {
         if (correo == null || correo.trim().isEmpty())     errores.put("correo",   "El correo es obligatorio");
 
         // Contraseña
+        List<String> erroresPwd = new ArrayList<>();
+        Map<String, Boolean> requisitosPwd = new LinkedHashMap<>();
         if (password == null || password.trim().isEmpty()) {
             errores.put("password", "La contraseña es obligatoria");
+            // Todos en falso si está vacío
+            requisitosPwd.put("len", false);
+            requisitosPwd.put("may", false);
+            requisitosPwd.put("min", false);
+            requisitosPwd.put("num", false);
+            requisitosPwd.put("spec", false);
         } else {
-            List<String> erroresPwd = new ArrayList<>();
-            if (password.length() < 8) erroresPwd.add("Mínimo 8 caracteres");
-            if (!password.matches(".*[A-Z].*")) erroresPwd.add("Al menos una mayúscula");
-            if (!password.matches(".*[a-z].*")) erroresPwd.add("Al menos una minúscula");
-            if (!password.matches(".*\\d.*")) erroresPwd.add("Al menos un número");
-            if (!password.matches(".*[\\W_].*")) erroresPwd.add("Al menos un carácter especial");
+            boolean len = password.length() >= 8;
+            boolean may = password.matches(".*[A-Z].*");
+            boolean min = password.matches(".*[a-z].*");
+            boolean num = password.matches(".*\\d.*");
+            boolean spec = password.matches(".*[\\W_].*");
+            if (!len) erroresPwd.add("Mínimo 8 caracteres");
+            if (!may) erroresPwd.add("Al menos una mayúscula");
+            if (!min) erroresPwd.add("Al menos una minúscula");
+            if (!num) erroresPwd.add("Al menos un número");
+            if (!spec) erroresPwd.add("Al menos un carácter especial");
             if (!erroresPwd.isEmpty()) errores.put("password", String.join(", ", erroresPwd));
+            // Guardar resultados para pintar los requisitos
+            requisitosPwd.put("len", len);
+            requisitosPwd.put("may", may);
+            requisitosPwd.put("min", min);
+            requisitosPwd.put("num", num);
+            requisitosPwd.put("spec", spec);
         }
+        // Siempre pon los requisitos en el request
+        req.setAttribute("requisitosPwd", requisitosPwd);
+
 
         // DNI
         int dni = 0;
