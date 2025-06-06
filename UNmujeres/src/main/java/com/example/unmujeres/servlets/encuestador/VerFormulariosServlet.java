@@ -1,4 +1,4 @@
-package com.example.unmujeres.servlets;
+package com.example.unmujeres.servlets.encuestador;
 import com.example.unmujeres.beans.OpcionPregunta;
 import com.example.unmujeres.daos.OpcionPreguntaDAO;
 import com.example.unmujeres.daos.PreguntaDAO;

@@ -1,4 +1,4 @@
-package com.example.unmujeres.servlets;
+package com.example.unmujeres.servlets.encuestador;
 
 import com.example.unmujeres.beans.Usuario;
 import com.example.unmujeres.daos.EstadisticasDAO;
@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
