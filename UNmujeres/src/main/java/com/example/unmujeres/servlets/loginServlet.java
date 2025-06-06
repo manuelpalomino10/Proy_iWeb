@@ -55,19 +55,19 @@ public class loginServlet extends HttpServlet {
             } else {
                 request.setAttribute("errorMessage",
                         "Correo o contraseña incorrectos, o usuario inactivo");
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+                request.getRequestDispatcher("/Sistema/login.jsp").forward(request, response);
             }
         } catch (SQLException e) {
             e.printStackTrace(); // Imprime el stack trace completo en la consola del servidor
             request.setAttribute("errorMessage", "Error al intentar iniciar sesión. Por favor, inténtelo de nuevo más tarde.");
             // O un mensaje más específico si puedes determinar la causa del SQL Exception
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("/Sistema/login.jsp").forward(request, response);
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher("/Sistema/login.jsp").forward(request, response);
     }
 }

@@ -63,7 +63,7 @@
 
 <div class="container">
     <div class="image-container">
-        <img src="img/back.jpg" alt="Imagen ONU Mujeres">
+        <img src="${pageContext.request.contextPath}/img/back.jpg" alt="Imagen ONU Mujeres">
     </div>
     <div class="login-container">
         <div class="card o-hidden border-0 shadow-lg">

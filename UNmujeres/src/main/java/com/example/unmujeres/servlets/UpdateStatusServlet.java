@@ -46,7 +46,7 @@ public class UpdateStatusServlet extends HttpServlet {
 
             respuestaDAO.updateResponse(registroId, registroId, estado);
             request.setAttribute("mensaje", "Estado actualizado correctamente");
-            response.sendRedirect("success.jsp");
+            response.sendRedirect("/Sistema/success.jsp");
         } catch (IllegalArgumentException e) {
             request.setAttribute("error", "Datos inválidos: " + e.getMessage());
             request.getRequestDispatcher("error.jsp").forward(request, response);

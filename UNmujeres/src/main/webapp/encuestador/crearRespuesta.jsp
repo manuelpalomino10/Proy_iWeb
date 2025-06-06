@@ -18,15 +18,15 @@
 %>
 
 <html lang="es">
-<jsp:include page="header.jsp" />
+<jsp:include page="../header.jsp" />
 <body id="page-top">
 
 <div id="wrapper">
-    <jsp:include page="sidebarEnc.jsp" />
+    <jsp:include page="../sidebarEnc.jsp" />
 
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-            <jsp:include page="topbarEnc.jsp" />
+            <jsp:include page="../topbarEnc.jsp" />
 
             <div class="container-fluid">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -160,7 +160,7 @@
 </div>
 </div>
 
-<jsp:include page="footer.jsp" />
+<jsp:include page="../footer.jsp" />
 
     <script>
         document.getElementById("completadoBtn").addEventListener("click", function(event) {

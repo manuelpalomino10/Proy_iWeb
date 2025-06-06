@@ -73,7 +73,11 @@ public class UsuarioDAO extends BaseDAO {
 
                 Blob fotoBlob = rs.getBlob("foto");
                 if (fotoBlob != null) {
-                    usuario.setFotoBytes(fotoBlob.getBytes(1, (int) fotoBlob.length()));
+                    byte[] fotoBytes = fotoBlob.getBytes(1, (int) fotoBlob.length());
+                    usuario.setFotoBytes(fotoBytes);
+                    System.out.println("[DEBUG] Foto cargada con tamaño: " + fotoBytes.length);
+                } else {
+                    System.out.println("[DEBUG] Usuario sin foto.");
                 }
             }
 
@@ -83,6 +87,7 @@ public class UsuarioDAO extends BaseDAO {
 
         return usuario;
     }
+
 
     public boolean actualizarUsuario(Usuario usuario) throws SQLException {
         String sql = "UPDATE usuario SET direccion = ?, iddistritos = ?, contraseña = ? WHERE idusuario = ?";

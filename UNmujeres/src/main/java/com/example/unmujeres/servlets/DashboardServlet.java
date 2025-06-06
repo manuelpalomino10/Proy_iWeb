@@ -26,7 +26,7 @@ public class DashboardServlet extends HttpServlet {
 
         //
         if (usuario == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(request.getContextPath() + "/sistema/login");
             return;
         }
 
@@ -65,7 +65,7 @@ public class DashboardServlet extends HttpServlet {
             request.setAttribute("formulariosPorVencer", formulariosPorVencer);
             request.setAttribute("totalRespuestas", totalRespuestas);
             request.setAttribute("formulariosAsignadosHoy", formulariosAsignadosHoy);
-            request.getRequestDispatcher("index.jsp").forward(request, response);
+            request.getRequestDispatcher("/encuestador/index.jsp").forward(request, response);
 
         } catch (SQLException e) {
             e.printStackTrace();

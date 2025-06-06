@@ -27,7 +27,7 @@ public class PerfilServlet extends HttpServlet {
 
         //
         if (usuarioSesion == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(request.getContextPath() + "/Sistema/login");
             return;
         }
 
@@ -50,7 +50,7 @@ public class PerfilServlet extends HttpServlet {
             }
 
             request.setAttribute("usuario", usuario);
-            request.getRequestDispatcher("perfil.jsp").forward(request, response);
+            request.getRequestDispatcher("/encuestador/perfil.jsp").forward(request, response);
 
         } catch (SQLException e) {
             e.printStackTrace();

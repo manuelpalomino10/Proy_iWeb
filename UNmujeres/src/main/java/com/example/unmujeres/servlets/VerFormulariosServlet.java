@@ -51,7 +51,7 @@ public class VerFormulariosServlet extends HttpServlet {
 
         // Verificar
         if (idEnc == null) {
-            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
             return;
         }
 
@@ -100,7 +100,7 @@ public class VerFormulariosServlet extends HttpServlet {
 
                     // 9. Enviar a vista
                     request.setAttribute("datos", datos);
-                    view = request.getRequestDispatcher("/showAssignedForms.jsp");
+                    view = request.getRequestDispatcher("/encuestador/showAssignedForms.jsp");
                     view.forward(request, response);
 
                 } catch (Exception e) {
@@ -120,7 +120,7 @@ public class VerFormulariosServlet extends HttpServlet {
                 request.setAttribute("preguntas", preguntas);
                 request.setAttribute("opciones", opciones1);
                 request.setAttribute("idformulario", idFormulario);
-                request.getRequestDispatcher("/crearRespuesta.jsp").forward(request, response);
+                request.getRequestDispatcher("/encuestador/crearRespuesta.jsp").forward(request, response);
 
                 break;
 
@@ -181,7 +181,7 @@ public class VerFormulariosServlet extends HttpServlet {
                         request.setAttribute("drafts", datos1);
                         request.setAttribute("records", datos2);
                     }
-                    view = request.getRequestDispatcher("/responsesHistory.jsp");
+                    view = request.getRequestDispatcher("/encuestador/responsesHistory.jsp");
                     view.forward(request, response);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -208,7 +208,7 @@ public class VerFormulariosServlet extends HttpServlet {
 
                     ArrayList<Respuesta> respuestas = respuestaDAO.listaRespuestas(idReg);
                     request.setAttribute("respuestas", respuestas);
-                    view = request.getRequestDispatcher("/editResponse.jsp");
+                    view = request.getRequestDispatcher("/encuestador/editResponse.jsp");
                     view.forward(request, response);
                 }
                 break;
