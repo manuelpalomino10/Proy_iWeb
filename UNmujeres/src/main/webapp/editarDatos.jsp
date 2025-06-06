@@ -63,11 +63,34 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6 form-group">
-                                    <label for="contraseña">Nueva Contraseña</label>
-                                    <input type="password" class="form-control" id="contraseña" name="contraseña"
-                                            required>
+                                <div class="col-md-6 form-group" style="margin-bottom: 0;">
+                                    <label for="contraseña" style="margin-bottom: 2px; font-weight: 600;">Nueva Contraseña</label>
+                                    <input type="password" class="form-control" id="contraseña" name="contraseña" required
+                                           style="margin-bottom: 8px; margin-top: 0;"/>
+                                    <ul style="list-style: none; padding-left: 0; margin: 4px 0 0 0;">
+                                        <li style="color: #6c757d; font-size: 13px; font-weight: 600; margin-bottom: 2px;">
+                                            La contraseña debe tener:
+                                        </li>
+                                        <c:set var="reqs" value="${requisitosPwd}" />
+                                        <li style="color: ${reqs['len'] == null ? '#b0b0b0' : (reqs['len'] ? '#388e3c' : '#d32f2f')}; font-size: 12.5px; margin-bottom: 0;">
+                                            Mínimo 8 caracteres
+                                        </li>
+                                        <li style="color: ${reqs['may'] == null ? '#b0b0b0' : (reqs['may'] ? '#388e3c' : '#d32f2f')}; font-size: 12.5px; margin-bottom: 0;">
+                                            Al menos una mayúscula
+                                        </li>
+                                        <li style="color: ${reqs['min'] == null ? '#b0b0b0' : (reqs['min'] ? '#388e3c' : '#d32f2f')}; font-size: 12.5px; margin-bottom: 0;">
+                                            Al menos una minúscula
+                                        </li>
+                                        <li style="color: ${reqs['num'] == null ? '#b0b0b0' : (reqs['num'] ? '#388e3c' : '#d32f2f')}; font-size: 12.5px; margin-bottom: 0;">
+                                            Al menos un número
+                                        </li>
+                                        <li style="color: ${reqs['spec'] == null ? '#b0b0b0' : (reqs['spec'] ? '#388e3c' : '#d32f2f')}; font-size: 12.5px;">
+                                            Al menos un carácter especial
+                                        </li>
+                                    </ul>
                                 </div>
+
+
                                 <div class="col-md-6 form-group">
                                     <label for="confirmarContraseña">Confirmar Contraseña</label>
                                     <input type="password" class="form-control" id="confirmarContraseña"
