@@ -12,6 +12,7 @@ public class UsuarioDAO extends BaseDAO {
 
     public Usuario obtenerUsuarioConDistrito(int idUsuario) throws SQLException {
         Usuario usuario = null;
+        // Añade u.idroles a la consulta
         String sql = "SELECT u.*, d.nombre as nombre_distrito " +
                 "FROM usuario u " +
                 "LEFT JOIN distritos d ON u.iddistritos = d.iddistritos " +
@@ -32,10 +33,14 @@ public class UsuarioDAO extends BaseDAO {
                     usuario.setDireccion(rs.getString("direccion"));
                     usuario.setFotoBytes(rs.getBytes("foto"));
 
+                    // Campos adicionales críticos
+                    usuario.setIdroles(rs.getInt("idroles")); // AÑADE ESTA LÍNEA
+                    usuario.setEstado(rs.getBoolean("estado")); // Recomendado
+                    usuario.setIddistritos(rs.getInt("iddistritos")); // Recomendado
+
                     // Set Distrito
                     Distritos distrito = new Distritos();
-                    // En el ResultSet (dentro de obtenerUsuarioConDistrito):
-                    distrito.setIddistritos(rs.getInt("iddistritos")); // Columna en usuario
+                    distrito.setIddistritos(rs.getInt("iddistritos"));
                     distrito.setNombre(rs.getString("nombre_distrito"));
                     usuario.setDistrito(distrito);
                 }

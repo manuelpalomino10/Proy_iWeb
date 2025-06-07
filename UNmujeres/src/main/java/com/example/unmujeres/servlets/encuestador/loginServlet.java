@@ -2,19 +2,11 @@ package com.example.unmujeres.servlets.encuestador;
 
 import com.example.unmujeres.daos.HashUtil;
 import com.example.unmujeres.daos.UsuarioDAO;
-import com.example.unmujeres.beans.Usuario;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Base64;
 
-@WebServlet("/login")
-public class loginServlet extends HttpServlet {
+
+import com.example.unmujeres.beans.Usuario; import com.example.unmujeres.daos.UsuarioDAO; import jakarta.servlet.ServletException; import jakarta.servlet.annotation.WebServlet; import jakarta.servlet.http.HttpServlet; import jakarta.servlet.http.HttpServletRequest; import jakarta.servlet.http.HttpServletResponse; import jakarta.servlet.http.HttpSession; import java.io.IOException; import java.sql.SQLException; import java.util.Base64;
+
+@WebServlet("/login") public class loginServlet extends HttpServlet {
 
     private final UsuarioDAO usuarioDao = new UsuarioDAO();
 
@@ -27,11 +19,10 @@ public class loginServlet extends HttpServlet {
 
         String contraseñaHasheada = HashUtil.hashSHA256(contraseña);
 
-        Usuario usuario = null; // Inicializar usuario fuera del try para que sea accesible
-        Usuario usuarioConFoto = null; // Inicializar usuarioConFoto
+        Usuario usuario = null;
+        Usuario usuarioConFoto = null;
 
         try {
-            // Llama a la función de validación con la contraseña ya hasheada
             usuario = usuarioDao.validarUsuario(correo, contraseñaHasheada);
 
             if (usuario != null && usuario.isEstado()) {
@@ -39,29 +30,67 @@ public class loginServlet extends HttpServlet {
                 session.setAttribute("usuario", usuario);
                 session.setAttribute("idUsuario", usuario.getIdUsuario());
 
-                // Cargar el usuario completo con la fotoBytes si no está ya en el objeto 'usuario'
                 usuarioConFoto = usuarioDao.obtenerUsuarioConDistrito(usuario.getIdUsuario());
 
                 if (usuarioConFoto != null && usuarioConFoto.getFotoBytes() != null && usuarioConFoto.getFotoBytes().length > 0) {
                     String base64Image = Base64.getEncoder().encodeToString(usuarioConFoto.getFotoBytes());
-                    session.setAttribute("fotoBase64", base64Image); // Guardar la foto en base64 en la sesión
+                    session.setAttribute("fotoBase64", base64Image);
                 } else {
-                    session.removeAttribute("fotoBase64"); // Asegurarse de que no haya una foto antigua si el usuario no tiene una
+                    session.removeAttribute("fotoBase64");
                 }
 
                 session.setAttribute("usuario", usuarioConFoto != null ? usuarioConFoto : usuario);
 
-                response.sendRedirect(request.getContextPath() + "/dashboard");
+                int idroles = usuario.getIdroles();
+                System.out.println("Usuario autenticado: ID=" + usuario.getIdUsuario() + ", idroles=" + idroles);
+
+                switch (idroles) {
+                    case 1: // Administrador
+                    case 3: // Encuestador
+                        response.sendRedirect(request.getContextPath() + "/dashboard");
+                        break;
+                    case 2: // Coordinador
+                        request.setAttribute("errorMessage", "Rol de coordinador no soportado.");
+                        response.sendRedirect(request.getContextPath() + "/dashboard");
+                        break;
+                    default:
+                        request.setAttribute("errorMessage", "Rol de usuario no reconocido (idroles=" + idroles + ").");
+                        request.getRequestDispatcher("/Sistema/error.jsp").forward(request, response);
+                        break;
+                }
+
+                System.out.println("[DEBUG] Usuario base - ID: " + usuario.getIdUsuario()
+                        + ", Rol: " + usuario.getIdroles());
+
+                usuarioConFoto = usuarioDao.obtenerUsuarioConDistrito(usuario.getIdUsuario());
+
+                if (usuarioConFoto != null) {
+                    System.out.println("[DEBUG] Usuario con foto - ID: " + usuarioConFoto.getIdUsuario()
+                            + ", Rol: " + usuarioConFoto.getIdroles());
+
+                    // Verificar si los roles coinciden
+                    if (usuario.getIdroles() != usuarioConFoto.getIdroles()) {
+                        System.err.println("[ERROR] Inconsistencia de roles! Base: " + usuario.getIdroles()
+                                + ", Con foto: " + usuarioConFoto.getIdroles());
+                    }
+                }
+
+
+                if (usuarioConFoto != null && usuarioConFoto.getIdroles() > 0) {
+                    session.setAttribute("usuario", usuarioConFoto);
+                } else {
+
+                    session.setAttribute("usuario", usuario);
+                    System.err.println("[WARNING] Usando usuario base por problema en usuarioConFoto");
+                }
             } else {
-                request.setAttribute("errorMessage",
-                        "Correo o contraseña incorrectos, o usuario inactivo");
+                request.setAttribute("errorMessage", "Correo o contraseña incorrectos, o usuario inactivo");
                 request.getRequestDispatcher("/Sistema/login.jsp").forward(request, response);
             }
         } catch (SQLException e) {
-            e.printStackTrace(); // Imprime el stack trace completo en la consola del servidor
-            request.setAttribute("errorMessage", "Error al intentar iniciar sesión. Por favor, inténtelo de nuevo más tarde.");
-            // O un mensaje más específico si puedes determinar la causa del SQL Exception
-            request.getRequestDispatcher("/Sistema/login.jsp").forward(request, response);
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Error al intentar iniciar sesión: " + e.getMessage());
+            request.getRequestDispatcher("/Sistema/error.jsp").forward(request, response);
         }
     }
 
@@ -70,4 +99,5 @@ public class loginServlet extends HttpServlet {
             throws ServletException, IOException {
         request.getRequestDispatcher("/Sistema/login.jsp").forward(request, response);
     }
+
 }
