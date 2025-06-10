@@ -18,8 +18,7 @@ public class CoordiGestionEncDAO extends BaseDAO {
                 "u.dni, u.direccion, u.idroles, u.idzona, u.iddistritos, " +
                 "u.fecha_incorporacion, u.cod_enc  " +
                 "FROM usuario u " +
-                "INNER JOIN zona_has_usuario zu ON u.idusuario = zu.usuario_idusuario " +
-                "WHERE zu.zona_idzona IN (SELECT zona_idzona FROM zona_has_usuario WHERE usuario_idusuario = ?) " +
+                "WHERE u.idzona = (SELECT idzona FROM usuario WHERE idusuario = ?) " +
                 "AND u.idroles = 3"; // 3 = rol encuestador
 
         try (Connection conn = this.getConnection();
@@ -41,8 +40,8 @@ public class CoordiGestionEncDAO extends BaseDAO {
                     usuario.setIdroles(rs.getInt("idroles"));
                     usuario.setIdzona(rs.getInt("idzona"));
                     usuario.setIddistritos(rs.getInt("iddistritos"));
-                    usuario.setFechaIncorporacion(rs.getDate("fechaIncorporacion"));
-                    usuario.setCodEnc(rs.getString("codEnc"));
+                    usuario.setFechaIncorporacion(rs.getDate("fecha_incorporacion"));
+                    usuario.setCodEnc(rs.getString("cod_enc"));
 
                     encuestadores.add(usuario);
                 }
@@ -86,7 +85,7 @@ public class CoordiGestionEncDAO extends BaseDAO {
 
             // 1. Eliminar asignaciones anteriores
             try (PreparedStatement ps = conn.prepareStatement(
-                    "DELETE FROM usuario_has_formulario WHERE usuario_idusuario = ?")) {
+                    "DELETE FROM enc_has_formulario  WHERE enc_idusuario  = ?")) {
                 ps.setInt(1, idEncuestador);
                 ps.executeUpdate();
             }
@@ -94,13 +93,12 @@ public class CoordiGestionEncDAO extends BaseDAO {
             // 2. Insertar nuevas asignaciones si la lista no está vacía
             if (idsFormularios != null && !idsFormularios.isEmpty()) {
                 try (PreparedStatement ps = conn.prepareStatement(
-                        "INSERT INTO usuario_has_formulario(usuario_idusuario, formulario_idformulario, codigo, asignado_por) " +
+                        "INSERT INTO enc_has_formulario(enc_idusuario, idformulario, codigo, fecha_asignacion) " +
                                 "VALUES (?, ?, UUID(), ?)")) {
 
                     for (int idForm : idsFormularios) {
                         ps.setInt(1, idEncuestador);
                         ps.setInt(2, idForm);
-                        ps.setInt(3, idCoordinador);
                         ps.addBatch();
                     }
                     ps.executeBatch();
