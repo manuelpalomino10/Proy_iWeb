@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <jsp:include page="/header.jsp" />
 
 <body id="page-top">
@@ -38,17 +39,39 @@
                                 <th>Acciones</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td>Juan Pérez</td>
-                                <td>juan@mail.com</td>
-                                <td><span class="badge badge-success">Activo</span></td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#banModal" data-nombre="Juan Pérez">Banear</button>
-                                    <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#assignModal" data-nombre="Juan Pérez">Asignar</button>
-                                </td>
-                            </tr>
-                            <!-- … más filas … -->
+                            <tbody
+                            <c:forEach var="enc" items="${listaEncuestadores}">
+                                <tr>
+                                    <td><c:out value="${enc.nombres} ${enc.apellidos}"/></td>
+                                    <td><c:out value="${enc.correo}"/></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${enc.estado}">
+                                                <span class="badge badge-success">Activo</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badge badge-danger">Baneado</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-warning"
+                                                data-toggle="modal"
+                                                data-target="#banModal"
+                                                data-nombre="${enc.nombres} ${enc.apellidos}"
+                                                data-id="${enc.idUsuario}">
+                                            Banear
+                                        </button>
+                                        <button class="btn btn-sm btn-primary"
+                                                data-toggle="modal"
+                                                data-target="#assignModal"
+                                                data-nombre="${enc.nombres} ${enc.apellidos}"
+                                                data-id="${enc.idUsuario}">
+                                            Asignar
+                                        </button>
+                                    </td>
+                                </tr>
+                            </c:forEach>
                             </tbody>
                         </table>
                     </div>
