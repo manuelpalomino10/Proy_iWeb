@@ -41,7 +41,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
 
             List<Usuario> lista = dao.listarPorZona(coordiId);
             req.setAttribute("listaEncuestadores", lista);
-            req.getRequestDispatcher("/gestion_encuestadores.jsp").forward(req, resp);
+            req.getRequestDispatcher("/coordinador/gestion_encuestadores.jsp").forward(req, resp);
         } catch (SQLException e) {
             throw new ServletException("Error al listar encuestadores", e);
         }
@@ -77,7 +77,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Acción inválida");
                     return;
             }
-            resp.sendRedirect(req.getContextPath() + "/gestion_encuestadores");
+            resp.sendRedirect(req.getContextPath() + "/coordinador/gestion_encuestadores");
         } catch (SQLException e) {
             throw new ServletException("Error en operación con encuestador", e);
         }
