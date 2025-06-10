@@ -1,17 +1,11 @@
 package com.example.unmujeres.daos;
 
 import com.example.unmujeres.beans.Usuario;
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CoordiGestionEncDAO extends BaseDAO {
-    private final DataSource dataSource;
-
-    public CoordiGestionEncDAO(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     /**
      * Lista todos los encuestadores (usuarios con rol 3) asociados a las zonas del coordinador
@@ -28,7 +22,7 @@ public class CoordiGestionEncDAO extends BaseDAO {
                 "WHERE zu.zona_idzona IN (SELECT zona_idzona FROM zona_has_usuario WHERE usuario_idusuario = ?) " +
                 "AND u.idroles = 3"; // 3 = rol encuestador
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = this.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, coordiId);
@@ -66,7 +60,7 @@ public class CoordiGestionEncDAO extends BaseDAO {
     public void actualizarEstado(int idUsuario, boolean nuevoEstado) throws SQLException {
         String sql = "UPDATE usuario SET estado = ? WHERE idusuario = ? AND idroles = 3";
 
-        try (Connection conn = dataSource.getConnection();
+        try (Connection conn = this.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setBoolean(1, nuevoEstado);
@@ -87,7 +81,7 @@ public class CoordiGestionEncDAO extends BaseDAO {
 
         Connection conn = null;
         try {
-            conn = dataSource.getConnection();
+            conn = this.getConnection();
             conn.setAutoCommit(false);
 
             // 1. Eliminar asignaciones anteriores

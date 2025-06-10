@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -22,9 +21,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         try {
-            // Obtener DataSource del contexto de la aplicación
-            DataSource ds = (DataSource) getServletContext().getAttribute("dataSource");
-            dao = new CoordiGestionEncDAO(ds);
+            dao = new CoordiGestionEncDAO();
         } catch (Exception e) {
             throw new ServletException("Error inicializando el DAO", e);
         }
@@ -35,7 +32,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             HttpSession session = req.getSession();
-            Integer coordiId = (Integer) session.getAttribute("usuarioId");
+            Integer coordiId = (Integer) session.getAttribute("idUsuario");
 
             if (coordiId == null) {
                 resp.sendRedirect(req.getContextPath() + "/login");
@@ -54,7 +51,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         HttpSession session = req.getSession();
-        Integer coordiId = (Integer) session.getAttribute("usuarioId");
+        Integer coordiId = (Integer) session.getAttribute("idUsuario");
 
         if (coordiId == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
