@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-@WebServlet("/encuestador")
+@WebServlet("/gestion_encuestadores")
 public class GestionEncuestadoresServlet extends HttpServlet {
 
     private CoordiGestionEncDAO dao;
@@ -80,7 +80,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Acción inválida");
                     return;
             }
-            resp.sendRedirect(req.getContextPath() + "/encuestador");
+            resp.sendRedirect(req.getContextPath() + "/gestion_encuestadores");
         } catch (SQLException e) {
             throw new ServletException("Error en operación con encuestador", e);
         }

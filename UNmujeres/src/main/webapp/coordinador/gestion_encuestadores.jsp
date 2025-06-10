@@ -158,13 +158,13 @@
 </script>
 
 <!-- Form para banear -->
-<form id="banForm" action="${pageContext.request.contextPath}/encuestador" method="post" style="display:none">
+<form id="banForm" action="${pageContext.request.contextPath}/gestion_encuestadores" method="post" style="display:none">
     <input type="hidden" name="action" value="banear"/>
     <input type="hidden" id="banIdInput"  name="idusuario" value=""/>
 </form>
 
 <!-- Form para asignar -->
-<form id="assignForm" action="${pageContext.request.contextPath}/encuestador" method="post" style="display:none">
+<form id="assignForm" action="${pageContext.request.contextPath}/gestion_encuestadores" method="post" style="display:none">
     <input type="hidden" name="action" value="asignar"/>
     <input type="hidden" id="assignIdInput" name="idusuario" value=""/>
     <!-- Los checkboxes de formularios los clonaremos vía JS -->
