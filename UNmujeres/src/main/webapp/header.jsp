@@ -31,13 +31,22 @@
   <!-- Custom styles for this template-->
   <link href="${pageContext.request.contextPath}/css/sb-admin-2.min.css" rel="stylesheet">
 
+  <!-- DataTables CSS (elige uno, por ejemplo, el local) -->
+  <link href="${pageContext.request.contextPath}/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+  <!-- (Opcional, si prefieres el CDN)
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css"/> -->
+
+  <!-- Date Range Picker CSS -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
 
   <style>
-    +    .falta-respuesta {
-    +      border: 2px solid red;
-    +      background-color: #ffecec;
-    +    }
-    +  </style>
+    .falta-respuesta {
+      border: 2px solid red;
+      background-color: #ffecec;
+    }
+  </style>
 
 </head>
 

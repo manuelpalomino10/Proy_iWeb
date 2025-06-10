@@ -13,30 +13,27 @@ import java.sql.SQLException;
 
 public class EncHasFormularioDAO extends BaseDAO {
 
-    public ArrayList<EncHasFormulario> getByEncuestador(int idEnc) {
+    public ArrayList<EncHasFormulario> getByUser(int idUsuario) {
         ArrayList<EncHasFormulario> asignaciones = new ArrayList<>();
 
         String sql = "SELECT * FROM enc_has_formulario WHERE enc_idusuario = ?";
 
         try (Connection con = this.getConnection();
-                PreparedStatement ps = con.prepareStatement(sql);) {
-            ps.setInt(1, idEnc);
+             PreparedStatement ps = con.prepareStatement(sql);) {
+            ps.setInt(1, idUsuario);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     EncHasFormulario a = new EncHasFormulario();
 
                     a.setIdEncHasFormulario(rs.getInt("idenc_has_formulario"));
+                    System.out.println("Se extrajo idehf "+ a.getIdEncHasFormulario());
                     a.setFechaAsignacion(rs.getDate("fecha_asignacion"));
                     a.setCodigo(rs.getString("codigo"));
 
                     // Obtener formulario por id
                     FormularioDAO formularioDAO = new FormularioDAO();
                     a.setFormulario(formularioDAO.getById(rs.getInt("idformulario")));
-
-                    // Obtener encuestador por id
-                    UsuarioDAO usuarioDAO = new UsuarioDAO();
-                    a.setUsuario(usuarioDAO.getById(idEnc));
 
                     asignaciones.add(a);
                 }

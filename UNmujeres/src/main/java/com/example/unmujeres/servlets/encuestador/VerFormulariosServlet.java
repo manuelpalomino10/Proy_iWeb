@@ -67,7 +67,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     ArrayList<Map<String, Object>> datos = new ArrayList<>();
 
                     // 3. Obtener arreglo de asignaciones
-                    ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByEncuestador(idEnc); // ID hardcodeado
+                    ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idEnc); // ID hardcodeado
                     //  para cada asignacion
                     for (EncHasFormulario asignacion : asignaciones) {
                         //System.out.println("\n1. Asignacion extraída: " + asignacion.getIdEncHasFormulario());
@@ -133,7 +133,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     ArrayList<Map<String, Object>> datos2 = new ArrayList<>();
 
                     // 3. lista de borradores
-                    ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByEncuestador(idEnc); // ID hardcodeado
+                    ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idEnc);
                     for (EncHasFormulario asignacion : asignaciones) {
                         System.out.println("Asignacion id es: "+asignacion.getIdEncHasFormulario());
 

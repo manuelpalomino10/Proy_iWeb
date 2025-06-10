@@ -2,7 +2,7 @@ package com.example.unmujeres.servlets.encuestador;
 
 import com.example.unmujeres.daos.Usuario;
 import com.example.unmujeres.beans.Distritos;
-import com.example.unmujeres.daos.Zona;
+import com.example.unmujeres.beans.Zona;
 import com.example.unmujeres.daos.DistritoDAO;
 import com.example.unmujeres.daos.EncuestadorDAO;
 import com.example.unmujeres.daos.ZonaDAO;

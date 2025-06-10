@@ -48,22 +48,58 @@
   </div>
 </div>
 
-<!-- Bootstrap core JavaScript-->
+<%--<!-- Bootstrap core JavaScript-->--%>
+<%--<script src="${pageContext.request.contextPath}/vendor/jquery/jquery.min.js"></script>--%>
+<%--<script src="${pageContext.request.contextPath}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>--%>
+
+<%--<!-- Core plugin JavaScript-->--%>
+<%--<script src="${pageContext.request.contextPath}/vendor/jquery-easing/jquery.easing.min.js"></script>--%>
+
+<%--<!-- Custom scripts for all pages-->--%>
+<%--<script src="${pageContext.request.contextPath}/js/sb-admin-2.min.js"></script>--%>
+
+<%--<!-- DataTables -->--%>
+<%--<script src="${pageContext.request.contextPath}/vendor/datatables/jquery.dataTables.min.js"></script>--%>
+<%--<link href="${pageContext.request.contextPath}/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">--%>
+<%--<script src="${pageContext.request.contextPath}/vendor/datatables/dataTables.bootstrap4.min.js"></script>--%>
+
+<%--<script src="${pageContext.request.contextPath}/js/demo/datatables-demo.js"></script>--%>
+
+
+
+
+<!-- jQuery (elige una fuente: local o CDN, pero no ambas) -->
 <script src="${pageContext.request.contextPath}/vendor/jquery/jquery.min.js"></script>
+<!-- Si prefieres usar el CDN, comenta o elimina la línea anterior y utiliza esta:
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> -->
+
+<!-- Bootstrap Bundle JS (incluye Popper.js) -->
 <script src="${pageContext.request.contextPath}/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-<!-- Core plugin JavaScript-->
+<!-- Core plugin (jQuery easing) -->
 <script src="${pageContext.request.contextPath}/vendor/jquery-easing/jquery.easing.min.js"></script>
 
-<!-- Custom scripts for all pages-->
+<!-- Moment.js (requerido para Date Range Picker) -->
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+<!-- Date Range Picker -->
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<!-- DataTables: usa la inclusión local o la del CDN (pero no ambas) -->
+<script src="${pageContext.request.contextPath}/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="${pageContext.request.contextPath}/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<!-- Si prefieres el CDN, comenta estas dos líneas y utiliza:
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script> -->
+
+<!-- Custom scripts for all pages -->
 <script src="${pageContext.request.contextPath}/js/sb-admin-2.min.js"></script>
 
-<!-- DataTables -->
-<script src="${pageContext.request.contextPath}/vendor/datatables/jquery.dataTables.min.js"></script>
-<link href="${pageContext.request.contextPath}/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-<script src="${pageContext.request.contextPath}/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
+<!-- DataTables Demo Script -->
 <script src="${pageContext.request.contextPath}/js/demo/datatables-demo.js"></script>
+
+
+
+
 
 <script>
   // Evento para el botón de confirmación en el modal

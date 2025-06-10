@@ -2,7 +2,7 @@ package com.example.unmujeres.daos;
 
 
 
-import com.example.unmujeres.daos.Zona;
+import com.example.unmujeres.beans.Zona;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

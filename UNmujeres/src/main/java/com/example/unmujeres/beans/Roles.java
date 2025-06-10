@@ -12,10 +12,10 @@ public class Roles {
     public Roles() {
     }
 
-    public int getIdroles() {
+    public int getIdRoles() {
         return idroles;
     }
-    public void setIdroles(int idroles) {
+    public void setIdRoles(int idroles) {
         this.idroles = idroles;
     }
 
