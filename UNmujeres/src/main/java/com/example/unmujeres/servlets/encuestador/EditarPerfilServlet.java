@@ -1,4 +1,4 @@
-package com.example.unmujeres.servlets;
+package com.example.unmujeres.servlets.encuestador;
 
 import com.example.unmujeres.beans.Distritos;
 import com.example.unmujeres.daos.UsuarioDAO;
@@ -48,12 +48,12 @@ public class EditarPerfilServlet extends HttpServlet {
 
             request.setAttribute("usuario", usuario);
             request.setAttribute("distritos", distritos);
-            request.getRequestDispatcher("editarDatos.jsp").forward(request, response);
+            request.getRequestDispatcher("/encuestador/editarDatos.jsp").forward(request, response);
 
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("error", "Error al cargar datos: " + e.getMessage());
-            request.getRequestDispatcher("editarDatos.jsp").forward(request, response);
+            request.getRequestDispatcher("/encuestador/editarDatos.jsp").forward(request, response);
         }
     }
 
@@ -65,7 +65,7 @@ public class EditarPerfilServlet extends HttpServlet {
         Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
 
         if (usuarioSesion == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
+            response.sendRedirect(request.getContextPath() + "/Sistema/login");
             return;
         }
 
@@ -149,7 +149,7 @@ public class EditarPerfilServlet extends HttpServlet {
         } catch (SQLException e) {
             request.setAttribute("error", mensaje + " | Error adicional al cargar distritos");
         }
-        request.getRequestDispatcher("editarDatos.jsp").forward(request, response);
+        request.getRequestDispatcher("/encuestador/editarDatos.jsp").forward(request, response);
     }
 
 }

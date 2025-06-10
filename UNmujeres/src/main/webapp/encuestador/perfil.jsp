@@ -10,17 +10,17 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<jsp:include page="header.jsp" />
+<jsp:include page="../header.jsp" />
 
 
 
 <body id="page-top">
 <div id="wrapper">
-    <jsp:include page="sidebarEnc.jsp" />
+    <jsp:include page="../sidebarEnc.jsp" />
 
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-            <jsp:include page="topbarEnc.jsp" />
+            <jsp:include page="../topbarEnc.jsp" />
 
             <div class="container-fluid">
                 <div class="card shadow m-4 d-flex m-auto" style="max-width: 900px; margin: 2rem auto">
@@ -41,7 +41,7 @@
                                              class="profile-img" alt="Foto de perfil"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <img id="currentProfileImage" src="img/perfil-del-usuario.png"
+                                        <img id="currentProfileImage" src="../img/perfil-del-usuario.png"
                                              class="profile-img" alt="Foto de perfil por defecto"/>
                                     </c:otherwise>
                                 </c:choose>
@@ -208,6 +208,6 @@
     </div>
 </c:if>
 
-<jsp:include page="footer.jsp" />
+<jsp:include page="../footer.jsp" />
 </body>
 </html>

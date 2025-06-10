@@ -36,6 +36,7 @@
             mask: linear-gradient(90deg, transparent 0%, white 20%, white 80%, transparent 100%);
             -webkit-mask: linear-gradient(90deg, transparent 0%, white 20%, white 80%, transparent 100%);
         }
+
         .image-container img {
             max-width: 100%;
             max-height: 100%;
@@ -63,7 +64,7 @@
 
 <div class="container">
     <div class="image-container">
-        <img src="img/back.jpg" alt="Imagen ONU Mujeres">
+        <img src="${pageContext.request.contextPath}/img/back.jpg" alt="Imagen ONU Mujeres">
     </div>
     <div class="login-container">
         <div class="card o-hidden border-0 shadow-lg">

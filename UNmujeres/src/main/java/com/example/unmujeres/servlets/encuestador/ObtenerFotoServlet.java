@@ -1,4 +1,5 @@
-package com.example.unmujeres.servlets;
+package com.example.unmujeres.servlets.encuestador;
+
 
 
 import com.example.unmujeres.beans.Usuario;
@@ -9,7 +10,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 
 @WebServlet("/obtenerFoto")
 public class ObtenerFotoServlet extends HttpServlet {

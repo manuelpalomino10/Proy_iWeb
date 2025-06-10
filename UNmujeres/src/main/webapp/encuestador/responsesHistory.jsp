@@ -17,7 +17,7 @@
 
 <html>
 
-  <jsp:include page="header.jsp" />
+  <jsp:include page="../header.jsp" />
 
   <body id="page-top">
 
@@ -25,7 +25,7 @@
   <div id="wrapper">
 
     <!-- Sidebar -->
-    <jsp:include page="sidebarEnc.jsp" />
+    <jsp:include page="../sidebarEnc.jsp" />
     <!-- End of Sidebar -->
 
     <!-- Content Wrapper -->
@@ -35,7 +35,7 @@
       <div id="content">
 
         <!-- Topbar -->
-        <jsp:include page="topbarEnc.jsp" />
+        <jsp:include page="../topbarEnc.jsp" />
         <!-- End of Topbar -->
 
         <!-- Begin Page Content -->
@@ -170,6 +170,6 @@
 
   </div>
   <!-- End of Page Wrapper -->
-  <jsp:include page="footer.jsp" />
+  <jsp:include page="../footer.jsp" />
   </body>
 </html>

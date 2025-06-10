@@ -1,4 +1,4 @@
-package com.example.unmujeres.servlets;
+package com.example.unmujeres.servlets.encuestador;
 import com.example.unmujeres.beans.OpcionPregunta;
 import com.example.unmujeres.daos.OpcionPreguntaDAO;
 import com.example.unmujeres.daos.PreguntaDAO;
@@ -70,7 +70,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByEncuestador(idEnc); // ID hardcodeado
                     //  para cada asignacion
                     for (EncHasFormulario asignacion : asignaciones) {
-                        //System.out.println("\n1. Asignacion extraída: "+ asignacion.getIdEncHasFormulario());
+                        //System.out.println("\n1. Asignacion extraída: " + asignacion.getIdEncHasFormulario());
                         // 4. Obtener formulario relacionado por el id, obtenido de la asignacion
                         Formulario formulario = formularioDAO.getById(asignacion.getFormulario().getIdFormulario());
                         // si existe formulario y esta activo (formulario.estado=1),
@@ -119,8 +119,9 @@ public class VerFormulariosServlet extends HttpServlet {
 
                 request.setAttribute("preguntas", preguntas);
                 request.setAttribute("opciones", opciones1);
-                //request.setAttribute("idformulario", idFormulario);
+                request.setAttribute("idformulario", idFormulario);
                 request.getRequestDispatcher("/crearRespuesta.jsp").forward(request, response);
+
                 break;
 
             case "historial":
@@ -287,9 +288,10 @@ public class VerFormulariosServlet extends HttpServlet {
                 break;
 
             case "guardar":
+                System.out.println("se hace en dopost: " +action);
                 String acto = request.getParameter("acto");
 
-                String nuevoEstado;
+                String nuevoEstado = "B";
                 if (Objects.equals(acto, "borrador")) {
                     nuevoEstado = "B";
                 } else if (Objects.equals(acto, "completado")) {
@@ -362,10 +364,8 @@ public class VerFormulariosServlet extends HttpServlet {
                     request.setAttribute("error", "Error al guardar las respuestas");
                     request.getRequestDispatcher("/error.jsp").forward(request, response);
                 }
-                break;
+            break;
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + action);
         }
     }
 

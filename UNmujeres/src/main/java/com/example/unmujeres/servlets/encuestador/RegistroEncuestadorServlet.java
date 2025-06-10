@@ -1,4 +1,4 @@
-package com.example.unmujeres.servlets;
+package com.example.unmujeres.servlets.encuestador;
 
 import com.example.unmujeres.daos.Usuario;
 import com.example.unmujeres.beans.Distritos;
@@ -32,7 +32,7 @@ public class RegistroEncuestadorServlet extends HttpServlet {
         } catch (SQLException ex) {
             throw new ServletException("Error cargando zonas/distritos", ex);
         }
-        req.getRequestDispatcher("/form.jsp").forward(req, resp);
+        req.getRequestDispatcher("/encuestador/form.jsp").forward(req, resp);
     }
 
     @Override
@@ -144,7 +144,7 @@ public class RegistroEncuestadorServlet extends HttpServlet {
             req.setAttribute("direccion",  direccion);
             req.setAttribute("distrito",   distritoParam);
             req.setAttribute("correo",     correo);
-            req.getRequestDispatcher("/form.jsp").forward(req, resp);
+            req.getRequestDispatcher("/encuestador/form.jsp").forward(req, resp);
             return;
         }
 
@@ -171,6 +171,6 @@ public class RegistroEncuestadorServlet extends HttpServlet {
             throw new ServletException("Error al insertar usuario", ex);
         }
 
-        resp.sendRedirect(req.getContextPath() + "/success.jsp");
+        resp.sendRedirect(req.getContextPath() + "/Sistema/success.jsp");
     }
 }

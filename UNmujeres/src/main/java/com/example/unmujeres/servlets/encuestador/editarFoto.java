@@ -1,11 +1,10 @@
-package com.example.unmujeres.servlets;
+package com.example.unmujeres.servlets.encuestador;
 import com.example.unmujeres.beans.Usuario;
 import com.example.unmujeres.daos.UsuarioDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import com.example.unmujeres.daos.UsuarioDAO;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -52,5 +51,7 @@ public class editarFoto extends HttpServlet {
         response.getWriter().write("{\"success\": true}");
     }
 }
+
+
 
 
