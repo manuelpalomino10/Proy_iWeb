@@ -67,7 +67,6 @@
 
 
 
-
 <!-- jQuery (elige una fuente: local o CDN, pero no ambas) -->
 <script src="${pageContext.request.contextPath}/vendor/jquery/jquery.min.js"></script>
 <!-- Si prefieres usar el CDN, comenta o elimina la línea anterior y utiliza esta:
@@ -96,9 +95,6 @@
 
 <!-- DataTables Demo Script -->
 <script src="${pageContext.request.contextPath}/js/demo/datatables-demo.js"></script>
-
-
-
 
 
 <script>

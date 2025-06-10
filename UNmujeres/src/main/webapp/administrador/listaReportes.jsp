@@ -180,7 +180,7 @@
         if (startMoment.isValid() && endMoment.isValid()) {
           startDate = startMoment;
           endDate = endMoment;
-          System.out.println("fechas es valido")
+          console.log("fechas es valido")
           hasValidValue = true;
         }
       }
