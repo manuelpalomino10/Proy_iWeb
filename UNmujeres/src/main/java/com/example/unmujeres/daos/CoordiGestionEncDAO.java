@@ -16,7 +16,7 @@ public class CoordiGestionEncDAO extends BaseDAO {
     public List<Usuario> listarPorZona(int coordiId) throws SQLException {
         String sql = "SELECT u.idusuario, u.nombres, u.apellidos, u.correo, u.estado, " +
                 "u.dni, u.direccion, u.idroles, u.idzona, u.iddistritos, " +
-                "u.fechaIncorporacion, u.codEnc " +
+                "u.fecha_incorporacion, u.cod_enc  " +
                 "FROM usuario u " +
                 "INNER JOIN zona_has_usuario zu ON u.idusuario = zu.usuario_idusuario " +
                 "WHERE zu.zona_idzona IN (SELECT zona_idzona FROM zona_has_usuario WHERE usuario_idusuario = ?) " +
