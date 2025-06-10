@@ -67,6 +67,9 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                     // false = baneado (adaptado al boolean de Usuario)
                     dao.actualizarEstado(id, false);
                     break;
+                case "desbanear":
+                    dao.actualizarEstado(id, true);
+                    break;
                 case "asignar":
                     String[] fids = req.getParameterValues("formularios");
                     List<Integer> lista = fids == null ? List.of() :
@@ -77,7 +80,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Acción inválida");
                     return;
             }
-            resp.sendRedirect(req.getContextPath() + "/coordinador/gestion_encuestadores");
+            resp.sendRedirect(req.getContextPath() + "/gestion_encuestadores");
         } catch (SQLException e) {
             throw new ServletException("Error en operación con encuestador", e);
         }

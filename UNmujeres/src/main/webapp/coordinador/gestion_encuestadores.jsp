@@ -59,8 +59,16 @@
                                                 data-toggle="modal"
                                                 data-target="#banModal"
                                                 data-nombre="${enc.nombres} ${enc.apellidos}"
-                                                data-id="${enc.idUsuario}">
-                                            Banear
+                                                data-id="${enc.idUsuario}"
+                                                data-action="${enc.estado ? 'banear' : 'desbanear'}">
+                                            <c:choose>
+                                                <c:when test="${enc.estado}">
+                                                    Banear
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Desbanear
+                                                </c:otherwise>
+                                            </c:choose>
                                         </button>
                                         <button class="btn btn-sm btn-primary"
                                                 data-toggle="modal"
@@ -98,15 +106,15 @@
 <div class="modal fade" id="banModal" tabindex="-1">
     <div class="modal-dialog"><div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Banear Encuestador</h5>
+            <h5 class="modal-title" id="banTitle">Banear Encuestador</h5>
             <button type="button" class="close" data-dismiss="modal">×</button>
         </div>
         <div class="modal-body">
-            ¿Seguro que quieres banear a <strong id="banName"></strong>?
+            ¿Seguro que quieres <span id="banVerb">banear</span> a <strong id="banName"></strong>?
         </div>
         <div class="modal-footer">
             <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-            <button id="banConfirmBtn" class="btn btn-danger">Sí, banear</button>
+            <button id="banConfirmBtn" class="btn btn-danger"><span id="banButtonVerb">Sí, banear</span></button>
         </div>
     </div></div>
 </div>
@@ -144,10 +152,22 @@
         // Cuando se abre el modal de ban
         $('#banModal').on('show.bs.modal', e => {
             let btn = $(e.relatedTarget);
-            let id   = btn.data('id');      // ASEGÚRATE de pasar data-id en el botón
-            let name = btn.data('nombre');
+            let id     = btn.data('id');
+            let name   = btn.data('nombre');
+            let action = btn.data('action');
             $('#banName').text(name);
             $('#banIdInput').val(id);
+            $('#banForm input[name=action]').val(action);
+
+            if(action === 'banear') {
+                $('#banTitle').text('Banear Encuestador');
+                $('#banVerb').text('banear');
+                $('#banButtonVerb').text('Sí, banear');
+            } else {
+                $('#banTitle').text('Desbanear Encuestador');
+                $('#banVerb').text('desbanear');
+                $('#banButtonVerb').text('Sí, desbanear');
+            }
         });
         // Al confirmar ban
         $('#banConfirmBtn').click(() => $('#banForm').submit());
