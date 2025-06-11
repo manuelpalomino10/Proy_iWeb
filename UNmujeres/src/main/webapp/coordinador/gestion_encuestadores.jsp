@@ -23,7 +23,18 @@
             <div class="container-fluid">
                 <h1 class="h3 mb-2 text-gray-800">Gestión de Encuestadores</h1>
                 <p class="mb-4">Administra tus encuestadores: desbanéalos o asígnales formularios.</p>
-
+                <c:if test="${not empty param.success}">
+                    <div class="alert alert-success alert-dismissible fade show">
+                            ${param.success}
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    </div>
+                </c:if>
+                <c:if test="${not empty param.warn}">
+                    <div class="alert alert-warning alert-dismissible fade show">
+                            ${param.warn}
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    </div>
+                </c:if>
                 <!-- Tabla con scroll -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
@@ -55,7 +66,7 @@
                                         </c:choose>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-warning"
+                                        <button class="btn btn-sm btn-danger"
                                                 data-toggle="modal"
                                                 data-target="#banModal"
                                                 data-nombre="${enc.nombres} ${enc.apellidos}"
@@ -70,13 +81,10 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </button>
-                                        <button class="btn btn-sm btn-primary"
-                                                data-toggle="modal"
-                                                data-target="#assignModal"
-                                                data-nombre="${enc.nombres} ${enc.apellidos}"
-                                                data-id="${enc.idUsuario}">
+                                        <a class="btn btn-sm btn-primary"
+                                           href="${pageContext.request.contextPath}/gestion_encuestadores?idusuario=${enc.idUsuario}">
                                             Asignar
-                                        </button>
+                                        </a>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -124,42 +132,71 @@
 <div class="modal fade" id="assignModal" tabindex="-1">
     <div class="modal-dialog modal-lg"><div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Asignar Formularios a <span id="assignName"></span></h5>
+            <h5 class="modal-title">Asignar Formularios a ${assignName}</h5>
             <button type="button" class="close" data-dismiss="modal">×</button>
         </div>
         <div class="modal-body">
-            <div class="form-group">
-                <label>Selecciona formularios</label>
-                <div id="formulariosList" class="list-group">
-                    <!-- JS inyectará aquí los checkboxes -->
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Formularios Disponibles</h6>
+                    <c:forEach var="f" items="${dispFormularios}">
+                        <form class="d-flex justify-content-between align-items-center mb-2" method="post" action="${pageContext.request.contextPath}/gestion_encuestadores">
+                            <input type="hidden" name="action" value="asignar_form"/>
+                            <input type="hidden" name="idusuario" value="${assignId}"/>
+                            <input type="hidden" name="idformulario" value="${f.idFormulario}"/>
+                            <span class="mr-2"><c:out value="${f.nombre}"/></span>
+                            <button type="submit" class="btn btn-sm btn-success">Asignar</button>
+                        </form>
+                    </c:forEach>
+                    <c:if test="${empty dispFormularios}">
+                        <p>No hay formularios disponibles para asignar.</p>
+                    </c:if>
+                </div>
+                <div class="col-md-6">
+                    <h6>Formularios del Encuestador</h6>
+                    <c:forEach var="f" items="${asigFormularios}">
+                        <form class="d-flex justify-content-between align-items-center mb-2" method="post" action="${pageContext.request.contextPath}/gestion_encuestadores">
+                            <input type="hidden" name="action" value="desasignar_form"/>
+                            <input type="hidden" name="idusuario" value="${assignId}"/>
+                            <input type="hidden" name="idformulario" value="${f.idFormulario}"/>
+                            <span class="mr-2"><c:out value="${f.nombre}"/></span>
+                            <c:choose>
+                                <c:when test="${f.respuestasCount > 0}">
+                                    <button type="submit" class="btn btn-sm btn-secondary" disabled
+                                            data-toggle="tooltip"
+                                            title="No se puede desasignar este formulario porque ya tiene respuestas">
+                                        Desasignar
+                                    </button>
+                                </c:when>
+                                <c:otherwise>
+                                    <button type="submit" class="btn btn-sm btn-danger">Desasignar</button>
+                                </c:otherwise>
+                            </c:choose>
+                        </form>
+                    </c:forEach>
+                    <c:if test="${empty asigFormularios}">
+                        <p>No hay formularios asignados.</p>
+                    </c:if>
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-            <button id="assignConfirmBtn" class="btn btn-primary">Confirmar Asignación</button>
-        </div>
-    </div></div>
 </div>
 
 
 <!-- Script de inicialización -->
 <script>
-    $(document).ready(function(){
-        // Tu DataTable
-        $('#dataTable').DataTable({ destroy:true, /* …tu config…*/ });
-
-        // Cuando se abre el modal de ban
+    $(function(){
+        $('#dataTable').DataTable({destroy:true});
         $('#banModal').on('show.bs.modal', e => {
             let btn = $(e.relatedTarget);
-            let id     = btn.data('id');
-            let name   = btn.data('nombre');
+            let id   = btn.data('id');
+            let name = btn.data('nombre');
             let action = btn.data('action');
             $('#banName').text(name);
             $('#banIdInput').val(id);
             $('#banForm input[name=action]').val(action);
-
-            if(action === 'banear') {
+            if(action === 'banear'){
                 $('#banTitle').text('Banear Encuestador');
                 $('#banVerb').text('banear');
                 $('#banButtonVerb').text('Sí, banear');
@@ -169,49 +206,18 @@
                 $('#banButtonVerb').text('Sí, desbanear');
             }
         });
-        // Al confirmar ban
-        $('#banConfirmBtn').click(() => $('#banForm').submit());
-
-        // Cuando se abre el modal de asignar
-        $('#assignModal').on('show.bs.modal', e => {
-            let btn = $(e.relatedTarget);
-            let id   = btn.data('id');
-            let name = btn.data('nombre');
-            $('#assignName').text(name);
-            $('#assignIdInput').val(id);
-
-            // Limpia y carga checkboxes: supongamos que tienes una lista JS de formularios
-            let formularios = [
-                {id:1, nombre:'Encuesta Satisfacción'},
-                {id:2, nombre:'Datos Demográficos'},
-                /* … */
-            ];
-            let $list = $('#formulariosList').empty();
-            formularios.forEach(f => {
-                $list.append(`
-        <label class="list-group-item">
-          <input type="checkbox" name="formularios" value="${f.id}"> ${f.nombre}
-        </label>`);
-            });
-        });
-        // Al confirmar asignación
-        $('#assignConfirmBtn').click(() => $('#assignForm').submit());
+        $('#banConfirmBtn').click(()=>$('#banForm').submit());
+        $('[data-toggle="tooltip"]').tooltip();
+        <c:if test="${showAssignModal}">
+        $('#assignModal').modal('show');
+        </c:if>
     });
-
 </script>
 
 <!-- Form para banear -->
 <form id="banForm" action="${pageContext.request.contextPath}/gestion_encuestadores" method="post" style="display:none">
     <input type="hidden" name="action" value="banear"/>
     <input type="hidden" id="banIdInput"  name="idusuario" value=""/>
-</form>
-
-<!-- Form para asignar -->
-<form id="assignForm" action="${pageContext.request.contextPath}/gestion_encuestadores" method="post" style="display:none">
-    <input type="hidden" name="action" value="asignar"/>
-    <input type="hidden" id="assignIdInput" name="idusuario" value=""/>
-    <!-- Los checkboxes de formularios los clonaremos vía JS -->
-    <div id="assignFieldsContainer"></div>
 </form>
 
 
