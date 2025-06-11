@@ -116,8 +116,15 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                             .filter(s -> s != null && !s.isBlank())
                             .map(Integer::parseInt)
                             .toList();
-                    dao.asignarFormularios(id, lista);
-                    break;
+                    List<Integer> noDes = dao.asignarFormularios(id, lista);
+                    String url = req.getContextPath() + "/gestion_encuestadores";
+                    if (!noDes.isEmpty()) {
+                        url += "?warn=No+se+desasignaron+formularios+con+mas+de+10+respuestas";
+                    } else {
+                        url += "?success=Asignaciones+actualizadas";
+                    }
+                    resp.sendRedirect(url);
+                    return;
                 default:
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Acción inválida");
                     return;

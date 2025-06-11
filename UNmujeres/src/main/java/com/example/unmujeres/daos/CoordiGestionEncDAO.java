@@ -75,38 +75,61 @@ public class CoordiGestionEncDAO extends BaseDAO {
      * @param idsFormularios Lista de IDs de formularios a asignar
      * @throws SQLException
      */
-    public void asignarFormularios(int idEncuestador, List<Integer> idsFormularios)
+    public List<Integer> asignarFormularios(int idEncuestador, List<Integer> idsFormularios)
             throws SQLException {
 
         Connection conn = null;
+        List<Integer> noDesasignados = new ArrayList<>();
         try {
             conn = this.getConnection();
             conn.setAutoCommit(false);
 
-            // 1. Eliminar asignaciones anteriores
-            try (PreparedStatement ps = conn.prepareStatement(
-                    "DELETE FROM enc_has_formulario  WHERE enc_idusuario  = ?")) {
+            // Obtener asignaciones actuales
+            String query = "SELECT idenc_has_formulario, idformulario FROM enc_has_formulario WHERE enc_idusuario = ?";
+            List<Integer> asignadosPersistentes = new ArrayList<>();
+            try (PreparedStatement ps = conn.prepareStatement(query)) {
                 ps.setInt(1, idEncuestador);
-                ps.executeUpdate();
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        int idEhf = rs.getInt("idenc_has_formulario");
+                        int idForm = rs.getInt("idformulario");
+                        int count = contarRespuestasPorEncuestadorYFormulario(idEncuestador, idForm);
+                        if (count > 10) {
+                            // no eliminar si tiene mas de 10 respuestas
+                            asignadosPersistentes.add(idForm);
+                            noDesasignados.add(idForm);
+                        } else {
+                            try (PreparedStatement del = conn.prepareStatement(
+                                    "DELETE FROM enc_has_formulario WHERE idenc_has_formulario = ?")) {
+                                del.setInt(1, idEhf);
+                                del.executeUpdate();
+                            }
+                        }
+                    }
+                }
             }
 
-            // 2. Insertar nuevas asignaciones si la lista no está vacía
+            // Insertar nuevas asignaciones
             if (idsFormularios != null && !idsFormularios.isEmpty()) {
                 try (PreparedStatement ps = conn.prepareStatement(
                         "INSERT INTO enc_has_formulario(enc_idusuario, idformulario, codigo, fecha_asignacion) " +
                                 "VALUES (?, ?, UUID(), ?)")) {
-
                     for (int idForm : idsFormularios) {
+
+                    }
+                    ps.executeBatch();
+                    if (!asignadosPersistentes.contains(idFormulario)) {
                         ps.setInt(1, idEncuestador);
                         ps.setInt(2, idForm);
                         ps.setDate(3, new java.sql.Date(System.currentTimeMillis()));
                         ps.addBatch();
+                        asignadosPersistentes.add(idForm);
                     }
-                    ps.executeBatch();
                 }
             }
 
             conn.commit();
+            return noDesasignados;
         } catch (SQLException e) {
             if (conn != null) {
                 conn.rollback();
@@ -195,4 +218,22 @@ public class CoordiGestionEncDAO extends BaseDAO {
             return formularios;
         }
     }
+}
+
+public int contarRespuestasPorEncuestadorYFormulario(int encId, int idFormulario) throws SQLException {
+    String sql = "SELECT COUNT(*) FROM registro_respuestas rr " +
+            "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+            "WHERE ehf.enc_idusuario = ? AND ehf.idformulario = ?";
+    try (Connection conn = this.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, encId);
+        ps.setInt(2, idFormulario);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+}
 }

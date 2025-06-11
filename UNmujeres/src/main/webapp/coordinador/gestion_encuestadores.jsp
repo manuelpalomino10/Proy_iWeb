@@ -23,7 +23,18 @@
             <div class="container-fluid">
                 <h1 class="h3 mb-2 text-gray-800">Gestión de Encuestadores</h1>
                 <p class="mb-4">Administra tus encuestadores: desbanéalos o asígnales formularios.</p>
-
+                <c:if test="${not empty param.success}">
+                    <div class="alert alert-success alert-dismissible fade show">
+                            ${param.success}
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    </div>
+                </c:if>
+                <c:if test="${not empty param.warn}">
+                    <div class="alert alert-warning alert-dismissible fade show">
+                            ${param.warn}
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    </div>
+                </c:if>
                 <!-- Tabla con scroll -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
