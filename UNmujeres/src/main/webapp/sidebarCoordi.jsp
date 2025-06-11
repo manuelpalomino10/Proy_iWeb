@@ -30,11 +30,11 @@
   <!-- Heading -->
   <div class="sidebar-heading">FUNCIONES</div>
 
-  <!-- Nav Item - Pages Collapse Menu -->
-  <li class="nav-item">
-    <a class="nav-link" href="gestion_encuestadores.html" aria-expanded="true" aria-controls="collapseTwo">
+  <!-- Gestión de Encuestadores -->Add commentMore actions
+  <li class="nav-item ${pageAct == 'encuestadores' ? 'active' : ''}">
+    <a class="nav-link" href="${pageContext.request.contextPath}/gestion_encuestadores">
       <i class="fas fa-fw fa-users"></i>
-      <span>Gestion de encuestadores</span>
+      <span>Gestión de Encuestadores</span>
     </a>
     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
       <div class="bg-white py-2 collapse-inner rounded">
