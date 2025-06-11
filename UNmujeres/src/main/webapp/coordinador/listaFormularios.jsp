@@ -88,10 +88,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                <% for (EncHasFormulario asignacion : asignaciones) { %>
+                <%
+                  int index=0;
+                  for (EncHasFormulario asignacion : asignaciones) {
+                %>
                 <tr>
                   <td><%=asignacion.getFormulario().getNombre()%></td>
-                  <td><%=totalesRegistros.get(asignacion.getFormulario().getIdFormulario()-1)%></td>
+                  <td><%=totalesRegistros.get(index)%></td>
                   <td><%=asignacion.getFormulario().getRegistrosEsperados()%></td>
                   <td style="white-space: nowrap;"><%=asignacion.getFechaAsignacion()%></td>
                   <td style="white-space: nowrap;"><%=asignacion.getFormulario().getFechaLimite()%></td>
@@ -108,6 +111,7 @@
                     </form>
                   </td>
                 </tr>
+                <% index++; // Incrementa el índice en cada iteración %>
                 <% } %>
                 </tbody>
               <% } %>
