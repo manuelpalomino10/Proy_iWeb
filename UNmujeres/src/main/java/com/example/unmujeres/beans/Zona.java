@@ -10,6 +10,7 @@ public class Zona {
         this.nombre = nombre;
     }
     //-------------------------------------------------
+    public Zona() {}
 
     public int getIdzona() {
         return idzona;

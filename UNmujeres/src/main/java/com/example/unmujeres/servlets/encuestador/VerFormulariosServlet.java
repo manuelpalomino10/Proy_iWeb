@@ -364,10 +364,8 @@ public class VerFormulariosServlet extends HttpServlet {
                     request.setAttribute("error", "Error al guardar las respuestas");
                     request.getRequestDispatcher("/error.jsp").forward(request, response);
                 }
-                break;
+            break;
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + action);
         }
     }
 

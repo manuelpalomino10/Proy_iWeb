@@ -100,6 +100,10 @@
                                     Iniciar Sesión
                                 </button>
                             </form>
+                            <hr>
+                            <div class="text-center">
+                                <a class="small" href="encuestador/register">Registrarte</a>
+                            </div>
                         </div>
                     </div>
                 </div>
