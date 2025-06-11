@@ -40,14 +40,19 @@
         GESTIÓN
     </div>
     <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="true" aria-controls="collapseUsuarios">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios"
+           aria-expanded="true" aria-controls="collapseUsuarios">
             <i class="fas fa-fw fa-user-cog"></i>
             <span>Gestión de Usuarios</span>
         </a>
         <div id="collapseUsuarios" class="collapse" aria-labelledby="headingUsuarios" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="crear-coordinador.html">Crear Coordinador</a>
-                <a class="collapse-item" href="lista-usuarios.html">Lista de Usuarios</a>
+            <div class="bg-white py-2 collapse-inner rounded text-dark">
+                <a class="collapse-item" href="${pageContext.request.contextPath}/CrearCordiServlet">
+                    Crear Coordinador
+                </a>
+                <a class="collapse-item" href="${pageContext.request.contextPath}/UsuarioServlet">
+                    Lista de Usuarios
+                </a>
             </div>
         </div>
     </li>

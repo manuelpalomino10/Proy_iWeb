@@ -5,7 +5,6 @@
       <map>
         <entry key="file://$PROJECT_DIR$/src/main/webapp/DashboardCuidado.jsp" value="file://$PROJECT_DIR$/src/main/webapp" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/Sistema/login.jsp" value="file://$PROJECT_DIR$/src/main/webapp/Sistema" />
-        <entry key="file://$PROJECT_DIR$/src/main/webapp/coordinador/gestion_encuestadores.jsp" value="file://$PROJECT_DIR$/src/main/webapp/coordinador" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/coordinador/indexCoordi.jsp" value="file://$PROJECT_DIR$/src/main/webapp/coordinador" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/coordinador/listaFormularios.jsp" value="file://$PROJECT_DIR$/src/main/webapp/coordinador" />
         <entry key="file://$PROJECT_DIR$/src/main/webapp/footer.jsp" value="file://$PROJECT_DIR$/src/main/webapp" />

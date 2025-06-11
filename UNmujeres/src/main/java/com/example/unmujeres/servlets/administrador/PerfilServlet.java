@@ -1,4 +1,5 @@
-package com.example.unmujeres.servlets.administrador;
+package com.example.unmujeres.servlets.admin;
+
 import com.example.unmujeres.beans.Usuario;
 import com.example.unmujeres.daos.UsuarioDAO;
 import jakarta.servlet.ServletException;
@@ -26,7 +27,7 @@ public class PerfilServlet extends HttpServlet {
 
         //
         if (usuarioSesion == null) {
-            response.sendRedirect(request.getContextPath() + "/Sistema/login");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
@@ -50,6 +51,7 @@ public class PerfilServlet extends HttpServlet {
 
             request.setAttribute("usuario", usuario);
             request.getRequestDispatcher("administrador/perfil.jsp").forward(request, response);
+
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("error", "Error de base de datos: " + e.getMessage());

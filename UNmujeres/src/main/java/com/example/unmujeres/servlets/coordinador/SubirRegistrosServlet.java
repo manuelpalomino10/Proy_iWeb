@@ -1,6 +1,8 @@
 package com.example.unmujeres.servlets.coordinador;
 
 import com.example.unmujeres.beans.EncHasFormulario;
+import com.example.unmujeres.beans.OpcionPregunta;
+import com.example.unmujeres.beans.Pregunta;
 import com.example.unmujeres.beans.RegistroRespuestas;
 import com.example.unmujeres.beans.Usuario;
 import com.example.unmujeres.daos.EncHasFormularioDAO;
@@ -15,10 +17,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @MultipartConfig
 @WebServlet(name = "SubirRegistrosServlet", value = "/SubirRegistrosServlet")
@@ -28,6 +27,7 @@ public class SubirRegistrosServlet extends HttpServlet {
     FormularioDAO formularioDAO = new FormularioDAO();
     RegistroRespuestasDAO registroDAO = new RegistroRespuestasDAO();
     RespuestaDAO respuestaDAO = new RespuestaDAO();
+    OpcionPreguntaDAO opcionDAO = new OpcionPreguntaDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -97,6 +97,8 @@ public class SubirRegistrosServlet extends HttpServlet {
             return;
         }
 
+//        String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
+//        System.out.println("accion de dopost es: " + action);
 
         System.out.println("Iniciando proceso de subir registros");
         //Validación del parámetro idEhf.
@@ -181,6 +183,91 @@ public class SubirRegistrosServlet extends HttpServlet {
         } finally {
             response.sendRedirect(request.getContextPath() + "/SubirRegistrosServlet");
         }
+
+
+        // desde aqui en otro servelt creo
+        switch (action){
+            case "crear":
+                System.out.println("se hace en dopost: " + action);
+                String acto = request.getParameter("acto");
+
+                String nuevoEstado = "B";
+                if (Objects.equals(acto, "borrador")) {
+                    nuevoEstado = "B";
+                } else if (Objects.equals(acto, "completado")) {
+                    nuevoEstado = "C";
+                } else {
+                    // Valor por defecto o generar error
+                    nuevoEstado = "B";
+                }
+                System.out.println("se hace acto para: " +nuevoEstado);
+                try {
+                    int idEncHasFormulario = Integer.parseInt(request.getParameter("idasignacion"));
+                    System.out.println("el id de asignacion es: " +idEncHasFormulario);
+                    // 1. Crear registro principal
+                    RegistroRespuestas nuevoRegistro = new RegistroRespuestas();
+                    nuevoRegistro.setFechaRegistro(new Date(System.currentTimeMillis()));
+                    nuevoRegistro.setEstado(nuevoEstado); // Borrador
+                    nuevoRegistro.setEncHasFormulario(ehfDAO.getById(idEncHasFormulario));
+
+                    int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);
+
+                    System.out.println("Nuevo Registro id es: "+idRegistro);
+
+                    // 2. Procesar respuestas
+                    Map<String, String[]> parametros = request.getParameterMap();
+                    Map<Integer, String> respuestasTexto = new HashMap<>();
+                    Map<Integer, List<Integer>> respuestasOpciones = new HashMap<>();
+
+                    for (String paramName : parametros.keySet()) {
+                        if (paramName.startsWith("pregunta_")) {
+
+                            String[] parts = paramName.split("_");
+                            int idPregunta = Integer.parseInt(parts[1]);
+
+                            System.out.println("Id pregunta es " + idPregunta);
+
+                            // Manejar checkbox (pueden tener múltiples valores)
+                            if (parts.length > 2) {
+                                String[] valores = request.getParameterValues(paramName);
+                                if (valores != null) {
+                                    for (String valor : valores) {
+                                        respuestasOpciones.computeIfAbsent(idPregunta, k -> new ArrayList<>())
+                                                .add(Integer.parseInt(valor));
+                                    }
+                                }
+                            } else {
+                                String valor = request.getParameter(paramName);
+//                                respuestasTexto.put(idPregunta, (valor != null) ? valor.trim() : " ");
+                                if (valor != null && !valor.trim().isEmpty()) {
+                                    respuestasTexto.put(idPregunta, valor.trim());
+                                } else {respuestasTexto.put(idPregunta, null);}
+                            }
+                        }
+                    }
+
+                    // 3. Guardar respuestas
+                    if (!respuestasTexto.isEmpty()) {
+                        respuestaDAO.guardarRespuestas(idRegistro, respuestasTexto);
+                    }
+
+                    if (!respuestasOpciones.isEmpty()) {
+                        respuestaDAO.guardarRespuestasOpciones(idRegistro, respuestasOpciones);
+                    }
+
+                    // Redirigir a edición para permitir guardar como borrador o completar
+                    response.sendRedirect( "/SubirRegistrosServlet");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    request.setAttribute("error", "Error al guardar las respuestas");
+                    request.getRequestDispatcher("/error.jsp").forward(request, response);
+                }
+                break;
+        }
+        // hasta aqui en tro servlet
+
+
     }
 
     @Override

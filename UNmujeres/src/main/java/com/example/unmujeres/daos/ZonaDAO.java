@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ZonaDAO extends BaseDAO {
-
     /**
      * Lee todas las zonas de la tabla `zona` y las devuelve como lista de beans Zona.
      */
