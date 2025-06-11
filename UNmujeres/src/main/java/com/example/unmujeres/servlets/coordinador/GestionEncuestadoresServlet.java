@@ -88,7 +88,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                     String[] fids = req.getParameterValues("formularios");
                     List<Integer> lista = fids == null ? List.of() :
                             Arrays.stream(fids).map(Integer::parseInt).toList();
-                    dao.asignarFormularios(id, lista, coordiId);
+                    dao.asignarFormularios(id, lista);
                     break;
                 default:
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Acción inválida");

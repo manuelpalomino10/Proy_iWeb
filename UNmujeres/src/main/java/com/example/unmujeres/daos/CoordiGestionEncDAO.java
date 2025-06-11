@@ -73,10 +73,9 @@ public class CoordiGestionEncDAO extends BaseDAO {
      * Asigna formularios a un encuestador (operación transaccional)
      * @param idEncuestador ID del encuestador
      * @param idsFormularios Lista de IDs de formularios a asignar
-     * @param idCoordinador ID del coordinador que realiza la asignación
      * @throws SQLException
      */
-    public void asignarFormularios(int idEncuestador, List<Integer> idsFormularios, int idCoordinador)
+    public void asignarFormularios(int idEncuestador, List<Integer> idsFormularios)
             throws SQLException {
 
         Connection conn = null;
@@ -100,6 +99,7 @@ public class CoordiGestionEncDAO extends BaseDAO {
                     for (int idForm : idsFormularios) {
                         ps.setInt(1, idEncuestador);
                         ps.setInt(2, idForm);
+                        ps.setDate(3, new java.sql.Date(System.currentTimeMillis()));
                         ps.addBatch();
                     }
                     ps.executeBatch();
