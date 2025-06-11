@@ -146,15 +146,17 @@ public class RegistroRespuestasDAO extends BaseDAO {
     public ArrayList<Integer> countRegByForm() {
         String sql = "SELECT " +
                 "    f.idformulario, " +
-                "    COUNT(DISTINCT reg.idregistro_respuestas) " +
-                "FROM registro_respuestas reg " +
+                "    COUNT(DISTINCT reg.idregistro_respuestas) AS total_respuestas " +
+                "FROM formulario f " +
                 "INNER JOIN enc_has_formulario ehf " +
-                "    ON reg.idenc_has_formulario = ehf.idenc_has_formulario " +
-                "INNER JOIN formulario f " +
-                "    ON ehf.idformulario = f.idformulario " +
+                "    ON f.idformulario = ehf.idformulario " +
+                "INNER JOIN registro_respuestas reg " +
+                "    ON ehf.idenc_has_formulario = reg.idenc_has_formulario " +
                 "WHERE reg.estado = 'C' " +
+                "    AND ehf.enc_idusuario = ? " +
                 "GROUP BY f.idformulario";
         ArrayList<Integer> totales = new ArrayList<>();
+        System.out.println("");
         try (Connection con = this.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery()) {

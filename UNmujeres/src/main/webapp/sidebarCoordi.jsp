@@ -19,13 +19,8 @@
       <span>Resumen</span></a>
   </li>
 
-
-
-
   <!-- Divider -->
   <hr class="sidebar-divider">
-
-
 
   <!-- Heading -->
   <div class="sidebar-heading">FUNCIONES</div>
@@ -36,18 +31,11 @@
       <i class="fas fa-fw fa-users"></i>
       <span>Gestión de Encuestadores</span>
     </a>
-    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-      <div class="bg-white py-2 collapse-inner rounded">
-        <h6 class="collapse-header">Custom Components:</h6>
-        <a class="collapse-item" href="buttons.html">Buttons</a>
-        <a class="collapse-item" href="cards.html">Cards</a>
-      </div>
-    </div>
   </li>
 
   <!-- Gestión de Formularios -->
   <li class="nav-item ${pageAct == 'formularios' ? 'active' : ''}">
-    <a class="nav-link" href="${pageContext.request.contextPath}/gestion_formularios">
+    <a class="nav-link" href="${pageContext.request.contextPath}/SubirRegistrosServlet">
       <i class="fas fa-fw fa-file-alt"></i>
       <span>Gestión de Formularios</span>
     </a>
