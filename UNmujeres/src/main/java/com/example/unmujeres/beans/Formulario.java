@@ -11,6 +11,9 @@ public class Formulario {
     private Date fechaLimite;
     private boolean estado;
     private int registrosEsperados;
+    // cantidad de respuestas registradas para este formulario cuando se consulta
+    // asignaciones de encuestadores. Usado para determinar si puede desasignarse
+    private int respuestasCount;
     Categoria categoria;
 
     public Formulario(){
@@ -65,4 +68,11 @@ public class Formulario {
         this.categoria = categoria;
     }
 
+    public int getRespuestasCount() {
+        return respuestasCount;
+    }
+
+    public void setRespuestasCount(int respuestasCount) {
+        this.respuestasCount = respuestasCount;
+    }
 }
