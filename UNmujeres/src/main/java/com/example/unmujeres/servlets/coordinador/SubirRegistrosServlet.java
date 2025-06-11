@@ -63,7 +63,7 @@ public class SubirRegistrosServlet extends HttpServlet {
                     System.out.println("Se consulto lista de asignados de coordi");
 
                     ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idUser);
-                    ArrayList<Integer> totales = registroDAO.countRegByForm();
+                    ArrayList<Integer> totales = registroDAO.countRegByForm(idUser);
                     // 9. Enviar a vista
                     request.setAttribute("asignaciones", asignaciones);
                     request.setAttribute("totalesRegistros", totales);
