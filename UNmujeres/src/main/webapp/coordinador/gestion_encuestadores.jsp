@@ -219,7 +219,11 @@
                                 ${f.nombre}
                                 <button type="button" class="btn btn-sm btn-danger unassign-btn">Desasignar</button>
                             </li>`);
-                        $('#assignFieldsContainer').append(`<input type="hidden" name="formularios" value="${f.id}" data-id="${f.id}">`);
+                        if(f.id){
+                            $('#assignFieldsContainer').append(
+                                `<input type="hidden" name="formularios" value="${f.id}" data-id="${f.id}">`
+                            );
+                        }
                     });
                 }
             }).fail(function(jqXHR, textStatus, errorThrown){
@@ -250,7 +254,11 @@
                     ${nombre}
                     <button type="button" class="btn btn-sm btn-danger unassign-btn">Desasignar</button>
                 </li>`);
-            $('#assignFieldsContainer').append(`<input type="hidden" name="formularios" value="${id}" data-id="${id}">`);
+            if(id){
+                $('#assignFieldsContainer').append(
+                    `<input type="hidden" name="formularios" value="${id}" data-id="${id}">`
+                );
+            }
             submitAssignments();
         });
 

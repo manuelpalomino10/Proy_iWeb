@@ -88,6 +88,10 @@ public class GestionEncuestadoresServlet extends HttpServlet {
         String action = req.getParameter("action");
 
         String idParam = req.getParameter("idusuario");
+        if (idParam == null || idParam.isBlank()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Par\u00E1metro idusuario inv\u00E1lido");
+            return;
+        }
         int id;
         try {
             id = Integer.parseInt(idParam);
@@ -107,8 +111,11 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                     break;
                 case "asignar":
                     String[] fids = req.getParameterValues("formularios");
-                    List<Integer> lista = fids == null ? List.of() :
-                            Arrays.stream(fids).map(Integer::parseInt).toList();
+                    List<Integer> lista = (fids == null) ? List.of()
+                            : Arrays.stream(fids)
+                            .filter(s -> s != null && !s.isBlank())
+                            .map(Integer::parseInt)
+                            .toList();
                     dao.asignarFormularios(id, lista);
                     break;
                 default:
