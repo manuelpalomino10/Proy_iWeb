@@ -187,10 +187,9 @@ public class CoordiGestionEncDAO extends BaseDAO {
      * @throws SQLException en caso de error de consulta
      */
     public List<Formulario> obtenerFormulariosDisponibles(int coordiId, int encId) throws SQLException {
-        String sql = "SELECT f.idformulario, f.nombre, f.fecha_creacion, f.fecha_limite, " +
+        String sql = "SELECT DISTINCT f.idformulario, f.nombre, f.fecha_creacion, f.fecha_limite, " +
                 "f.estado, f.registros_esperados, f.idcategoria " +
                 "FROM formulario f " +
-                "JOIN enc_has_formulario ehf ON f.idformulario = ehf.idformulario " +
                 "WHERE f.estado = 1 " +
                 "AND NOT EXISTS (SELECT 1 FROM enc_has_formulario ehf WHERE ehf.enc_idusuario = ? AND ehf.idformulario = f.idformulario)";
         try (Connection conn = this.getConnection();
@@ -224,10 +223,13 @@ public class CoordiGestionEncDAO extends BaseDAO {
      */
     public List<Formulario> obtenerFormulariosAsignados(int encId) throws SQLException {
         String sql = "SELECT f.idformulario, f.nombre, f.fecha_creacion, f.fecha_limite, " +
-                "f.estado, f.registros_esperados, f.idcategoria " +
+                "f.estado, f.registros_esperados, f.idcategoria, " +
+                "COUNT(rr.idregistro_respuestas) AS respuestas_count " +
                 "FROM formulario f " +
                 "JOIN enc_has_formulario ehf ON f.idformulario = ehf.idformulario " +
-                "WHERE ehf.enc_idusuario = ?";
+                "LEFT JOIN registro_respuestas rr ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "WHERE ehf.enc_idusuario = ? " +
+                "GROUP BY f.idformulario, f.nombre, f.fecha_creacion, f.fecha_limite, f.estado, f.registros_esperados, f.idcategoria";
 
         try (Connection conn = this.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -244,6 +246,7 @@ public class CoordiGestionEncDAO extends BaseDAO {
                     f.setFechaLimite(rs.getDate("fecha_limite"));
                     f.setEstado(rs.getBoolean("estado"));
                     f.setRegistrosEsperados(rs.getInt("registros_esperados"));
+                    f.setRespuestasCount(rs.getInt("respuestas_count"));
                     formularios.add(f);
                 }
             }
