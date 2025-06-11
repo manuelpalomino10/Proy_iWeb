@@ -161,10 +161,18 @@
                             <input type="hidden" name="idusuario" value="${assignId}"/>
                             <input type="hidden" name="idformulario" value="${f.idFormulario}"/>
                             <span class="mr-2"><c:out value="${f.nombre}"/></span>
-                            <button type="submit" class="btn btn-sm btn-danger"
-                                    <c:if test="${f.respuestasCount > 10}">disabled data-toggle="tooltip" title="No se puede desasignar este formulario porque contiene más de 10 respuestas"</c:if>>
-                                Desasignar
-                            </button>
+                            <c:choose>
+                                <c:when test="${f.respuestasCount > 0}">
+                                    <button type="submit" class="btn btn-sm btn-secondary" disabled
+                                            data-toggle="tooltip"
+                                            title="No se puede desasignar este formulario porque ya tiene respuestas">
+                                        Desasignar
+                                    </button>
+                                </c:when>
+                                <c:otherwise>
+                                    <button type="submit" class="btn btn-sm btn-danger">Desasignar</button>
+                                </c:otherwise>
+                            </c:choose>
                         </form>
                     </c:forEach>
                     <c:if test="${empty asigFormularios}">

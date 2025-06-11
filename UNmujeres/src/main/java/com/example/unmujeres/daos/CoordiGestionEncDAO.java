@@ -85,11 +85,11 @@ public class CoordiGestionEncDAO extends BaseDAO {
     }
 
     /**
-     * Desasigna un formulario de un encuestador. Devuelve false si no se puede
-     * desasignar por tener más de 10 respuestas.
+     * Desasigna un formulario de un encuestador. Devuelve false si el
+     * encuestador ya registró respuestas para dicho formulario.
      */
     public boolean desasignarFormulario(int encId, int idFormulario) throws SQLException {
-        if (contarRespuestasPorEncuestadorYFormulario(encId, idFormulario) > 10) {
+        if (contarRespuestasPorEncuestadorYFormulario(encId, idFormulario) > 0) {
             return false;
         }
         String sql = "DELETE FROM enc_has_formulario WHERE enc_idusuario = ? AND idformulario = ?";
@@ -127,8 +127,8 @@ public class CoordiGestionEncDAO extends BaseDAO {
                         int idEhf = rs.getInt("idenc_has_formulario");
                         int idForm = rs.getInt("idformulario");
                         int count = contarRespuestasPorEncuestadorYFormulario(idEncuestador, idForm);
-                        if (count > 10) {
-                            // no eliminar si tiene más de 10 respuestas
+                        if (count > 0) {
+                            // no eliminar si el encuestador ya registró respuestas
                             asignadosPersistentes.add(idForm);
                             noDesasignados.add(idForm);
                         } else {

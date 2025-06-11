@@ -116,7 +116,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                     List<Integer> noDes = dao.asignarFormularios(id, lista);
                     String url = req.getContextPath() + "/gestion_encuestadores";
                     if (!noDes.isEmpty()) {
-                        url += "?warn=No+se+desasignaron+formularios+con+mas+de+10+respuestas";
+                        url += "?warn=No+se+desasignaron+formularios+porque+ya+tienen+respuestas";
                     } else {
                         url += "?success=Asignaciones+actualizadas";
                     }
@@ -134,7 +134,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                     if (ok) {
                         rurl += "?success=Asignaciones+actualizadas";
                     } else {
-                        rurl += "?warn=No+se+puede+desasignar+este+formulario+porque+contiene+mas+de+10+respuestas";
+                        rurl += "?warn=No+se+puede+desasignar+este+formulario+porque+ya+tiene+respuestas";
                     }
                     resp.sendRedirect(rurl);
                     return;
