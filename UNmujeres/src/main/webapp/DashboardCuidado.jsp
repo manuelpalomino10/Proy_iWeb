@@ -15,7 +15,7 @@
 
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
-            <jsp:include page="topbarEnc.jsp" />
+            <jsp:include page="topbarAdmin.jsp" />
 
             <div class="container-fluid">
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">

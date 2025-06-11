@@ -51,17 +51,11 @@
             </div>
         </div>
     </li>
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReportes" aria-expanded="true" aria-controls="collapseReportes">
+    <li class="nav-item ${pageAct eq 'historial' ? 'active' : ''}">
+        <a class="nav-link" href="ReportesServlet">
             <i class="fas fa-fw fa-table"></i>
-            <span>Reportes</span>
-        </a>
-        <div id="collapseReportes" class="collapse" aria-labelledby="headingReportes" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <a class="collapse-item" href="reportes-filtros.html">Filtros de Reporte</a>
-                <a class="collapse-item" href="reportes-lista.html">Lista de Reportes</a>
-            </div>
-        </div>
+            <span>Reportes</span></a>
+    </li>
     </li>
     <hr class="sidebar-divider d-none d-md-block">
     <div class="text-center d-none d-md-inline">

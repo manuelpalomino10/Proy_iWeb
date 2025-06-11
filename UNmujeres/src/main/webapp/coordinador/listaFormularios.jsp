@@ -54,7 +54,7 @@
     <div id="content">
 
       <!-- Topbar -->
-      <jsp:include page="../topbarEnc.jsp" />
+      <jsp:include page="../topbarCoordi.jsp" />
       <!-- End of Topbar -->
 
       <!-- Begin Page Content -->
@@ -100,6 +100,7 @@
                   <td><%=asignacion.getFormulario().getFechaLimite()%></td>
                   <td>
                     <a class="btn btn-success" href="<%=request.getContextPath()%>/SubirRegistrosServlet?action=crear&id_asig=<%= asignacion.getIdEncHasFormulario() %>&id_form=<%=asignacion.getFormulario().getIdFormulario()%>">Crear Registro</a>
+                    <br>
                     <form id="csvForm_<%= asignacion.getIdEncHasFormulario() %>" action="<%=request.getContextPath()%>/SubirRegistrosServlet" method="POST" enctype="multipart/form-data">
                       <input type="hidden" name="idEhf" value="<%= asignacion.getIdEncHasFormulario() %>" />
                       <button type="button" class="btn btn-primary importBtn" data-id="<%= asignacion.getIdEncHasFormulario() %>">

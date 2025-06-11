@@ -23,7 +23,7 @@
         <div id="content">
 
             <!-- Topbar -->
-            <jsp:include page="../topbarEnc.jsp" />
+            <jsp:include page="../topbarCoordi.jsp" />
             <!-- End of Topbar -->
 
             <!-- Begin Page Content -->
@@ -32,7 +32,6 @@
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                     <h1 class="h3 mb-0 text-gray-800">Resumen Coordinador</h1>
-                    >
                 </div>
 
                 <!-- Content Row 1: Tarjetas de resumen -->

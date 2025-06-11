@@ -46,16 +46,18 @@ import com.example.unmujeres.beans.Usuario; import com.example.unmujeres.daos.Us
 
                 switch (idroles) {
                     case 1: // Administrador
+                        response.sendRedirect(request.getContextPath() + "/dashboard"); //linkear a lo que corresponda, es editable para pruebas
+                        break;
                     case 3: // Encuestador
                         response.sendRedirect(request.getContextPath() + "/dashboard");
                         break;
                     case 2: // Coordinador
-                        request.setAttribute("errorMessage", "Rol de coordinador no soportado.");
-                        response.sendRedirect(request.getContextPath() + "/dashboard");
+                        // request.setAttribute("errorMessage", "Rol de coordinador no soportado.");
+                        response.sendRedirect(request.getContextPath() + "/dashboard"); //linkear a lo que corresponda, es editable para pruebas
                         break;
                     default:
                         request.setAttribute("errorMessage", "Rol de usuario no reconocido (idroles=" + idroles + ").");
-                        request.getRequestDispatcher("/Sistema/error.jsp").forward(request, response);
+                        request.getRequestDispatcher("/error.jsp").forward(request, response);
                         break;
                 }
 
@@ -85,19 +87,19 @@ import com.example.unmujeres.beans.Usuario; import com.example.unmujeres.daos.Us
                 }
             } else {
                 request.setAttribute("errorMessage", "Correo o contraseña incorrectos, o usuario inactivo");
-                request.getRequestDispatcher("/Sistema/login.jsp").forward(request, response);
+                request.getRequestDispatcher("Sistema/login.jsp").forward(request, response);
             }
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Error al intentar iniciar sesión: " + e.getMessage());
-            request.getRequestDispatcher("/Sistema/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/error.jsp").forward(request, response);
         }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/Sistema/login.jsp").forward(request, response);
+        request.getRequestDispatcher("Sistema/login.jsp").forward(request, response);
     }
 
 }

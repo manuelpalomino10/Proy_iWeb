@@ -202,6 +202,18 @@ public class UsuarioDAO extends BaseDAO {
         return usuario;
     }
 
+    public boolean actualizarContraseña(int idUsuario, String contraseñaPlana) throws SQLException {
+        String sql = "UPDATE usuario SET contraseña = SHA2(?, 256) WHERE idusuario = ?";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, contraseñaPlana); // Se hashea en la BD con SHA2
+            ps.setInt(2, idUsuario);
+
+            return ps.executeUpdate() > 0;
+        }
+    }
 
 }
 

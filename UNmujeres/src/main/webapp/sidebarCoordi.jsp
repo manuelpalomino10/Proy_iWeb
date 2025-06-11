@@ -45,7 +45,7 @@
     </div>
   </li>
   <li class="nav-item">
-    <a class="nav-link" href="formularios.html">
+    <a class="nav-link" href="SubirRegistrosServlet">
       <i class="fas fa-fw fa-edit"></i>
       <span>Formularios</span>
     </a>
