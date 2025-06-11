@@ -1,5 +1,6 @@
 package com.example.unmujeres.servlets.encuestador;
 import com.example.unmujeres.beans.OpcionPregunta;
+import com.example.unmujeres.beans.Usuario;
 import com.example.unmujeres.daos.OpcionPreguntaDAO;
 import com.example.unmujeres.daos.PreguntaDAO;
 import com.example.unmujeres.daos.RegistroRespuestasDAO;
@@ -45,15 +46,19 @@ public class VerFormulariosServlet extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
 
-        // Obtener ID
-        HttpSession session = request.getSession();
-        Integer idEnc = (Integer) session.getAttribute("idUsuario"); // Asume que el atributo se llama "idUsuario"
-
-        // Verificar
-        if (idEnc == null) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
             response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
             return;
         }
+        Usuario user = (Usuario) session.getAttribute("usuario");
+        if (user == null || user.getIdUsuario()==0 || user.getIdroles()==0) {
+            session.setAttribute("error", "Sesión inválida o usuario no autenticado.");
+            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
+            return;
+        }
+        int idUser = user.getIdUsuario();
+        int userRole = user.getIdroles();
 
         String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
         RequestDispatcher view;
@@ -67,7 +72,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     ArrayList<Map<String, Object>> datos = new ArrayList<>();
 
                     // 3. Obtener arreglo de asignaciones
-                    ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idEnc); // ID hardcodeado
+                    ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idUser);
                     //  para cada asignacion
                     for (EncHasFormulario asignacion : asignaciones) {
                         //System.out.println("\n1. Asignacion extraída: " + asignacion.getIdEncHasFormulario());
@@ -133,7 +138,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     ArrayList<Map<String, Object>> datos2 = new ArrayList<>();
 
                     // 3. lista de borradores
-                    ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idEnc);
+                    ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idUser);
                     for (EncHasFormulario asignacion : asignaciones) {
                         System.out.println("Asignacion id es: "+asignacion.getIdEncHasFormulario());
 
@@ -255,7 +260,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     nuevoEstado1 = "B";
                 }
 
-                int idReg = Integer.parseInt(request.getParameter("idregistro_respuestas"));
+                int idReg = Integer.parseUnsignedInt(request.getParameter("idregistro_respuestas"));
                 registroDAO.updateState(idReg,nuevoEstado1);
                 System.out.println("Se ha actualizado el registro con id: " + idReg + "al estado: " + nuevoEstado1 + " en" + nuevoEstado1.getClass().getSimpleName());
 
@@ -364,10 +369,8 @@ public class VerFormulariosServlet extends HttpServlet {
                     request.setAttribute("error", "Error al guardar las respuestas");
                     request.getRequestDispatcher("/error.jsp").forward(request, response);
                 }
-                break;
+            break;
 
-            default:
-                throw new IllegalStateException("Unexpected value: " + action);
         }
     }
 

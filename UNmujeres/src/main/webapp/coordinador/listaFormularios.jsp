@@ -5,33 +5,13 @@
   Time: 23:28
   To change this template use File | Settings | File Templates.
 --%>
-
-<%--<!-- CSS de DataTables (si lo usas) -->--%>
-<%--<link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css"/>--%>
-<%--<!-- CSS del Date Range Picker -->--%>
-<%--<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />--%>
-
-<%--<!-- jQuery -->--%>
-<%--<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>--%>
-<%--<!-- Moment.js -->--%>
-<%--<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>--%>
-<%--<!-- Date Range Picker -->--%>
-<%--<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>--%>
-<%--<!-- Script de DataTables (opcional) -->--%>
-<%--<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>--%>
-
-<%--<!-- un par de estilos rápidos para alinear filtros y botón -->--%>
-<%--<style>--%>
-<%--  .filtros     { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:.7rem; }--%>
-<%--  .filtros > * { font-size:0.9rem; }--%>
-<%--</style>--%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.example.unmujeres.beans.EncHasFormulario" %>
 
 <%
   ArrayList<EncHasFormulario> asignaciones = (ArrayList<EncHasFormulario>) request.getAttribute("asignaciones");
+  ArrayList<Integer> totalesRegistros = (ArrayList<Integer>) request.getAttribute("totalesRegistros");
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -54,7 +34,7 @@
     <div id="content">
 
       <!-- Topbar -->
-      <jsp:include page="../topbarCoordi.jsp" />
+      <jsp:include page="../topbarEnc.jsp" />
       <!-- End of Topbar -->
 
       <!-- Begin Page Content -->
@@ -69,6 +49,23 @@
           <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary"></h6>
           </div>
+
+          <% if (session.getAttribute("error") != null) { %>
+          <div>
+            <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
+            </div>
+          </div>
+          <% session.removeAttribute("error"); %>
+          <% } %>
+
+          <% if (session.getAttribute("success") != null) { %>
+          <div>
+            <div class="alert alert-success" role="alert"><%=session.getAttribute("success")%>
+            </div>
+          </div>
+          <% session.removeAttribute("success"); %>
+          <% } %>
+
           <div class="card-body">
             <div class="table-responsive">
               <%
@@ -94,13 +91,12 @@
                 <% for (EncHasFormulario asignacion : asignaciones) { %>
                 <tr>
                   <td><%=asignacion.getFormulario().getNombre()%></td>
-                  <td>0</td> <%--<%=totalRegistros%>--%>
+                  <td><%=totalesRegistros.get(asignacion.getFormulario().getIdFormulario()-1)%></td>
                   <td><%=asignacion.getFormulario().getRegistrosEsperados()%></td>
-                  <td><%=asignacion.getFechaAsignacion()%></td>
-                  <td><%=asignacion.getFormulario().getFechaLimite()%></td>
+                  <td style="white-space: nowrap;"><%=asignacion.getFechaAsignacion()%></td>
+                  <td style="white-space: nowrap;"><%=asignacion.getFormulario().getFechaLimite()%></td>
                   <td>
                     <a class="btn btn-success" href="<%=request.getContextPath()%>/SubirRegistrosServlet?action=crear&id_asig=<%= asignacion.getIdEncHasFormulario() %>&id_form=<%=asignacion.getFormulario().getIdFormulario()%>">Crear Registro</a>
-                    <br>
                     <form id="csvForm_<%= asignacion.getIdEncHasFormulario() %>" action="<%=request.getContextPath()%>/SubirRegistrosServlet" method="POST" enctype="multipart/form-data">
                       <input type="hidden" name="idEhf" value="<%= asignacion.getIdEncHasFormulario() %>" />
                       <button type="button" class="btn btn-primary importBtn" data-id="<%= asignacion.getIdEncHasFormulario() %>">

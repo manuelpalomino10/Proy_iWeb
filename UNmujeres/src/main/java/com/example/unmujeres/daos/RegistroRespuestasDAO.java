@@ -128,7 +128,7 @@ public class RegistroRespuestasDAO extends BaseDAO {
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setDate(1, new java.sql.Date(registro.getFechaRegistro().getTime()));
+            ps.setDate(1, new Date(registro.getFechaRegistro().getTime()));
             ps.setString(2, registro.getEstado());
             ps.setInt(3, registro.getEncHasFormulario().getIdEncHasFormulario());
             ps.executeUpdate();
@@ -142,5 +142,33 @@ public class RegistroRespuestasDAO extends BaseDAO {
         throw new SQLException("No se pudo crear el registro de respuestas");
     }
 
+
+    public ArrayList<Integer> countRegByForm() {
+        String sql = "SELECT " +
+                "    f.idformulario, " +
+                "    COUNT(DISTINCT reg.idregistro_respuestas) " +
+                "FROM registro_respuestas reg " +
+                "INNER JOIN enc_has_formulario ehf " +
+                "    ON reg.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "INNER JOIN formulario f " +
+                "    ON ehf.idformulario = f.idformulario " +
+                "WHERE reg.estado = 'C' " +
+                "GROUP BY f.idformulario";
+        ArrayList<Integer> totales = new ArrayList<>();
+        try (Connection con = this.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
+
+
+            while (rs.next()) {
+                totales.add(rs.getInt(2));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totales;
+    }
 
 }
