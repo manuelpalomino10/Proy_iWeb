@@ -99,8 +99,7 @@
                   <td style="white-space: nowrap;"><%=asignacion.getFechaAsignacion()%></td>
                   <td style="white-space: nowrap;"><%=asignacion.getFormulario().getFechaLimite()%></td>
                   <td>
-                    <a class="btn btn-success" href="<%=request.getContextPath()%>/SubirRegistrosServlet?action=crear&id_asig=<%= asignacion.getIdEncHasFormulario() %>&id_form=<%=asignacion.getFormulario().getIdFormulario()%>">Crear Registro</a>
-
+                    <a class="btn btn-success" href="<%=request.getContextPath()%>/ServletA?action=guardar&id_asig=<%= asignacion.getIdEncHasFormulario() %>&id_form=<%=asignacion.getFormulario().getIdFormulario()%>">Crear Registro</a>
 <%--                    <a class="btn btn-success" href="<%=request.getContextPath()%>/SubirRegistrosServlet?action=crear&id_asig=<%= asignacion.getIdEncHasFormulario() %>&id_form=<%=asignacion.getFormulario().getIdFormulario()%>">Crear Registro</a>--%>
                     <form id="csvForm_<%= asignacion.getIdEncHasFormulario() %>" action="<%=request.getContextPath()%>/SubirRegistrosServlet" method="POST" enctype="multipart/form-data">
                       <input type="hidden" name="idEhf" value="<%= asignacion.getIdEncHasFormulario() %>" />
