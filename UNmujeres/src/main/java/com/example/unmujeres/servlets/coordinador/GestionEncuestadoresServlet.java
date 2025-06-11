@@ -1,6 +1,7 @@
 package com.example.unmujeres.servlets.coordinador;
 
 import com.example.unmujeres.beans.Usuario;
+import com.example.unmujeres.beans.Formulario;
 import com.example.unmujeres.daos.CoordiGestionEncDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,15 +31,28 @@ public class GestionEncuestadoresServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        try {
-            HttpSession session = req.getSession();
-            Integer coordiId = (Integer) session.getAttribute("idUsuario");
+        HttpSession session = req.getSession();
+        Integer coordiId = (Integer) session.getAttribute("idUsuario");
+        if (coordiId == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
 
-            if (coordiId == null) {
-                resp.sendRedirect(req.getContextPath() + "/login");
-                return;
+        String action = req.getParameter("action");
+        if ("get_formularios".equals(action)) {
+            int encId = Integer.parseInt(req.getParameter("idusuario"));
+            try {
+                List<Formulario> disponibles = dao.obtenerFormulariosDisponibles(coordiId, encId);
+                List<Formulario> asignados = dao.obtenerFormulariosAsignados(encId);
+                resp.setContentType("application/json");
+                resp.getWriter().print(toJson(disponibles, asignados));
+            } catch (SQLException e) {
+                throw new ServletException("Error al obtener formularios", e);
             }
+            return;
+        }
 
+        try {
             List<Usuario> lista = dao.listarPorZona(coordiId);
             req.setAttribute("listaEncuestadores", lista);
             req.getRequestDispatcher("/coordinador/gestion_encuestadores.jsp").forward(req, resp);
@@ -84,5 +98,37 @@ public class GestionEncuestadoresServlet extends HttpServlet {
         } catch (SQLException e) {
             throw new ServletException("Error en operación con encuestador", e);
         }
+    }
+    private String toJson(List<Formulario> disponibles, List<Formulario> asignados) {
+        StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        sb.append("\"disponibles\":");
+        sb.append('[');
+        for (int i = 0; i < disponibles.size(); i++) {
+            Formulario f = disponibles.get(i);
+            sb.append('{')
+                    .append("\"id\":").append(f.getIdFormulario()).append(',')
+                    .append("\"nombre\":\"").append(escape(f.getNombre())).append("\"}");
+            if (i < disponibles.size() - 1) sb.append(',');
+        }
+        sb.append(']');
+        sb.append(',');
+        sb.append("\"asignados\":");
+        sb.append('[');
+        for (int i = 0; i < asignados.size(); i++) {
+            Formulario f = asignados.get(i);
+            sb.append('{')
+                    .append("\"id\":").append(f.getIdFormulario()).append(',')
+                    .append("\"nombre\":\"").append(escape(f.getNombre())).append("\"}");
+            if (i < asignados.size() - 1) sb.append(',');
+        }
+        sb.append(']');
+        sb.append('}');
+        return sb.toString();
+    }
+
+    private String escape(String text) {
+        if (text == null) return "";
+        return text.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }

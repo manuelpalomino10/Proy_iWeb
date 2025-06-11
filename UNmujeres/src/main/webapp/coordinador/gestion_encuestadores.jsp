@@ -188,23 +188,41 @@
             $('#assignName').text(name);
             $('#assignIdInput').val(id);
 
-            // Demo de formularios disponibles
-            let formularios = [
-                {id:1, nombre:'Encuesta Satisfacción'},
-                {id:2, nombre:'Datos Demográficos'}
-            ];
-            let $list = $('#formulariosList').empty();
-
             $('#availableList').empty();
             $('#assignedList').empty();
             $('#assignFieldsContainer').empty();
 
-            formularios.forEach(f => {
-                $('#availableList').append(
-                    `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${f.id}" data-nombre="${f.nombre}">
-                        ${f.nombre}
-                        <button type="button" class="btn btn-sm btn-success assign-btn">Asignar</button>
-                    </li>`);
+            $.getJSON('${pageContext.request.contextPath}/gestion_encuestadores', {
+                action: 'get_formularios',
+                idusuario: id
+            }, function(data){
+                const disp = data.disponibles || [];
+                const asign = data.asignados || [];
+
+                if(disp.length === 0){
+                    $('#availableList').append('<li class="list-group-item">No hay formularios disponibles para asignar.</li>');
+                } else {
+                    disp.forEach(f => {
+                        $('#availableList').append(
+                            `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${f.id}" data-nombre="${f.nombre}">
+                                ${f.nombre}
+                                <button type="button" class="btn btn-sm btn-success assign-btn">Asignar</button>
+                            </li>`);
+                    });
+                }
+
+                if(asign.length === 0){
+                    $('#assignedList').append('<li class="list-group-item">No hay formularios asignados.</li>');
+                } else {
+                    asign.forEach(f => {
+                        $('#assignedList').append(
+                            `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${f.id}" data-nombre="${f.nombre}">
+                                ${f.nombre}
+                                <button type="button" class="btn btn-sm btn-danger unassign-btn">Desasignar</button>
+                            </li>`);
+                        $('#assignFieldsContainer').append(`<input type="hidden" name="formularios" value="${f.id}" data-id="${f.id}">`);
+                    });
+                }
             });
         });
 
@@ -214,10 +232,15 @@
             let id = li.data('id');
             let nombre = li.data('nombre');
             li.remove();
+            if($('#availableList li').length === 0){
+                $('#availableList').append('<li class="list-group-item">No hay formularios disponibles para asignar.</li>');
+            }
+            $('#assignedList').find('.list-group-item:contains("No hay formularios asignados")').remove();
+
             $('#assignedList').append(
                 `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${id}" data-nombre="${nombre}">
                     ${nombre}
-                    <button type="button" class="btn btn-sm btn-danger unassign-btn">Quitar</button>
+                    <button type="button" class="btn btn-sm btn-danger unassign-btn">Desasignar</button>
                 </li>`);
             $('#assignFieldsContainer').append(`<input type="hidden" name="formularios" value="${id}" data-id="${id}">`);
         });
@@ -228,6 +251,8 @@
             let id = li.data('id');
             let nombre = li.data('nombre');
             li.remove();
+            $('#assignedList').children().length === 0 && $('#assignedList').append('<li class="list-group-item">No hay formularios asignados.</li>');
+            $('#availableList').find('.list-group-item:contains("No hay formularios disponibles")').remove();
             $('#availableList').append(
                 `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${id}" data-nombre="${nombre}">
                     ${nombre}

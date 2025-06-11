@@ -1,6 +1,7 @@
 package com.example.unmujeres.daos;
 
 import com.example.unmujeres.beans.Usuario;
+import com.example.unmujeres.beans.Formulario;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,6 +117,82 @@ public class CoordiGestionEncDAO extends BaseDAO {
                 conn.setAutoCommit(true);
                 conn.close();
             }
+        }
+    }
+
+    /**
+     * Obtiene los formularios activos disponibles para asignar a un encuestador.
+     * Un formulario está disponible si está activo y no se ha asignado previamente
+     * al encuestador indicado. La lógica de zona se maneja a nivel de coordinador
+     * y queda supeditada a la configuración de la base de datos.
+     *
+     * @param coordiId id del coordinador que realiza la consulta
+     * @param encId id del encuestador al que se asignarán formularios
+     * @return lista de formularios disponibles
+     * @throws SQLException en caso de error de consulta
+     */
+    public List<Formulario> obtenerFormulariosDisponibles(int coordiId, int encId) throws SQLException {
+        String sql = "SELECT f.idformulario, f.nombre, f.fecha_creacion, f.fecha_limite, " +
+                "f.estado, f.registros_esperados, f.idcategoria " +
+                "FROM formulario f " +
+                "WHERE f.estado = 1 AND f.idformulario NOT IN (" +
+                "SELECT idformulario FROM enc_has_formulario WHERE enc_idusuario = ?)";
+
+        try (Connection conn = this.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, encId);
+
+            List<Formulario> formularios = new ArrayList<>();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Formulario f = new Formulario();
+                    f.setIdFormulario(rs.getInt("idformulario"));
+                    f.setNombre(rs.getString("nombre"));
+                    f.setFechaCreacion(rs.getDate("fecha_creacion"));
+                    f.setFechaLimite(rs.getDate("fecha_limite"));
+                    f.setEstado(rs.getBoolean("estado"));
+                    f.setRegistrosEsperados(rs.getInt("registros_esperados"));
+                    formularios.add(f);
+                }
+            }
+            return formularios;
+        }
+    }
+
+    /**
+     * Obtiene los formularios ya asignados a un encuestador.
+     *
+     * @param encId id del encuestador
+     * @return lista de formularios asignados
+     * @throws SQLException en caso de error de consulta
+     */
+    public List<Formulario> obtenerFormulariosAsignados(int encId) throws SQLException {
+        String sql = "SELECT f.idformulario, f.nombre, f.fecha_creacion, f.fecha_limite, " +
+                "f.estado, f.registros_esperados, f.idcategoria " +
+                "FROM formulario f " +
+                "JOIN enc_has_formulario ehf ON f.idformulario = ehf.idformulario " +
+                "WHERE ehf.enc_idusuario = ?";
+
+        try (Connection conn = this.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, encId);
+
+            List<Formulario> formularios = new ArrayList<>();
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Formulario f = new Formulario();
+                    f.setIdFormulario(rs.getInt("idformulario"));
+                    f.setNombre(rs.getString("nombre"));
+                    f.setFechaCreacion(rs.getDate("fecha_creacion"));
+                    f.setFechaLimite(rs.getDate("fecha_limite"));
+                    f.setEstado(rs.getBoolean("estado"));
+                    f.setRegistrosEsperados(rs.getInt("registros_esperados"));
+                    formularios.add(f);
+                }
+            }
+            return formularios;
         }
     }
 }
