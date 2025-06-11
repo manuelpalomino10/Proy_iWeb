@@ -1,10 +1,11 @@
-package com.example.unmujeres.servlets.encuestador;
+package com.example.unmujeres.servlets;
 
 import com.example.unmujeres.daos.HashUtil;
 import com.example.unmujeres.daos.UsuarioDAO;
 
 
-import com.example.unmujeres.beans.Usuario; import com.example.unmujeres.daos.UsuarioDAO; import jakarta.servlet.ServletException; import jakarta.servlet.annotation.WebServlet; import jakarta.servlet.http.HttpServlet; import jakarta.servlet.http.HttpServletRequest; import jakarta.servlet.http.HttpServletResponse; import jakarta.servlet.http.HttpSession; import java.io.IOException; import java.sql.SQLException; import java.util.Base64;
+import com.example.unmujeres.beans.Usuario;
+import jakarta.servlet.ServletException; import jakarta.servlet.annotation.WebServlet; import jakarta.servlet.http.HttpServlet; import jakarta.servlet.http.HttpServletRequest; import jakarta.servlet.http.HttpServletResponse; import jakarta.servlet.http.HttpSession; import java.io.IOException; import java.sql.SQLException; import java.util.Base64;
 
 @WebServlet("/login") public class loginServlet extends HttpServlet {
 
