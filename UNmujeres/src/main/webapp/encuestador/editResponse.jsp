@@ -212,8 +212,11 @@
             inputs.forEach(function(input) {
                 if (!input.value.trim()) {
                     faltantes.push(input); // Guarda los campos incompletos
+                    System.out.println("Se agrego el faltante "+input);
                     input.classList.add("falta-respuesta"); // Aplica estilo
+
                 } else {
+                    System.out.println("no esta vacio el input: "+input);
                     input.classList.remove("falta-respuesta"); // Remueve el estilo si está completo
                 }
             });
@@ -226,6 +229,7 @@
                 $('#SaveRegModal').modal('show');
             }
         });
+
     </script>
 </body>
 

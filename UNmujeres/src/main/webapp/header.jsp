@@ -33,11 +33,11 @@
 
 
   <style>
-    +    .falta-respuesta {
-    +      border: 2px solid red;
-    +      background-color: #ffecec;
-    +    }
-    +  </style>
+    .falta-respuesta {
+      border: 2px solid red;
+      background-color: #ffecec;
+     }
+  </style>
 
 </head>
 
