@@ -141,6 +141,4 @@ public class RegistroRespuestasDAO extends BaseDAO {
         }
         throw new SQLException("No se pudo crear el registro de respuestas");
     }
-
-
 }

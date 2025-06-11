@@ -19,14 +19,7 @@
     <li class="nav-item dropdown no-arrow">
       <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
          data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-        <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-            Hola, ${usuario.nombres}
-            <c:choose>
-                <c:when test="${usuario.idroles == 1}"> - Administrador</c:when>
-                <c:when test="${usuario.idroles == 2}"> - Coordinador Interno</c:when>
-                <c:when test="${usuario.idroles == 3}"> - Encuestador</c:when>
-            </c:choose>
-        </span>
+        <span class="mr-2 d-none d-lg-inline text-gray-600 small">Hola, ${usuario.nombres}</span>
         <c:choose>
           <c:when test="${not empty sessionScope.fotoBase64}">
             <img class="img-profile rounded-circle"
