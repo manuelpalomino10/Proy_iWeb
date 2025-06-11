@@ -47,13 +47,17 @@ public class GestionEncuestadoresServlet extends HttpServlet {
             } catch (NumberFormatException e) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Par\u00E1metro idusuario inv\u00E1lido");
                 return;
-            }            try {
+            }
+            try {
                 List<Formulario> disponibles = dao.obtenerFormulariosDisponibles(coordiId, encId);
                 List<Formulario> asignados = dao.obtenerFormulariosAsignados(encId);
                 resp.setContentType("application/json");
                 resp.getWriter().print(toJson(disponibles, asignados));
             } catch (SQLException e) {
-                throw new ServletException("Error al obtener formularios", e);
+                e.printStackTrace();
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "Error al obtener formularios");
+                return;
             }
             return;
         }
@@ -61,9 +65,12 @@ public class GestionEncuestadoresServlet extends HttpServlet {
         try {
             List<Usuario> lista = dao.listarPorZona(coordiId);
             req.setAttribute("listaEncuestadores", lista);
-            req.getRequestDispatcher("/coordinador/gestion_encuestadores.jsp").forward(req, resp);
+            req.getRequestDispatcher("/coordinador/gestion_encuestadores.jsp")
+                    .forward(req, resp);
         } catch (SQLException e) {
-            throw new ServletException("Error al listar encuestadores", e);
+            e.printStackTrace();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Error al listar encuestadores");
         }
     }
 
@@ -110,7 +117,9 @@ public class GestionEncuestadoresServlet extends HttpServlet {
             }
             resp.sendRedirect(req.getContextPath() + "/gestion_encuestadores");
         } catch (SQLException e) {
-            throw new ServletException("Error en operación con encuestador", e);
+            e.printStackTrace();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "Error en operación con encuestador");
         }
     }
     private String toJson(List<Formulario> disponibles, List<Formulario> asignados) {

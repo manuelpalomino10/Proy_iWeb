@@ -222,6 +222,11 @@
                         $('#assignFieldsContainer').append(`<input type="hidden" name="formularios" value="${f.id}" data-id="${f.id}">`);
                     });
                 }
+            }).fail(function(jqXHR, textStatus, errorThrown){
+                console.error('Error al obtener formularios:', textStatus, errorThrown, jqXHR.responseText);
+                $('#assignModal .modal-body').prepend(
+                    '<div class="alert alert-danger">Error al cargar los formularios.</div>'
+                );
             });
         });
 
