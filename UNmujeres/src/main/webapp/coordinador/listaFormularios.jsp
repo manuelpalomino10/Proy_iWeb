@@ -34,7 +34,7 @@
     <div id="content">
 
       <!-- Topbar -->
-      <jsp:include page="../topbarEnc.jsp" />
+      <jsp:include page="../topbarCoordi.jsp" />
       <!-- End of Topbar -->
 
       <!-- Begin Page Content -->

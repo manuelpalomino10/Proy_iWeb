@@ -31,7 +31,7 @@
   <div id="wrapper">
 
     <!-- Sidebar -->
-    <jsp:include page="/sidebarCoordi.jsp" />
+    <jsp:include page="/sidebarAdmin.jsp" />
     <!-- End of Sidebar -->
 
     <!-- Content Wrapper -->
@@ -41,7 +41,7 @@
       <div id="content">
 
         <!-- Topbar -->
-        <jsp:include page="../topbarEnc.jsp" />
+        <jsp:include page="../topbarAdmin.jsp" />
         <!-- End of Topbar -->
 
         <!-- Begin Page Content -->
