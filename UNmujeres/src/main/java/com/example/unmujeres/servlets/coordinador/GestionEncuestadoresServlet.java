@@ -37,34 +37,31 @@ public class GestionEncuestadoresServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
+        Integer openId = null;
+        try {
+            if (req.getParameter("idusuario") != null) {
+                openId = Integer.parseInt(req.getParameter("idusuario"));
 
-        String action = req.getParameter("action");
-        if ("get_formularios".equals(action)) {
-            String idStr = req.getParameter("idusuario");
-            int encId;
-            try {
-                encId = Integer.parseInt(idStr);
-            } catch (NumberFormatException e) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Par\u00E1metro idusuario inv\u00E1lido");
-                return;
             }
-            try {
-                List<Formulario> disponibles = dao.obtenerFormulariosDisponibles(coordiId, encId);
-                List<Formulario> asignados = dao.obtenerFormulariosAsignados(encId);
-                resp.setContentType("application/json");
-                resp.getWriter().print(toJson(disponibles, asignados));
-            } catch (SQLException e) {
-                e.printStackTrace();
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                        "Error al obtener formularios");
-                return;
-            }
-            return;
-        }
+        } catch (NumberFormatException ignored) { }
 
         try {
             List<Usuario> lista = dao.listarPorZona(coordiId);
             req.setAttribute("listaEncuestadores", lista);
+            if (openId != null) {
+                List<Formulario> disp = dao.obtenerFormulariosDisponibles(coordiId, openId);
+                List<Formulario> asign = dao.obtenerFormulariosAsignados(openId);
+                req.setAttribute("dispFormularios", disp);
+                req.setAttribute("asigFormularios", asign);
+                req.setAttribute("assignId", openId);
+                for (Usuario u : lista) {
+                    if (u.getIdUsuario() == openId) {
+                        req.setAttribute("assignName", u.getNombres() + " " + u.getApellidos());
+                        break;
+                    }
+                }
+                req.setAttribute("showAssignModal", true);
+            }
             req.getRequestDispatcher("/coordinador/gestion_encuestadores.jsp")
                     .forward(req, resp);
         } catch (SQLException e) {
@@ -125,6 +122,22 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                     }
                     resp.sendRedirect(url);
                     return;
+                case "asignar_form":
+                    int idFormAdd = Integer.parseInt(req.getParameter("idformulario"));
+                    dao.asignarFormulario(id, idFormAdd);
+                    resp.sendRedirect(req.getContextPath() + "/gestion_encuestadores?success=Formulario+asignado");
+                    return;
+                case "desasignar_form":
+                    int idFormDel = Integer.parseInt(req.getParameter("idformulario"));
+                    boolean ok = dao.desasignarFormulario(id, idFormDel);
+                    String rurl = req.getContextPath() + "/gestion_encuestadores";
+                    if (ok) {
+                        rurl += "?success=Asignaciones+actualizadas";
+                    } else {
+                        rurl += "?warn=No+se+puede+desasignar+este+formulario+porque+contiene+mas+de+10+respuestas";
+                    }
+                    resp.sendRedirect(rurl);
+                    return;
                 default:
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Acción inválida");
                     return;
@@ -135,37 +148,5 @@ public class GestionEncuestadoresServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     "Error en operación con encuestador");
         }
-    }
-    private String toJson(List<Formulario> disponibles, List<Formulario> asignados) {
-        StringBuilder sb = new StringBuilder();
-        sb.append('{');
-        sb.append("\"disponibles\":");
-        sb.append('[');
-        for (int i = 0; i < disponibles.size(); i++) {
-            Formulario f = disponibles.get(i);
-            sb.append('{')
-                    .append("\"id\":").append(f.getIdFormulario()).append(',')
-                    .append("\"nombre\":\"").append(escape(f.getNombre())).append("\"}");
-            if (i < disponibles.size() - 1) sb.append(',');
-        }
-        sb.append(']');
-        sb.append(',');
-        sb.append("\"asignados\":");
-        sb.append('[');
-        for (int i = 0; i < asignados.size(); i++) {
-            Formulario f = asignados.get(i);
-            sb.append('{')
-                    .append("\"id\":").append(f.getIdFormulario()).append(',')
-                    .append("\"nombre\":\"").append(escape(f.getNombre())).append("\"}");
-            if (i < asignados.size() - 1) sb.append(',');
-        }
-        sb.append(']');
-        sb.append('}');
-        return sb.toString();
-    }
-
-    private String escape(String text) {
-        if (text == null) return "";
-        return text.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 }

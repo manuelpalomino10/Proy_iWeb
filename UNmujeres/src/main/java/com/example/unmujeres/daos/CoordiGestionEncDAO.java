@@ -70,6 +70,39 @@ public class CoordiGestionEncDAO extends BaseDAO {
     }
 
     /**
+     * Asigna un formulario específico a un encuestador.
+     */
+    public void asignarFormulario(int encId, int idFormulario) throws SQLException {
+        String sql = "INSERT INTO enc_has_formulario(enc_idusuario, idformulario, codigo, fecha_asignacion) " +
+                "VALUES (?, ?, UUID(), ?)";
+        try (Connection conn = this.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, encId);
+            ps.setInt(2, idFormulario);
+            ps.setDate(3, new java.sql.Date(System.currentTimeMillis()));
+            ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Desasigna un formulario de un encuestador. Devuelve false si no se puede
+     * desasignar por tener más de 10 respuestas.
+     */
+    public boolean desasignarFormulario(int encId, int idFormulario) throws SQLException {
+        if (contarRespuestasPorEncuestadorYFormulario(encId, idFormulario) > 10) {
+            return false;
+        }
+        String sql = "DELETE FROM enc_has_formulario WHERE enc_idusuario = ? AND idformulario = ?";
+        try (Connection conn = this.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, encId);
+            ps.setInt(2, idFormulario);
+            ps.executeUpdate();
+        }
+        return true;
+    }
+
+    /**
      * Asigna formularios a un encuestador (operación transaccional)
      * @param idEncuestador ID del encuestador
      * @param idsFormularios Lista de IDs de formularios a asignar
@@ -156,11 +189,13 @@ public class CoordiGestionEncDAO extends BaseDAO {
      */
     public List<Formulario> obtenerFormulariosDisponibles(int coordiId, int encId) throws SQLException {
         String sql = "SELECT f.idformulario, f.nombre, f.fecha_creacion, f.fecha_limite, " +
-                "f.estado, f.registros_esperados, f.idcategoria " +
+                "f.estado, f.registros_esperados, f.idcategoria, " +
+                "COUNT(rr.idregistro_respuestas) AS respuestas " +
                 "FROM formulario f " +
-                "WHERE f.estado = 1 AND f.idformulario NOT IN (" +
-                "SELECT idformulario FROM enc_has_formulario WHERE enc_idusuario = ?)";
-
+                "JOIN enc_has_formulario ehf ON f.idformulario = ehf.idformulario " +
+                "LEFT JOIN registro_respuestas rr ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "WHERE ehf.enc_idusuario = ? " +
+                "GROUP BY f.idformulario, f.nombre, f.fecha_creacion, f.fecha_limite, f.estado, f.registros_esperados, f.idcategoria";
         try (Connection conn = this.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -176,6 +211,7 @@ public class CoordiGestionEncDAO extends BaseDAO {
                     f.setFechaLimite(rs.getDate("fecha_limite"));
                     f.setEstado(rs.getBoolean("estado"));
                     f.setRegistrosEsperados(rs.getInt("registros_esperados"));
+                    f.setRespuestasCount(rs.getInt("respuestas"));
                     formularios.add(f);
                 }
             }

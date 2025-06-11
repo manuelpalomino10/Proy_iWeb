@@ -81,13 +81,10 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </button>
-                                        <button class="btn btn-sm btn-primary"
-                                                data-toggle="modal"
-                                                data-target="#assignModal"
-                                                data-nombre="${enc.nombres} ${enc.apellidos}"
-                                                data-id="${enc.idUsuario}">
+                                        <a class="btn btn-sm btn-primary"
+                                           href="${pageContext.request.contextPath}/gestion_encuestadores?idusuario=${enc.idUsuario}">
                                             Asignar
-                                        </button>
+                                        </a>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -135,48 +132,63 @@
 <div class="modal fade" id="assignModal" tabindex="-1">
     <div class="modal-dialog modal-lg"><div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Asignar Formularios a <span id="assignName"></span></h5>
+            <h5 class="modal-title">Asignar Formularios a ${assignName}</h5>
             <button type="button" class="close" data-dismiss="modal">×</button>
         </div>
         <div class="modal-body">
-            <p class="mb-2">Selecciona un formulario de la lista y presiona
-                <strong>Asignar</strong>. Los formularios asignados se mostrarán
-                debajo.</p>
+
             <div class="row">
                 <div class="col-md-6">
                     <h6>Formularios Disponibles</h6>
-                    <ul id="availableList" class="list-group mb-3"></ul>
+                    <c:forEach var="f" items="${dispFormularios}">
+                        <form class="d-flex justify-content-between align-items-center mb-2" method="post" action="${pageContext.request.contextPath}/gestion_encuestadores">
+                            <input type="hidden" name="action" value="asignar_form"/>
+                            <input type="hidden" name="idusuario" value="${assignId}"/>
+                            <input type="hidden" name="idformulario" value="${f.idFormulario}"/>
+                            <span class="mr-2"><c:out value="${f.nombre}"/></span>
+                            <button type="submit" class="btn btn-sm btn-success">Asignar</button>
+                        </form>
+                    </c:forEach>
+                    <c:if test="${empty dispFormularios}">
+                        <p>No hay formularios disponibles para asignar.</p>
+                    </c:if>
                 </div>
                 <div class="col-md-6">
                     <h6>Formularios del Encuestador</h6>
-                    <ul id="assignedList" class="list-group mb-3"></ul>
+                    <c:forEach var="f" items="${asigFormularios}">
+                        <form class="d-flex justify-content-between align-items-center mb-2" method="post" action="${pageContext.request.contextPath}/gestion_encuestadores">
+                            <input type="hidden" name="action" value="desasignar_form"/>
+                            <input type="hidden" name="idusuario" value="${assignId}"/>
+                            <input type="hidden" name="idformulario" value="${f.idFormulario}"/>
+                            <span class="mr-2"><c:out value="${f.nombre}"/></span>
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    <c:if test="${f.respuestasCount > 10}">disabled data-toggle="tooltip" title="No se puede desasignar este formulario porque contiene más de 10 respuestas"</c:if>>
+                                Desasignar
+                            </button>
+                        </form>
+                    </c:forEach>
+                    <c:if test="${empty asigFormularios}">
+                        <p>No hay formularios asignados.</p>
+                    </c:if>
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button id="assignCloseBtn" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
-        </div>
-    </div></div>
 </div>
 
 
 <!-- Script de inicialización -->
 <script>
-    $(document).ready(function(){
-        // Tu DataTable
-        $('#dataTable').DataTable({ destroy:true, /* …tu config…*/ });
-
-        // Cuando se abre el modal de ban
+    $(function(){
+        $('#dataTable').DataTable({destroy:true});
         $('#banModal').on('show.bs.modal', e => {
             let btn = $(e.relatedTarget);
-            let id     = btn.data('id');
-            let name   = btn.data('nombre');
+            let id   = btn.data('id');
+            let name = btn.data('nombre');
             let action = btn.data('action');
             $('#banName').text(name);
             $('#banIdInput').val(id);
             $('#banForm input[name=action]').val(action);
-
-            if(action === 'banear') {
+            if(action === 'banear'){
                 $('#banTitle').text('Banear Encuestador');
                 $('#banVerb').text('banear');
                 $('#banButtonVerb').text('Sí, banear');
@@ -186,126 +198,18 @@
                 $('#banButtonVerb').text('Sí, desbanear');
             }
         });
-        // Al confirmar ban
-        $('#banConfirmBtn').click(() => $('#banForm').submit());
-
-        // Cuando se abre el modal de asignar
-        $('#assignModal').on('show.bs.modal', e => {
-            let btn  = $(e.relatedTarget);
-            let id   = btn.data('id');
-            let name = btn.data('nombre');
-
-            $('#assignName').text(name);
-            $('#assignIdInput').val(id);
-
-            $('#availableList').empty();
-            $('#assignedList').empty();
-            $('#assignFieldsContainer').empty();
-
-            $.getJSON('${pageContext.request.contextPath}/gestion_encuestadores', {
-                action: 'get_formularios',
-                idusuario: id
-            }, function(data){
-                const disp = data.disponibles || [];
-                const asign = data.asignados || [];
-
-                if(disp.length === 0){
-                    $('#availableList').append('<li class="list-group-item">No hay formularios disponibles para asignar.</li>');
-                } else {
-                    disp.forEach(f => {
-                        $('#availableList').append(
-                            `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${f.id}" data-nombre="${f.nombre}">
-                                ${f.nombre}
-                                <button type="button" class="btn btn-sm btn-success assign-btn">Asignar</button>
-                            </li>`);
-                    });
-                }
-
-                if(asign.length === 0){
-                    $('#assignedList').append('<li class="list-group-item">No hay formularios asignados.</li>');
-                } else {
-                    asign.forEach(f => {
-                        $('#assignedList').append(
-                            `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${f.id}" data-nombre="${f.nombre}">
-                                ${f.nombre}
-                                <button type="button" class="btn btn-sm btn-danger unassign-btn">Desasignar</button>
-                            </li>`);
-                        if(f.id){
-                            $('#assignFieldsContainer').append(
-                                `<input type="hidden" name="formularios" value="${f.id}" data-id="${f.id}">`
-                            );
-                        }
-                    });
-                }
-            }).fail(function(jqXHR, textStatus, errorThrown){
-                console.error('Error al obtener formularios:', textStatus, errorThrown, jqXHR.responseText);
-                $('#assignModal .modal-body').prepend(
-                    '<div class="alert alert-danger">Error al cargar los formularios.</div>'
-                );
-            });
-        });
-
-        function submitAssignments(){
-            $.post('${pageContext.request.contextPath}/gestion_encuestadores', $('#assignForm').serialize());
-        }
-
-        // Asignar uno por uno
-        $('#availableList').on('click', '.assign-btn', function(){
-            let li = $(this).closest('li');
-            let id = li.data('id');
-            let nombre = li.data('nombre');
-            li.remove();
-            if($('#availableList li').length === 0){
-                $('#availableList').append('<li class="list-group-item">No hay formularios disponibles para asignar.</li>');
-            }
-            $('#assignedList').find('.list-group-item:contains("No hay formularios asignados")').remove();
-
-            $('#assignedList').append(
-                `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${id}" data-nombre="${nombre}">
-                    ${nombre}
-                    <button type="button" class="btn btn-sm btn-danger unassign-btn">Desasignar</button>
-                </li>`);
-            if(id){
-                $('#assignFieldsContainer').append(
-                    `<input type="hidden" name="formularios" value="${id}" data-id="${id}">`
-                );
-            }
-            submitAssignments();
-        });
-
-        // Quitar asignación
-        $('#assignedList').on('click', '.unassign-btn', function(){
-            let li = $(this).closest('li');
-            let id = li.data('id');
-            let nombre = li.data('nombre');
-            li.remove();
-            $('#assignedList').children().length === 0 && $('#assignedList').append('<li class="list-group-item">No hay formularios asignados.</li>');
-            $('#availableList').find('.list-group-item:contains("No hay formularios disponibles")').remove();
-            $('#availableList').append(
-                `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${id}" data-nombre="${nombre}">
-                    ${nombre}
-                    <button type="button" class="btn btn-sm btn-success assign-btn">Asignar</button>
-                </li>`);
-            $('#assignFieldsContainer').find(`input[data-id='${id}']`).remove();
-            submitAssignments();
-        });
-
+        $('#banConfirmBtn').click(()=>$('#banForm').submit());
+        $('[data-toggle="tooltip"]').tooltip();
+        <c:if test="${showAssignModal}">
+        $('#assignModal').modal('show');
+        </c:if>
     });
-
 </script>
 
 <!-- Form para banear -->
 <form id="banForm" action="${pageContext.request.contextPath}/gestion_encuestadores" method="post" style="display:none">
     <input type="hidden" name="action" value="banear"/>
     <input type="hidden" id="banIdInput"  name="idusuario" value=""/>
-</form>
-
-<!-- Form para asignar -->
-<form id="assignForm" action="${pageContext.request.contextPath}/gestion_encuestadores" method="post" style="display:none">
-    <input type="hidden" name="action" value="asignar"/>
-    <input type="hidden" id="assignIdInput" name="idusuario" value=""/>
-    <!-- Campos ocultos con IDs de formularios asignados -->
-    <div id="assignFieldsContainer"></div>
 </form>
 
 
