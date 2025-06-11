@@ -55,7 +55,7 @@
                                         </c:choose>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-warning"
+                                        <button class="btn btn-sm btn-danger"
                                                 data-toggle="modal"
                                                 data-target="#banModal"
                                                 data-nombre="${enc.nombres} ${enc.apellidos}"
@@ -128,10 +128,17 @@
             <button type="button" class="close" data-dismiss="modal">×</button>
         </div>
         <div class="modal-body">
-            <div class="form-group">
-                <label>Selecciona formularios</label>
-                <div id="formulariosList" class="list-group">
-                    <!-- JS inyectará aquí los checkboxes -->
+            <p class="mb-2">Selecciona un formulario de la lista y presiona
+                <strong>Asignar</strong>. Los formularios asignados se mostrarán
+                debajo.</p>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Formularios Disponibles</h6>
+                    <ul id="availableList" class="list-group mb-3"></ul>
+                </div>
+                <div class="col-md-6">
+                    <h6>Formularios del Encuestador</h6>
+                    <ul id="assignedList" class="list-group mb-3"></ul>
                 </div>
             </div>
         </div>
@@ -174,26 +181,61 @@
 
         // Cuando se abre el modal de asignar
         $('#assignModal').on('show.bs.modal', e => {
-            let btn = $(e.relatedTarget);
+            let btn  = $(e.relatedTarget);
             let id   = btn.data('id');
             let name = btn.data('nombre');
+
             $('#assignName').text(name);
             $('#assignIdInput').val(id);
 
-            // Limpia y carga checkboxes: supongamos que tienes una lista JS de formularios
+            // Demo de formularios disponibles
             let formularios = [
                 {id:1, nombre:'Encuesta Satisfacción'},
-                {id:2, nombre:'Datos Demográficos'},
-                /* … */
+                {id:2, nombre:'Datos Demográficos'}
             ];
             let $list = $('#formulariosList').empty();
+
+            $('#availableList').empty();
+            $('#assignedList').empty();
+            $('#assignFieldsContainer').empty();
+
             formularios.forEach(f => {
-                $list.append(`
-        <label class="list-group-item">
-          <input type="checkbox" name="formularios" value="${f.id}"> ${f.nombre}
-        </label>`);
+                $('#availableList').append(
+                    `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${f.id}" data-nombre="${f.nombre}">
+                        ${f.nombre}
+                        <button type="button" class="btn btn-sm btn-success assign-btn">Asignar</button>
+                    </li>`);
             });
         });
+
+        // Asignar uno por uno
+        $('#availableList').on('click', '.assign-btn', function(){
+            let li = $(this).closest('li');
+            let id = li.data('id');
+            let nombre = li.data('nombre');
+            li.remove();
+            $('#assignedList').append(
+                `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${id}" data-nombre="${nombre}">
+                    ${nombre}
+                    <button type="button" class="btn btn-sm btn-danger unassign-btn">Quitar</button>
+                </li>`);
+            $('#assignFieldsContainer').append(`<input type="hidden" name="formularios" value="${id}" data-id="${id}">`);
+        });
+
+        // Quitar asignación
+        $('#assignedList').on('click', '.unassign-btn', function(){
+            let li = $(this).closest('li');
+            let id = li.data('id');
+            let nombre = li.data('nombre');
+            li.remove();
+            $('#availableList').append(
+                `<li class="list-group-item d-flex justify-content-between align-items-center" data-id="${id}" data-nombre="${nombre}">
+                    ${nombre}
+                    <button type="button" class="btn btn-sm btn-success assign-btn">Asignar</button>
+                </li>`);
+            $('#assignFieldsContainer').find(`input[data-id='${id}']`).remove();
+        });
+
         // Al confirmar asignación
         $('#assignConfirmBtn').click(() => $('#assignForm').submit());
     });
@@ -210,7 +252,7 @@
 <form id="assignForm" action="${pageContext.request.contextPath}/gestion_encuestadores" method="post" style="display:none">
     <input type="hidden" name="action" value="asignar"/>
     <input type="hidden" id="assignIdInput" name="idusuario" value=""/>
-    <!-- Los checkboxes de formularios los clonaremos vía JS -->
+    <!-- Campos ocultos con IDs de formularios asignados -->
     <div id="assignFieldsContainer"></div>
 </form>
 
