@@ -143,8 +143,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-            <button id="assignConfirmBtn" class="btn btn-primary">Confirmar Asignación</button>
+            <button id="assignCloseBtn" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
         </div>
     </div></div>
 </div>
@@ -226,6 +225,10 @@
             });
         });
 
+        function submitAssignments(){
+            $.post('${pageContext.request.contextPath}/gestion_encuestadores', $('#assignForm').serialize());
+        }
+
         // Asignar uno por uno
         $('#availableList').on('click', '.assign-btn', function(){
             let li = $(this).closest('li');
@@ -243,6 +246,7 @@
                     <button type="button" class="btn btn-sm btn-danger unassign-btn">Desasignar</button>
                 </li>`);
             $('#assignFieldsContainer').append(`<input type="hidden" name="formularios" value="${id}" data-id="${id}">`);
+            submitAssignments();
         });
 
         // Quitar asignación
@@ -259,10 +263,9 @@
                     <button type="button" class="btn btn-sm btn-success assign-btn">Asignar</button>
                 </li>`);
             $('#assignFieldsContainer').find(`input[data-id='${id}']`).remove();
+            submitAssignments();
         });
 
-        // Al confirmar asignación
-        $('#assignConfirmBtn').click(() => $('#assignForm').submit());
     });
 
 </script>

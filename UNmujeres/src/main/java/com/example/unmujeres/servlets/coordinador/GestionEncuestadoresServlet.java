@@ -40,8 +40,14 @@ public class GestionEncuestadoresServlet extends HttpServlet {
 
         String action = req.getParameter("action");
         if ("get_formularios".equals(action)) {
-            int encId = Integer.parseInt(req.getParameter("idusuario"));
+            String idStr = req.getParameter("idusuario");
+            int encId;
             try {
+                encId = Integer.parseInt(idStr);
+            } catch (NumberFormatException e) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Par\u00E1metro idusuario inv\u00E1lido");
+                return;
+            }            try {
                 List<Formulario> disponibles = dao.obtenerFormulariosDisponibles(coordiId, encId);
                 List<Formulario> asignados = dao.obtenerFormulariosAsignados(encId);
                 resp.setContentType("application/json");
@@ -73,7 +79,15 @@ public class GestionEncuestadoresServlet extends HttpServlet {
         }
 
         String action = req.getParameter("action");
-        int id = Integer.parseInt(req.getParameter("idusuario"));
+
+        String idParam = req.getParameter("idusuario");
+        int id;
+        try {
+            id = Integer.parseInt(idParam);
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Par\u00E1metro idusuario inv\u00E1lido");
+            return;
+        }
 
         try {
             switch(action) {
