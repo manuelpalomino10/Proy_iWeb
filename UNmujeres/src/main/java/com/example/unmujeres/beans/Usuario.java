@@ -102,6 +102,7 @@ public class Usuario {
     public void setIdroles(int idroles) {
         this.idroles = idroles;
     }
+
     public int getIdzona() {
         return idzona;
 

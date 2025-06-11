@@ -12,6 +12,7 @@ public class UsuarioDAO extends BaseDAO {
 
     public Usuario obtenerUsuarioConDistrito(int idUsuario) throws SQLException {
         Usuario usuario = null;
+        // Añade u.idroles a la consulta
         String sql = "SELECT u.*, d.nombre as nombre_distrito " +
                 "FROM usuario u " +
                 "LEFT JOIN distritos d ON u.iddistritos = d.iddistritos " +
@@ -32,10 +33,14 @@ public class UsuarioDAO extends BaseDAO {
                     usuario.setDireccion(rs.getString("direccion"));
                     usuario.setFotoBytes(rs.getBytes("foto"));
 
+                    // Campos adicionales críticos
+                    usuario.setIdroles(rs.getInt("idroles")); // AÑADE ESTA LÍNEA
+                    usuario.setEstado(rs.getBoolean("estado")); // Recomendado
+                    usuario.setIddistritos(rs.getInt("iddistritos")); // Recomendado
+
                     // Set Distrito
                     Distritos distrito = new Distritos();
-                    // En el ResultSet (dentro de obtenerUsuarioConDistrito):
-                    distrito.setIddistritos(rs.getInt("iddistritos")); // Columna en usuario
+                    distrito.setIddistritos(rs.getInt("iddistritos"));
                     distrito.setNombre(rs.getString("nombre_distrito"));
                     usuario.setDistrito(distrito);
                 }
@@ -73,7 +78,11 @@ public class UsuarioDAO extends BaseDAO {
 
                 Blob fotoBlob = rs.getBlob("foto");
                 if (fotoBlob != null) {
-                    usuario.setFotoBytes(fotoBlob.getBytes(1, (int) fotoBlob.length()));
+                    byte[] fotoBytes = fotoBlob.getBytes(1, (int) fotoBlob.length());
+                    usuario.setFotoBytes(fotoBytes);
+                    System.out.println("[DEBUG] Foto cargada con tamaño: " + fotoBytes.length);
+                } else {
+                    System.out.println("[DEBUG] Usuario sin foto.");
                 }
             }
 
@@ -83,6 +92,7 @@ public class UsuarioDAO extends BaseDAO {
 
         return usuario;
     }
+
 
     public boolean actualizarUsuario(Usuario usuario) throws SQLException {
         String sql = "UPDATE usuario SET direccion = ?, iddistritos = ?, contraseña = ? WHERE idusuario = ?";
@@ -192,6 +202,18 @@ public class UsuarioDAO extends BaseDAO {
         return usuario;
     }
 
+    public boolean actualizarContraseña(int idUsuario, String contraseñaPlana) throws SQLException {
+        String sql = "UPDATE usuario SET contraseña = SHA2(?, 256) WHERE idusuario = ?";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, contraseñaPlana); // Se hashea en la BD con SHA2
+            ps.setInt(2, idUsuario);
+
+            return ps.executeUpdate() > 0;
+        }
+    }
 
 }
 
