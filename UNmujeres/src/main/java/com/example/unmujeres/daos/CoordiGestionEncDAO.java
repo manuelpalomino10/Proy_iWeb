@@ -117,7 +117,7 @@ public class CoordiGestionEncDAO extends BaseDAO {
             conn = this.getConnection();
             conn.setAutoCommit(false);
 
-            // Obtener asignaciones actuales
+            // Obtener asignaciones actuales del encuestador
             String query = "SELECT idenc_has_formulario, idformulario FROM enc_has_formulario WHERE enc_idusuario = ?";
             List<Integer> asignadosPersistentes = new ArrayList<>();
             try (PreparedStatement ps = conn.prepareStatement(query)) {
@@ -128,7 +128,7 @@ public class CoordiGestionEncDAO extends BaseDAO {
                         int idForm = rs.getInt("idformulario");
                         int count = contarRespuestasPorEncuestadorYFormulario(idEncuestador, idForm);
                         if (count > 10) {
-                            // no eliminar si tiene mas de 10 respuestas
+                            // no eliminar si tiene más de 10 respuestas
                             asignadosPersistentes.add(idForm);
                             noDesasignados.add(idForm);
                         } else {
@@ -148,16 +148,15 @@ public class CoordiGestionEncDAO extends BaseDAO {
                         "INSERT INTO enc_has_formulario(enc_idusuario, idformulario, codigo, fecha_asignacion) " +
                                 "VALUES (?, ?, UUID(), ?)")) {
                     for (int idForm : idsFormularios) {
-
+                        if (!asignadosPersistentes.contains(idForm)) {
+                            ps.setInt(1, idEncuestador);
+                            ps.setInt(2, idForm);
+                            ps.setDate(3, new java.sql.Date(System.currentTimeMillis()));
+                            ps.addBatch();
+                            asignadosPersistentes.add(idForm);
+                        }
                     }
                     ps.executeBatch();
-                    if (!asignadosPersistentes.contains(idFormulario)) {
-                        ps.setInt(1, idEncuestador);
-                        ps.setInt(2, idForm);
-                        ps.setDate(3, new java.sql.Date(System.currentTimeMillis()));
-                        ps.addBatch();
-                        asignadosPersistentes.add(idForm);
-                    }
                 }
             }
 
@@ -189,13 +188,11 @@ public class CoordiGestionEncDAO extends BaseDAO {
      */
     public List<Formulario> obtenerFormulariosDisponibles(int coordiId, int encId) throws SQLException {
         String sql = "SELECT f.idformulario, f.nombre, f.fecha_creacion, f.fecha_limite, " +
-                "f.estado, f.registros_esperados, f.idcategoria, " +
-                "COUNT(rr.idregistro_respuestas) AS respuestas " +
+                "f.estado, f.registros_esperados, f.idcategoria " +
                 "FROM formulario f " +
                 "JOIN enc_has_formulario ehf ON f.idformulario = ehf.idformulario " +
-                "LEFT JOIN registro_respuestas rr ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
-                "WHERE ehf.enc_idusuario = ? " +
-                "GROUP BY f.idformulario, f.nombre, f.fecha_creacion, f.fecha_limite, f.estado, f.registros_esperados, f.idcategoria";
+                "WHERE f.estado = 1 " +
+                "AND NOT EXISTS (SELECT 1 FROM enc_has_formulario ehf WHERE ehf.enc_idusuario = ? AND ehf.idformulario = f.idformulario)";
         try (Connection conn = this.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -211,7 +208,6 @@ public class CoordiGestionEncDAO extends BaseDAO {
                     f.setFechaLimite(rs.getDate("fecha_limite"));
                     f.setEstado(rs.getBoolean("estado"));
                     f.setRegistrosEsperados(rs.getInt("registros_esperados"));
-                    f.setRespuestasCount(rs.getInt("respuestas"));
                     formularios.add(f);
                 }
             }
@@ -254,22 +250,20 @@ public class CoordiGestionEncDAO extends BaseDAO {
             return formularios;
         }
     }
-}
-
-public int contarRespuestasPorEncuestadorYFormulario(int encId, int idFormulario) throws SQLException {
-    String sql = "SELECT COUNT(*) FROM registro_respuestas rr " +
-            "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
-            "WHERE ehf.enc_idusuario = ? AND ehf.idformulario = ?";
-    try (Connection conn = this.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setInt(1, encId);
-        ps.setInt(2, idFormulario);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1);
+    public int contarRespuestasPorEncuestadorYFormulario(int encId, int idFormulario) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "WHERE ehf.enc_idusuario = ? AND ehf.idformulario = ?";
+        try (Connection conn = this.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, encId);
+            ps.setInt(2, idFormulario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+                return 0;
             }
         }
-        return 0;
     }
-}
 }
