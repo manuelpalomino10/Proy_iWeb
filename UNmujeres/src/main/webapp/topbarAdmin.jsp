@@ -20,14 +20,7 @@
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                    Hola, ${usuario.nombres}Add commentMore actions
-                    <c:choose>
-                        <c:when test="${usuario.idroles == 1}"> - Administrador</c:when>
-                        <c:when test="${usuario.idroles == 2}"> - Coordinador Interno</c:when>
-                        <c:when test="${usuario.idroles == 3}"> - Encuestador</c:when>
-                    </c:choose>
-                </span>
-                    Hola, ${usuario.nombres}Add commentMore actions
+                    Hola, ${usuario.nombres}
                     <c:choose>
                         <c:when test="${usuario.idroles == 1}"> - Administrador</c:when>
                         <c:when test="${usuario.idroles == 2}"> - Coordinador Interno</c:when>
@@ -57,10 +50,11 @@
 
 
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="login">
+                <a class="dropdown-item" href="${pageContext.request.contextPath}/logout">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Cerrar Sesión
                 </a>
+
             </div>
         </li>
 

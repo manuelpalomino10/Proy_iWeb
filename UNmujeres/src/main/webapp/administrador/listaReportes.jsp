@@ -16,9 +16,9 @@
   List<Roles> roles = (List<Roles>) request.getAttribute("listaRoles");
   List<ReporteDTO> lista = (List<ReporteDTO>) request.getAttribute("reportes");
 
-  int zonaSel = (int) request.getAttribute("zonaSel");
-  int rolSel  = (int) request.getAttribute("rolSel");
-  String dateRange   = (String) request.getAttribute("dateRange");
+  int zonaSel = (int) request.getAttribute("zona");
+  int rolSel  = (int) request.getAttribute("rol");
+  String dateRange   = (String) request.getAttribute("daterange");
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -52,37 +52,80 @@
           <%--        <p class="mb-4">Filtra y selecciona un formulario</p>--%>
 
           <!-- ------------- FORMULARIO DE FILTROS ------------- -->
-          <form id="filtros" method="GET" action="<%=request.getContextPath()%>/ReportesServlet?action=listaReportes" class="filtros">
-            <input type="hidden" name="action" value="listaReportes" />
+          <div class="container">
+            <form id="filtros" method="GET" action="<%=request.getContextPath()%>/ReportesServlet?action=listaReportes" class="row g-3">
+              <input type="hidden" name="action" value="listaReportes" />
 
-            Zona:
-            <select name="zona">
-              <option value="0" <%= (zonaSel == 0) ? "selected" : "" %>>Todos</option>
-              <% for (Zona zona : zonas) { %>
-              <option value="<%= zona.getIdzona() %>" <%= (zona.getIdzona() == zonaSel) ? "selected" : "" %>>
-                <%= zona.getNombre() %>
-              </option>
-              <% } %>
-            </select>
+              <!-- Sección 8 (Zona, Rol y Fecha) -->
+              <div class="col-md-8">
+                <div class="row">
+                  <!-- Primera fila: Zona y Rol -->
+                  <div class="col-md-6">
+                    <label for="zona" class="form-label">Zona:</label>
+                    <select name="zona" id="zona" class="form-select">
+                      <option value="0" <%= (zonaSel == 0) ? "selected" : "" %>>Todos</option>
+                      <% for (Zona zona : zonas) { %>
+                      <option value="<%= zona.getIdzona() %>" <%= (zona.getIdzona() == zonaSel) ? "selected" : "" %>>
+                        <%= zona.getNombre() %>
+                      </option>
+                      <% } %>
+                    </select>
+                  </div>
 
-            Rol:
-            <select name="rol">
-              <option value="0" <%= (rolSel == 0) ? "selected" : "" %>>Todos</option>
-              <% for (Roles rol : roles) { %>
-              <option value="<%= rol.getIdRoles() %>" <%= (rol.getIdRoles() == rolSel) ? "selected" : "" %>>
-                <%= rol.getNombre() %>
-              </option>
-              <% } %>
-            </select>
+                  <div class="col-md-6">
+                    <label for="rol" class="form-label">Rol:</label>
+                    <select name="rol" id="rol" class="form-select">
+                      <option value="0" <%= (rolSel == 0) ? "selected" : "" %>>Todos</option>
+                      <% for (Roles rol : roles) { %>
+                      <option value="<%= rol.getIdRoles() %>" <%= (rol.getIdRoles() == rolSel) ? "selected" : "" %>>
+                        <%= rol.getNombre() %>
+                      </option>
+                      <% } %>
+                    </select>
+                  </div>
+                </div>
 
-            <!-- Input para el rango de fechas -->
-            <label for="daterange">Rango de fechas:</label>
-            <input type="text" name="daterange" id="daterange" class="form-control" placeholder="DD-MM-YYYY - DD-MM-YYYY" value="<%=dateRange%>"/>
+                <!-- Segunda fila: Rango de fechas -->
+                <div class="row mt-3">
+                  <div class="col-md-12">
+                    <label for="daterange" class="form-label">Rango de fechas:</label>
+                    <input type="text" name="daterange" id="daterange" class="form-control" placeholder="DD-MM-YYYY - DD-MM-YYYY" value="<%=dateRange%>"/>
+                  </div>
+                </div>
+              </div>
 
-            <button class="btn btn-primary" type="submit">Filtrar</button>
-          </form>
+              <!-- Sección 4 (Botón centrado) -->
+              <div class="col-md-4 d-flex align-items-center justify-content-center">
+                <!-- Botón de filtrado -->
+                <button class="btn btn-primary w-100" type="submit">
+                <span class="icon text-white-50">
+                          <i class="fas fa-filter"></i>
+                </span>
+                  <span class="text">Filtrar</span>
+                </button>
+              </div>
+            </form>
+          </div>
 
           <hr/>
+
+          <% if (session.getAttribute("error") != null) { %>
+          <div>
+            <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
+            </div>
+          </div>
+          <% session.removeAttribute("error"); %>
+          <% } %>
+
+          <% if (session.getAttribute("success") != null) { %>
+          <div>
+            <div class="alert alert-success" role="alert"><%=session.getAttribute("success")%>
+            </div>
+          </div>
+          <% session.removeAttribute("success"); %>
+          <% } %>
+
+          </hr>
 
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
@@ -94,7 +137,7 @@
                 <%
                   if (lista == null || lista.isEmpty()) {
                 %>
-                <p>No hay resultados. Ajusta los filtros y presiona <strong>Filtrar</strong>.</p>
+                <p>No hay reportes disponibles. Ajusta los filtros y presiona <strong>Filtrar</strong>.</p>
                 <%
                 } else {
                 %>
@@ -103,9 +146,6 @@
                   <thead>
                   <tr>
                     <th>Título Formulario</th>
-                    <%--        <th>Zona</th>--%>
-                    <%--        <th>Rol</th>--%>
-                    <%--        <th>Rango de Fechas</th>--%>
                     <th>Filtro</th>
                     <th># Registros</th>
                     <th>Acciones</th>
@@ -115,9 +155,6 @@
                   <% for (ReporteDTO reporte : lista) { %>
                   <tr>
                     <td><%=reporte.getNombreFormulario()%></td>
-                    <%--        <td><%=reporte.getZona()%></td>--%>
-                    <%--        <td><%=reporte.getRol()%></td>--%>
-                    <%--        <td><%=reporte.getFecha()%></td>--%>
                     <td>
                         <%=reporte.getIdZona()==0?"Todas las zonas" : reporte.getIdZona()%>
                         <%=reporte.getIdRol()==0?"Todos los roles" : reporte.getIdRol()%>

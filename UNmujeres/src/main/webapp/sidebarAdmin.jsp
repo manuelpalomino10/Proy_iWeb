@@ -57,10 +57,10 @@
         </div>
     </li>
     <li class="nav-item ${pageAct eq 'historial' ? 'active' : ''}">
-        <a class="nav-link" href="ReportesServlet">
+        <a class="nav-link" href="${pageContext.request.contextPath}/ReportesServlet">
             <i class="fas fa-fw fa-table"></i>
-            <span>Reportes</span></a>
-    </li>
+            <span>Generar Reportes</span>
+        </a>
     </li>
     <hr class="sidebar-divider d-none d-md-block">
     <div class="text-center d-none d-md-inline">

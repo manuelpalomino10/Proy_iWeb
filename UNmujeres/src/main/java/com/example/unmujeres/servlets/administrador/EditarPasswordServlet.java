@@ -1,4 +1,4 @@
-package com.example.unmujeres.servlets.admin;
+package com.example.unmujeres.servlets.administrador;
 
 import com.example.unmujeres.beans.Usuario;
 import com.example.unmujeres.daos.UsuarioDAO;

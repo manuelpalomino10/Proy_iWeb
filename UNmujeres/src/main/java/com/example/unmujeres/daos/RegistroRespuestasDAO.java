@@ -128,7 +128,7 @@ public class RegistroRespuestasDAO extends BaseDAO {
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setDate(1, new java.sql.Date(registro.getFechaRegistro().getTime()));
+            ps.setDate(1, new Date(registro.getFechaRegistro().getTime()));
             ps.setString(2, registro.getEstado());
             ps.setInt(3, registro.getEncHasFormulario().getIdEncHasFormulario());
             ps.executeUpdate();
@@ -141,4 +141,47 @@ public class RegistroRespuestasDAO extends BaseDAO {
         }
         throw new SQLException("No se pudo crear el registro de respuestas");
     }
+
+
+    public ArrayList<Integer> countRegByForm(int idUser) {
+        String sql = "SELECT " +
+                "   f.idformulario, " +
+                "   f.nombre AS nombre_formulario, " +
+                "   COUNT(rr.idregistro_respuestas) AS total_registros_completados " +
+                "FROM enc_has_formulario ehf_principal " +
+                "JOIN usuario u_principal " +
+                "   ON ehf_principal.enc_idusuario = u_principal.idusuario " +
+                "JOIN formulario f " +
+                "   ON ehf_principal.idformulario = f.idformulario " +
+                "JOIN usuario u_zona " +
+                "   ON u_principal.idzona = u_zona.idzona " +
+                "JOIN enc_has_formulario ehf_zona " +
+                "   ON u_zona.idusuario = ehf_zona.enc_idusuario " +
+                "   AND ehf_principal.idformulario = ehf_zona.idformulario " +
+                "LEFT JOIN registro_respuestas rr " +
+                "   ON ehf_zona.idenc_has_formulario = rr.idenc_has_formulario " +
+                "   AND rr.estado = 'C' " +
+                "WHERE " +
+                "   u_principal.idusuario = ? " +  // Parámetro para el idusuario
+                "GROUP BY " +
+                "   f.idformulario, f.nombre";
+        ArrayList<Integer> totales = new ArrayList<>();
+
+        try (Connection con = this.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idUser);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                totales.add(rs.getInt(3));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return totales;
+    }
+
 }
