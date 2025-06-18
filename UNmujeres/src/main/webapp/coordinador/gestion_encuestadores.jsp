@@ -183,7 +183,7 @@
         </div>
     </div>
 </div>
-
+</div>
 
 <!-- Script de inicialización -->
 <script>
@@ -220,8 +220,6 @@
     <input type="hidden" name="action" value="banear"/>
     <input type="hidden" id="banIdInput"  name="idusuario" value=""/>
 </form>
-
-
 </body>
 
 </html>
