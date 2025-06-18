@@ -25,6 +25,10 @@ public class EncFilter extends SessionFilter {
             return;
         }
 
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setDateHeader("Expires", 0);
+                
         System.out.println("F_ENC: ACEPTADO");
         chain.doFilter(request, response);
     }
