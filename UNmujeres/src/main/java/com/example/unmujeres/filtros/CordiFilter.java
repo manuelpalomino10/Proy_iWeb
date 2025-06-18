@@ -6,7 +6,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/coordinador"})
+@WebFilter(urlPatterns = {"/coordinador/*"})
 public class CordiFilter extends SessionFilter {
 
     @Override

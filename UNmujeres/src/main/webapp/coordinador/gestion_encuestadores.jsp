@@ -25,13 +25,13 @@
                 <p class="mb-4">Administra tus encuestadores: desbanéalos o asígnales formularios.</p>
                 <c:if test="${not empty param.success}">
                     <div class="alert alert-success alert-dismissible fade show">
-                            ${param.success}
+                        <c:out value="${param.success}"/>
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                     </div>
                 </c:if>
                 <c:if test="${not empty param.warn}">
                     <div class="alert alert-warning alert-dismissible fade show">
-                            ${param.warn}
+                        <c:out value="${param.warn}"/>
                         <button type="button" class="close" data-dismiss="alert">&times;</button>
                     </div>
                 </c:if>
@@ -132,7 +132,7 @@
 <div class="modal fade" id="assignModal" tabindex="-1">
     <div class="modal-dialog modal-lg"><div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Asignar Formularios a ${assignName}</h5>
+            <h5 class="modal-title">Asignar Formularios a <c:out value="${assignName}"/></h5>
             <button type="button" class="close" data-dismiss="modal">×</button>
         </div>
         <div class="modal-body">
@@ -222,4 +222,5 @@
 
 
 </body>
+
 </html>
