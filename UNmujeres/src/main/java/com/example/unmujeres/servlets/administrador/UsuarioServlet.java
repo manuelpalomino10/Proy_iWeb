@@ -1,7 +1,7 @@
 package com.example.unmujeres.servlets.administrador;
 
 import com.example.unmujeres.beans.Usuario;
-import com.example.unmujeres.daos.administrador.UsuarioDao;
+import com.example.unmujeres.daos.UsuarioDAO;
 import com.example.unmujeres.dtos.UsuarioDto;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;

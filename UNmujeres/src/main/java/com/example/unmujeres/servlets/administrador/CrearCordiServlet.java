@@ -6,7 +6,8 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.sql.SQLException;
+import java.util.List;
 
 @WebServlet(name = "CrearCordiServlet", value = "/CrearCordiServlet")
 public class CrearCordiServlet extends HttpServlet {
@@ -14,8 +15,13 @@ public class CrearCordiServlet extends HttpServlet {
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
       ZonaDAO zonaDao = new ZonaDAO();
-      ArrayList<Zona> listaZonas = new ArrayList<>(zonaDao.listarZonas());
-      request.setAttribute("listaZonas", listaZonas);
+       List<Zona> listaZonas = null;
+       try {
+           listaZonas = zonaDao.listarZonas();
+       } catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+       request.setAttribute("listaZonas", listaZonas);
       request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request,response);
    }
 
@@ -35,8 +41,13 @@ public class CrearCordiServlet extends HttpServlet {
 
          // Recargar zonas también en caso de error
          ZonaDAO zonaDao = new ZonaDAO();
-         ArrayList<Zona> listaZonas = new ArrayList<>(zonaDao.listarZonas());
-         request.setAttribute("listaZonas", listaZonas);
+          List<Zona> listaZonas = null;
+          try {
+              listaZonas = zonaDao.listarZonas();
+          } catch (SQLException e) {
+              throw new RuntimeException(e);
+          }
+          request.setAttribute("listaZonas", listaZonas);
          request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request, response);
          return;
       }
@@ -55,8 +66,13 @@ public class CrearCordiServlet extends HttpServlet {
 
          // También recarga zonas para mostrar el form con error
          ZonaDAO zonaDao = new ZonaDAO();
-         ArrayList<Zona> listaZonas = new ArrayList<>(zonaDao.listarZonas());
-         request.setAttribute("listaZonas", listaZonas);
+          List<Zona> listaZonas = null;
+          try {
+              listaZonas = zonaDao.listarZonas();
+          } catch (SQLException ex) {
+              throw new RuntimeException(ex);
+          }
+          request.setAttribute("listaZonas", listaZonas);
 
          request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request, response);
       }
