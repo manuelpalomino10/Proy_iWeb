@@ -47,7 +47,7 @@
                   <td><%= formularioDto.getNombreCat() %></td>
                   <td><%= formularioDto.getFechaCreacion() %></td>
                   <td>
-                    <form action="${pageContext.request.contextPath}/GestionFormServlet" method="post">
+                    <form action="${pageContext.request.contextPath}/coordinador/GestionFormServlet" method="post">
                       <input type="hidden" name="id" value="<%= formularioDto.getId() %>">
                       <input type="hidden" name="estado" value="<%= formularioDto.isEstado() ? "true" : "false" %>">
                       <button type="submit" class="btn <%= formularioDto.isEstado() ? "btn-danger" : "btn-success" %> btn-sm">
@@ -56,7 +56,7 @@
                     </form>
                   </td>
                   <td>
-                    <form action="EliminarFormServlet" method="post" onsubmit="return confirm('¿Estás seguro de eliminar este formulario?');">
+                    <form action="${pageContext.request.contextPath}/coordinador/EliminarFormServlet" method="post" onsubmit="return confirm('¿Estás seguro de eliminar este formulario?');">
                       <input type="hidden" name="id" value="<%= formularioDto.getId() %>">
                       <button type="submit" class="btn btn-danger btn-sm">
                         <i class="fas fa-trash-alt"></i> Eliminar

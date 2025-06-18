@@ -24,7 +24,11 @@ public class AdminFilter implements Filter {
             res.sendRedirect(req.getContextPath() + "/access-denied.jsp");
             return;
         }
-
+                
+        res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setDateHeader("Expires", 0);
+                
         System.out.println("F_ADMIN: ACEPTADO");
         chain.doFilter(request, response);
     }

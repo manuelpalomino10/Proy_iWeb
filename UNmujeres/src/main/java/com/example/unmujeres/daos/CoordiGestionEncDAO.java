@@ -269,4 +269,25 @@ public class CoordiGestionEncDAO extends BaseDAO {
             }
         }
     }
+
+    /**
+     * Verifica que el encuestador pertenezca a la zona del coordinador.
+     *
+     * @param encId    id del encuestador
+     * @param coordiId id del coordinador
+     * @return {@code true} si ambos están en la misma zona y el usuario tiene rol de encuestador
+     * @throws SQLException en caso de error en la consulta
+     */
+    public boolean perteneceACoordinador(int encId, int coordiId) throws SQLException {
+        String sql = "SELECT 1 FROM usuario WHERE idusuario=? AND idroles=3 " +
+                "AND idzona=(SELECT idzona FROM usuario WHERE idusuario=?)";
+        try (Connection conn = this.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, encId);
+            ps.setInt(2, coordiId);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
 }

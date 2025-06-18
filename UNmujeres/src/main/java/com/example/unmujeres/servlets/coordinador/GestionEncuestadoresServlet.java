@@ -44,8 +44,12 @@ public class GestionEncuestadoresServlet extends HttpServlet {
 
             }
         } catch (NumberFormatException ignored) { }
-
         try {
+            if (openId != null && !dao.perteneceACoordinador(openId, coordiId)) {
+                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
+
             List<Usuario> lista = dao.listarPorZona(coordiId);
             req.setAttribute("listaEncuestadores", lista);
             if (openId != null) {
@@ -98,6 +102,11 @@ public class GestionEncuestadoresServlet extends HttpServlet {
         }
 
         try {
+            if (!dao.perteneceACoordinador(id, coordiId)) {
+                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
+
             switch(action) {
                 case "banear":
                     // false = baneado (adaptado al boolean de Usuario)
@@ -114,7 +123,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                             .map(Integer::parseInt)
                             .toList();
                     List<Integer> noDes = dao.asignarFormularios(id, lista);
-                    String url = req.getContextPath() + "/gestion_encuestadores";
+                    String url = req.getContextPath() + "/coordinador/gestion_encuestadores";
                     if (!noDes.isEmpty()) {
                         url += "?warn=No+se+desasignaron+formularios+porque+ya+tienen+respuestas";
                     } else {
@@ -125,12 +134,12 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                 case "asignar_form":
                     int idFormAdd = Integer.parseInt(req.getParameter("idformulario"));
                     dao.asignarFormulario(id, idFormAdd);
-                    resp.sendRedirect(req.getContextPath() + "/gestion_encuestadores?success=Formulario+asignado");
+                    resp.sendRedirect(req.getContextPath() + "/coordinador/gestion_encuestadores?success=Formulario+asignado");
                     return;
                 case "desasignar_form":
                     int idFormDel = Integer.parseInt(req.getParameter("idformulario"));
                     boolean ok = dao.desasignarFormulario(id, idFormDel);
-                    String rurl = req.getContextPath() + "/gestion_encuestadores";
+                    String rurl = req.getContextPath() + "/coordinador/gestion_encuestadores";
                     if (ok) {
                         rurl += "?success=Asignaciones+actualizadas";
                     } else {
@@ -142,7 +151,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
                     resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Acción inválida");
                     return;
             }
-            resp.sendRedirect(req.getContextPath() + "/gestion_encuestadores");
+            resp.sendRedirect(req.getContextPath() + "/coordinador/gestion_encuestadores");
         } catch (SQLException e) {
             e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,

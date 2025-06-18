@@ -50,7 +50,7 @@
                                 <th>Acciones</th>
                             </tr>
                             </thead>
-                            <tbody
+                            <tbody>
                             <c:forEach var="enc" items="${listaEncuestadores}">
                                 <tr>
                                     <td><c:out value="${enc.nombres} ${enc.apellidos}"/></td>
@@ -81,8 +81,8 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </button>
-                                        <a class="btn btn-sm btn-primary"
-                                           href="${pageContext.request.contextPath}/gestion_encuestadores?idusuario=${enc.idUsuario}">
+                                            <a class="btn btn-sm btn-primary"
+                                           href="${pageContext.request.contextPath}/coordinador/gestion_encuestadores?idusuario=${enc.idUsuario}">
                                             Asignar
                                         </a>
                                     </td>
@@ -141,7 +141,7 @@
                 <div class="col-md-6">
                     <h6>Formularios Disponibles</h6>
                     <c:forEach var="f" items="${dispFormularios}">
-                        <form class="d-flex justify-content-between align-items-center mb-2" method="post" action="${pageContext.request.contextPath}/gestion_encuestadores">
+                        <form class="d-flex justify-content-between align-items-center mb-2" method="post" action="${pageContext.request.contextPath}/coordinador/gestion_encuestadores">
                             <input type="hidden" name="action" value="asignar_form"/>
                             <input type="hidden" name="idusuario" value="${assignId}"/>
                             <input type="hidden" name="idformulario" value="${f.idFormulario}"/>
@@ -156,7 +156,7 @@
                 <div class="col-md-6">
                     <h6>Formularios del Encuestador</h6>
                     <c:forEach var="f" items="${asigFormularios}">
-                        <form class="d-flex justify-content-between align-items-center mb-2" method="post" action="${pageContext.request.contextPath}/gestion_encuestadores">
+                        <form class="d-flex justify-content-between align-items-center mb-2" method="post" action="${pageContext.request.contextPath}/coordinador/gestion_encuestadores">
                             <input type="hidden" name="action" value="desasignar_form"/>
                             <input type="hidden" name="idusuario" value="${assignId}"/>
                             <input type="hidden" name="idformulario" value="${f.idFormulario}"/>
@@ -181,8 +181,9 @@
                 </div>
             </div>
         </div>
+    </div>
 </div>
-
+</div>
 
 <!-- Script de inicialización -->
 <script>
@@ -215,12 +216,10 @@
 </script>
 
 <!-- Form para banear -->
-<form id="banForm" action="${pageContext.request.contextPath}/gestion_encuestadores" method="post" style="display:none">
+<form id="banForm" action="${pageContext.request.contextPath}/coordinador/gestion_encuestadores" method="post" style="display:none">
     <input type="hidden" name="action" value="banear"/>
     <input type="hidden" id="banIdInput"  name="idusuario" value=""/>
 </form>
-
-
 </body>
 
 </html>
