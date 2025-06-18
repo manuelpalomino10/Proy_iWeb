@@ -81,8 +81,8 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </button>
-                                        <a class="btn btn-sm btn-primary"
-                                           href="${pageContext.request.contextPath}/gestion_encuestadores?idusuario=${enc.idUsuario}">
+                                            <a class="btn btn-sm btn-primary"
+                                           href="${pageContext.request.contextPath}/coordinador/gestion_encuestadores?idusuario=${enc.idUsuario}">
                                             Asignar
                                         </a>
                                     </td>
