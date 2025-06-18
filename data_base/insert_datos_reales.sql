@@ -55,10 +55,10 @@ INSERT INTO formulario (idformulario,nombre,fecha_creacion,fecha_limite,estado,r
 
 INSERT INTO enc_has_formulario (idenc_has_formulario,enc_idusuario,idformulario,codigo,fecha_asignacion) VALUES
 -- encuestador 7 con 7 formularios asignados
-(1, 7, 1, '75318469', '2025-02-07'),
+(1, 7, 1, '75318777', '2025-02-07'),
 (2, 7, 2, '15864923', '2024-10-01'),
 (3, 7, 3, '45983125', '2025-03-15'),
-(4, 7, 4, '75318777', '2024-12-12'),
+(4, 7, 4, '76318747', '2024-12-12'),
 (5, 7, 5, '25697392', '2025-01-01'),
 (6, 7, 6, '18971686', '2025-03-01'),
 (7, 7, 7, '78461535', '2024-12-07'),
@@ -80,7 +80,17 @@ INSERT INTO enc_has_formulario (idenc_has_formulario,enc_idusuario,idformulario,
 -- encuestador 11 con 3 formulario asignado
 (20, 11, 1, '75318111', '2025-02-11'),
 (21, 11, 7, '95637815', '2025-03-15'),
-(22, 11, 8, '45664168', '2025-02-11');
+(22, 11, 8, '45664168', '2025-02-11'),
+
+-- cordi 3 con formulario asignado
+(23, 3, 1, null, '2025-02-07'),
+(24, 3, 2, null, '2024-10-01'),
+(25, 3, 3, null, '2025-03-15'),
+(26, 3, 4, null, '2024-12-12'),
+(27, 3, 5, null, '2025-01-01'),
+(28, 3, 6, null, '2025-03-01'),
+(29, 3, 7, null, '2024-12-07'),
+(30, 3, 8, null, '2025-01-01');
 
 
 INSERT INTO registro_respuestas (idregistro_respuestas, fecha_registro, estado, idenc_has_formulario) VALUES
