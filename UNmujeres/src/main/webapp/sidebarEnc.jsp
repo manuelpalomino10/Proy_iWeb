@@ -13,7 +13,7 @@
   <!-- Sidebar - Brand -->
   <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard">
     <div class="sidebar-brand-icon">
-      <img src="img/ONU.png" alt="Logo ONU Mujeres" style="max-width: 100%;">
+      <img src="${pageContext.request.contextPath}/img/ONU.png" alt="Logo ONU Mujeres" style="max-width: 100%;">
     </div>
 
   </a>
