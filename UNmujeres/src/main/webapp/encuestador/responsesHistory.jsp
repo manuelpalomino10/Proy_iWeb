@@ -45,6 +45,26 @@
           <h1 class="h3 mb-2 text-gray-800">Registros históricos</h1>
           <p class="mb-4">Las respuestas guardadas en borrador o completadas se muestran aquí.</p>
 
+          <hr/>
+
+          <% if (session.getAttribute("error") != null) { %>
+          <div>
+            <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
+            </div>
+          </div>
+          <% session.removeAttribute("error"); %>
+          <% } %>
+
+          <% if (session.getAttribute("success") != null) { %>
+          <div>
+            <div class="alert alert-success" role="alert"><%=session.getAttribute("success")%>
+            </div>
+          </div>
+          <% session.removeAttribute("success"); %>
+          <% } %>
+
+          </hr>
+
           <!-- Sección Borradores -->
           <div class="card shadow mb-4" id="borradoresSection">
             <div class="card-header py-3">

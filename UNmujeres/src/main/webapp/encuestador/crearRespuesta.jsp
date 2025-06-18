@@ -167,8 +167,8 @@
 
     <script>
         document.getElementById("completadoBtn").addEventListener("click", function(event) {
-            // Recoger todos los inputs cuya id empieza por "respuesta_"
-            var inputs = document.querySelectorAll("input[id^='respuesta_'], select[id^='respuesta_']");
+            // Recoger todos los inputs cuya id empieza por "pregunta_"
+            var inputs = document.querySelectorAll("input[id^='pregunta_'], select[id^='pregunta_']");
             var faltantes = [];
 
             inputs.forEach(function(input) {

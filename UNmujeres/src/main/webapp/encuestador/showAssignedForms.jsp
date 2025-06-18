@@ -36,6 +36,26 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+                    <hr/>
+
+                    <% if (session.getAttribute("error") != null) { %>
+                    <div>
+                        <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
+                        </div>
+                    </div>
+                    <% session.removeAttribute("error"); %>
+                    <% } %>
+
+                    <% if (session.getAttribute("success") != null) { %>
+                    <div>
+                        <div class="alert alert-success" role="alert"><%=session.getAttribute("success")%>
+                        </div>
+                    </div>
+                    <% session.removeAttribute("success"); %>
+                    <% } %>
+
+                    </hr>
+
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">Formularios Asignados</h1>
                     <p class="mb-4">Lista de formularios asignados a ti por tu Coordinador Interno.</p>

@@ -65,7 +65,7 @@ public class ReportesServlet extends HttpServlet {
         // Variables para almacenar las fechas. Inicialmente nulas.
         String fi=null,ff = null;
         if (dateRangeParam != null && dateRangeParam.equals(null) && !dateRangeParam.trim().isEmpty()) {
-            System.out.println("dateRangeParam: " + dateRangeParam + ", pero es no nulo por entrar a validar");
+
             try {
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");

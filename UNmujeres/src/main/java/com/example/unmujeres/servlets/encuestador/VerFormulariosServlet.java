@@ -17,7 +17,7 @@ import java.util.*;
 
 @WebServlet(
         name = "VerFormulariosServlet",
-        value = {"/shared/VerFormulariosServlet", "/encuestador/ServletA", "/coordinador/VerFormulariosServlet"}, // Múltiples rutas de acceso
+        value = {"/shared/VerFormulariosServlet", "/encuestador/ServletA", "/coordinador/VerFormulariosServlet", "/encuestador/VerFormulariosServlet"}, // Múltiples rutas de acceso
         initParams = {
                 @WebInitParam(name = "config", value = "default") // Parámetro de configuración
         }
@@ -36,6 +36,7 @@ public class VerFormulariosServlet extends HttpServlet {
     RegistroRespuestasDAO registroDAO = new RegistroRespuestasDAO();
     FormularioDAO formularioDAO = new FormularioDAO();
     RespuestaDAO respuestaDAO = new RespuestaDAO();
+    PreguntaDAO preguntaDAO = new PreguntaDAO();
     OpcionPreguntaDAO opcionDAO = new OpcionPreguntaDAO();
 
 
@@ -79,8 +80,10 @@ public class VerFormulariosServlet extends HttpServlet {
 
                     // 3. Obtener arreglo de asignaciones
                     ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idUser);
+                    List<Integer> IDsAsignaciones = new ArrayList<>();
                     //  para cada asignacion
                     for (EncHasFormulario asignacion : asignaciones) {
+                        IDsAsignaciones.add(asignacion.getIdEncHasFormulario());
                         //System.out.println("\n1. Asignacion extraída: " + asignacion.getIdEncHasFormulario());
                         // 4. Obtener formulario relacionado por el id, obtenido de la asignacion
                         Formulario formulario = formularioDAO.getById(asignacion.getFormulario().getIdFormulario());
@@ -108,6 +111,7 @@ public class VerFormulariosServlet extends HttpServlet {
                             datos.add(item);
                         }
                     }
+                    session.setAttribute("IDsAsignaciones", IDsAsignaciones);
 
                     // 9. Enviar a vista
                     request.setAttribute("datos", datos);
@@ -122,7 +126,6 @@ public class VerFormulariosServlet extends HttpServlet {
             case "guardar":
                 System.out.println("Se crea nueva respuesta");
                 int idFormulario = Integer.parseInt(request.getParameter("id_form"));
-                PreguntaDAO preguntaDAO = new PreguntaDAO();
 
                 // Convertir a estructura para la vista
                 ArrayList<Pregunta> preguntas = preguntaDAO.getPreguntasConOpcionesPorFormulario(idFormulario);
@@ -200,8 +203,36 @@ public class VerFormulariosServlet extends HttpServlet {
                 break;
 
             case "editar":
-                int idForm = Integer.parseInt(request.getParameter("id_form"));
-                int idReg = Integer.parseInt(request.getParameter("id"));
+
+                String idFormParam = request.getParameter("id_form");
+                String idRegParam = request.getParameter("id");
+
+                //validar parametros
+                int idForm;
+                int idReg;
+                if (idFormParam != null && idRegParam != null) {
+                    try {
+                        idForm = Integer.parseUnsignedInt(idFormParam);
+                        idReg = Integer.parseUnsignedInt(idRegParam);
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Parámetros de form o registro inválidos");
+                        session.setAttribute("error", "Parámetros de form o registro inválidos");
+                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
+                        return;
+
+//                    } catch (IllegalArgumentException e) {
+//                    session.setAttribute("error", "Validar que pertenezca al usuario");
+//                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
+//                    return;
+                    }
+                } else {
+                    session.setAttribute("error", "Los parámetros de formulario o registro no pueden ser nulos");
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
+                    return;
+                }
+
+
                 System.out.println("Se consulto el editor del registro id: " + idReg+" para form "+idForm);
 
                 RegistroRespuestas registro = registroDAO.getById(idReg);
@@ -225,13 +256,35 @@ public class VerFormulariosServlet extends HttpServlet {
                 break;
 
             case "descartar":
-                int IdReg = Integer.parseInt(request.getParameter("id"));
+                String idRegParam1 = request.getParameter("id");
+
+                //validar parametro
+                int IdReg1;
+                if (idRegParam1 != null) {
+                    try {
+                        IdReg1 = Integer.parseUnsignedInt(idRegParam1);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Parámetro de registro inválidos");
+                        session.setAttribute("error", "Parámetros de form o registro inválidos");
+                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
+                        return;
+
+//                    } catch (IllegalArgumentException e) {
+//                        session.setAttribute("error", "Validar que pertenezca al usuario");
+//                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
+//                        return;
+                    }
+                } else {
+                    session.setAttribute("error", "El parámetro de registro no puede ser nulo");
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
+                    return;
+                }
 
                 try {
 
-                    if(registroDAO.getById(IdReg) != null){
-                        System.out.println("Se eliminara el registro id: " + IdReg);
-                        registroDAO.delete(IdReg);
+                    if(registroDAO.getById(IdReg1) != null){
+                        System.out.println("Se eliminara el registro id: " + IdReg1);
+                        registroDAO.delete(IdReg1);
                     }
                     response.sendRedirect(request.getContextPath()+"/encuestador/VerFormulariosServlet?action=historial");
 
@@ -249,18 +302,13 @@ public class VerFormulariosServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
-            return;
-        }
+
         Usuario user = (Usuario) session.getAttribute("usuario");
-        if (user == null || user.getIdUsuario()==0 || user.getIdroles()==0) {
-            session.setAttribute("error", "Sesión inválida o usuario no autenticado.");
-            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
-            return;
-        }
         int idUser = user.getIdUsuario();
         int userRole = user.getIdroles();
+
+        List<Integer> IDsAsignaciones = (List<Integer>) session.getAttribute("IDsAsignaciones");
+        System.out.println("IDsAsignaciones: "+IDsAsignaciones);
 
         String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
         System.out.println("accion de dopost es: " + action);
@@ -278,10 +326,36 @@ public class VerFormulariosServlet extends HttpServlet {
                     nuevoEstado1 = "C";
                 } else {
                     // Valor por defecto o generar error
-                    nuevoEstado1 = "B";
+                    session.setAttribute("error", "No es un acto válido");
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
+                    return;
                 }
 
-                int idReg = Integer.parseUnsignedInt(request.getParameter("idregistro_respuestas"));
+                String idRegParam = request.getParameter("id");
+
+                //validar parametro
+                int idReg;
+                if (idRegParam != null) {
+                    try {
+                        idReg = Integer.parseUnsignedInt(idRegParam);
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Parámetro de registro inválidos");
+                        session.setAttribute("error", "Parámetros de form o registro inválidos");
+                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
+                        return;
+
+//                    } catch (IllegalArgumentException e) {
+//                        session.setAttribute("error", "Validar que pertenezca al usuario");
+//                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
+//                        return;
+                    }
+                } else {
+                    session.setAttribute("error", "El parámetro de registro no puede ser nulo");
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
+                    return;
+                }
+
                 registroDAO.updateState(idReg,nuevoEstado1);
                 System.out.println("Se ha actualizado el registro con id: " + idReg + "al estado: " + nuevoEstado1 + " en" + nuevoEstado1.getClass().getSimpleName());
 
@@ -314,8 +388,9 @@ public class VerFormulariosServlet extends HttpServlet {
                 break;
 
             case "guardar":
-                System.out.println("se hace en dopost: " +action);
+
                 String acto = request.getParameter("acto");
+                System.out.println("se hace acto en dopost: " +acto);
 
                 String nuevoEstado = "B";
                 if (Objects.equals(acto, "borrador")) {
@@ -323,17 +398,57 @@ public class VerFormulariosServlet extends HttpServlet {
                 } else if (Objects.equals(acto, "completado")) {
                     nuevoEstado = "C";
                 } else {
-                    // Valor por defecto o generar error
-                    nuevoEstado = "B";
+                    session.setAttribute("error", "No es un acto válido");
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
+                    return;
                 }
-                System.out.println("se hace acto para: " +nuevoEstado);
+                System.out.println("se hace para: " +nuevoEstado);
+
+                //String idFormParam = request.getParameter("id_form");
+                String idEncHasFormularioParam = request.getParameter("idasignacion");
+
+                //validar parametros
+                //int idForm;
+                int idEncHasFormulario;
+                if (idEncHasFormularioParam != null) {
+                    try {
+                        idEncHasFormulario = Integer.parseUnsignedInt(idEncHasFormularioParam);
+
+                        if (!IDsAsignaciones.contains(idEncHasFormulario)) {
+                            System.out.println("parametro de idAsig no pertenece a usuario");
+                            throw new IllegalArgumentException("No puedes generar respuestas para formularios no asignados");
+                        } else {
+                            int idForm = ehfDAO.getById(idEncHasFormulario).getFormulario().getIdFormulario();
+                            System.out.println("id form es " + idForm);
+
+                            ArrayList<Pregunta> preguntas = preguntaDAO.getPreguntasConOpcionesPorFormulario(idForm);
+                            ArrayList<OpcionPregunta> opciones = opcionDAO.getByForm(idForm);
+                        }
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Parámetros de form o asignacion inválidos");
+                        session.setAttribute("error", "Parámetro de asignación inválido");
+                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
+                        return;
+
+                    } catch (IllegalArgumentException e) {
+                        session.setAttribute("error", e.getMessage());
+                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
+                        return;
+                    }
+                } else {
+                    session.setAttribute("error", "El parámetro de asignación no puede ser nulo");
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
+                    return;
+                }
+
+
                 try {
-                    int idEncHasFormulario = Integer.parseInt(request.getParameter("idasignacion"));
                     System.out.println("el id de asignacion es: " +idEncHasFormulario);
                     // 1. Crear registro principal
                     RegistroRespuestas nuevoRegistro = new RegistroRespuestas();
                     nuevoRegistro.setFechaRegistro(new Date(System.currentTimeMillis()));
-                    nuevoRegistro.setEstado(nuevoEstado); // Borrador
+                    nuevoRegistro.setEstado(nuevoEstado);
                     nuevoRegistro.setEncHasFormulario(ehfDAO.getById(idEncHasFormulario));
 
                     int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);
@@ -386,15 +501,19 @@ public class VerFormulariosServlet extends HttpServlet {
 
                     } else if (userRole==2) {
                         response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
-                    } else {
-                        response.sendRedirect(request.getContextPath() + "/administrador/VerFormulariosServlet");
                     }
 
 
                 } catch (Exception e) {
                     e.printStackTrace();
                     request.setAttribute("error", "Error al guardar las respuestas");
-                    request.getRequestDispatcher("/error.jsp").forward(request, response);
+                    session.setAttribute("error", "Error al guardar las respuestas");
+                    if (userRole==3) {
+                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
+
+                    } else if (userRole==2) {
+                        response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
+                    }
                 }
             break;
 
