@@ -21,7 +21,7 @@ public class GestionFormServlet extends HttpServlet {
 
         //mandar lista a la vista -> listaUsuarios
         request.setAttribute("lista", list);
-        RequestDispatcher rd = request.getRequestDispatcher("/coordinador/GestionFormularios.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("/coordinador/gestionFormularios.jsp");
         rd.forward(request, response);
     }
 
