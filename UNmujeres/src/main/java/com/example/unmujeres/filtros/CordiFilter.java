@@ -21,7 +21,7 @@ public class CordiFilter extends SessionFilter {
         // Validación de rol
         if (user.getIdroles() != 2) {
             System.out.println("F_CORDI: DENEGADO");
-            res.sendRedirect(req.getContextPath() + "/access-denied");
+            res.sendRedirect(req.getContextPath() + "/access-denied.jsp");
             return;
         }
 

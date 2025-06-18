@@ -21,7 +21,7 @@ public class EncFilter extends SessionFilter {
         // Validación de rol
         if (user.getIdroles() != 3) {
             System.out.println("F_ENC: DENEGADO");
-            res.sendRedirect(req.getContextPath() + "/access-denied");
+            res.sendRedirect(req.getContextPath() + "/access-denied.jsp");
             return;
         }
 

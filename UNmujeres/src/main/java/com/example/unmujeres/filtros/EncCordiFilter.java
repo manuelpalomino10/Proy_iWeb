@@ -20,7 +20,7 @@ public class EncCordiFilter implements Filter {
         // Roles 2 (Coordinador) o 3 (Encuestador)
         if (rol != 2 && rol != 3) {
             System.out.println("F_ENC.o.CORD: DENEGADO");
-            res.sendRedirect(req.getContextPath() + "/access-denied");
+            res.sendRedirect(req.getContextPath() + "/access-denied.jsp");
             return;
         }
         System.out.println("F_ENC.o.CORD: ACEPTADO");

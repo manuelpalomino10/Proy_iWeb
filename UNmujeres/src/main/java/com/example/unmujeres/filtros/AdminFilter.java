@@ -21,7 +21,7 @@ public class AdminFilter implements Filter {
         // Validación de rol
         if (user.getIdroles() != 1) {
             System.out.println("F_ADMIN: DENEGADO");
-            res.sendRedirect(req.getContextPath() + "/access-denied");
+            res.sendRedirect(req.getContextPath() + "/access-denied.jsp");
             return;
         }
 
