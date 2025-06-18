@@ -50,10 +50,11 @@
 
 
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="login">
+                <a class="dropdown-item" href="${pageContext.request.contextPath}/logout">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Cerrar Sesión
                 </a>
+
             </div>
         </li>
 
