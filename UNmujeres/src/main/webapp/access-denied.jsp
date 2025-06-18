@@ -60,7 +60,7 @@
     <div class="card">
         <h1>🔒 Acceso Denegado</h1>
         <p>No tienes permisos para acceder a esta sección del sistema.</p>
-        <a href="login.jsp" class="btn">Volver al Login</a>
+        <a href="login" class="btn">Volver al Login</a>
     </div>
 </div>
 </body>
