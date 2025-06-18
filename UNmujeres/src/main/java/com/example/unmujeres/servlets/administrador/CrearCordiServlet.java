@@ -1,7 +1,7 @@
 package com.example.unmujeres.servlets.administrador;
 import com.example.unmujeres.beans.Zona;
 import com.example.unmujeres.daos.RegistroCordiDao;
-import com.example.unmujeres.daos.administrador.ZonaDao;
+import com.example.unmujeres.daos.ZonaDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -13,8 +13,8 @@ public class CrearCordiServlet extends HttpServlet {
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-      ZonaDao zonaDao = new ZonaDao();
-      ArrayList<Zona> listaZonas = zonaDao.obtenerZonas(); // Debes implementar esto
+      ZonaDAO zonaDao = new ZonaDAO();
+      ArrayList<Zona> listaZonas = new ArrayList<>(zonaDao.listarZonas());
       request.setAttribute("listaZonas", listaZonas);
       request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request,response);
    }
@@ -31,11 +31,11 @@ public class CrearCordiServlet extends HttpServlet {
       String idZonaStr = request.getParameter("idZona");
 
       if (dniStr == null || dniStr.isEmpty() || correo == null || correo.isEmpty()) {
-         request.setAttribute("error", "El campo DNI es obligatorio");
+         request.setAttribute("error", "Los campos DNI y correo son obligatorios");
 
          // Recargar zonas también en caso de error
-         ZonaDao zonaDao = new ZonaDao();
-         ArrayList<Zona> listaZonas = zonaDao.obtenerZonas();
+         ZonaDAO zonaDao = new ZonaDAO();
+         ArrayList<Zona> listaZonas = new ArrayList<>(zonaDao.listarZonas());
          request.setAttribute("listaZonas", listaZonas);
          request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request, response);
          return;
@@ -47,15 +47,15 @@ public class CrearCordiServlet extends HttpServlet {
          RegistroCordiDao registroCordiDao = new RegistroCordiDao();
          registroCordiDao.nuevoCordi(nombres, apellidos, dni, correo, idZona);
 
-         // Redirige al doGet() correctamente
-         response.sendRedirect("CrearCordiServlet");
+         // Redirige al doGet() correctamente usando ruta completa
+         response.sendRedirect(request.getContextPath() + "/CrearCordiServlet");
 
       } catch (NumberFormatException e) {
          request.setAttribute("error", "DNI debe ser un número válido");
 
          // También recarga zonas para mostrar el form con error
-         ZonaDao zonaDao = new ZonaDao();
-         ArrayList<Zona> listaZonas = zonaDao.obtenerZonas();
+         ZonaDAO zonaDao = new ZonaDAO();
+         ArrayList<Zona> listaZonas = new ArrayList<>(zonaDao.listarZonas());
          request.setAttribute("listaZonas", listaZonas);
 
          request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request, response);
