@@ -10,6 +10,8 @@
 <%@ page import="com.example.unmujeres.beans.Seccion" %>
 <%@ page import="com.example.unmujeres.beans.OpcionPregunta" %>
 <%@ page import="com.example.unmujeres.beans.Usuario" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.List" %>
 <%
     // Se obtiene la lista de preguntas y las opciones desde el request.
     ArrayList<Pregunta> preguntas = (ArrayList<Pregunta>) request.getAttribute("preguntas");

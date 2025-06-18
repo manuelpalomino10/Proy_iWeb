@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.List" %>
 <%
     ArrayList<Map<String, Object>> datos = (ArrayList<Map<String, Object>>) request.getAttribute("datos");
 %>
@@ -37,6 +38,41 @@
                 <div class="container-fluid">
 
                     <hr/>
+
+
+                    <%
+                        // Se asume que "validationErrors" es un Map<Integer, String> o puede ser una lista de String.
+                        Object errorObj = session.getAttribute("validationErrors");
+                        if (errorObj != null) {
+                    %>
+                    <div class="alert alert-danger">
+                        <ul>
+                            <%
+                                if (errorObj instanceof java.util.Map) {
+                                    Map<Integer, String> errores = (Map<Integer, String>) errorObj;
+                                    for (Map.Entry<Integer, String> entry : errores.entrySet()) {
+                            %>
+                            <li><strong>Pregunta <%= entry.getKey() %>:</strong> <%= entry.getValue() %></li>
+                            <%
+                                }
+                            } else if (errorObj instanceof java.util.List) {
+                                List<String> errores = (List<String>) errorObj;
+                                for (String err : errores) {
+                            %>
+                            <li><%= err %></li>
+                            <%
+                                    }
+                                }
+                                // Remover los errores de la sesión, de manera que se muestren una sola vez.
+                                session.removeAttribute("validationErrors");
+                            %>
+                        </ul>
+                    </div>
+                    <%
+                        }
+                    %>
+
+
 
                     <% if (session.getAttribute("error") != null) { %>
                     <div>

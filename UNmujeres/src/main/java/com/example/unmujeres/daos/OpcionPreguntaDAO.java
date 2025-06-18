@@ -95,6 +95,29 @@ public class OpcionPreguntaDAO extends BaseDAO{
         return opciones;
     }
 
+    public ArrayList<String> getByPreguntaToString (int idPregunta) {
+        ArrayList<OpcionPregunta> opciones = new ArrayList<>();
+        ArrayList<String> opcionesStr = new ArrayList<>();
 
+        String sql = " SELECT opcion FROM opcion_pregunta " +
+                "WHERE idpregunta = ? ";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);) {
+            ps.setInt(1, idPregunta);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String opc = rs.getString("opcion");
+
+                    opcionesStr.add(opc);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return opcionesStr;
+    }
 
 }
