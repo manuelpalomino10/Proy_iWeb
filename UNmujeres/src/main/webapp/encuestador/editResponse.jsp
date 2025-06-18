@@ -49,7 +49,7 @@
                             // Variable para controlar el cambio de sección.
                             int currentSeccionId = -1;
                     %>
-                        <form id="respuestaForm" method="POST" action="<%=request.getContextPath()%>/VerFormulariosServlet?action=editar">
+                        <form id="respuestaForm" method="POST" action="<%=request.getContextPath()%>/encuestador/VerFormulariosServlet?action=editar">
                         <!-- Campo hidden para el id del registro de respuestas -->
                         <input type="hidden" name="idregistro_respuestas" value="<%= registro.getIdRegistroRespuestas() %>" />
                     <%

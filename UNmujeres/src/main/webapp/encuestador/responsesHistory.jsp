@@ -81,8 +81,8 @@
                               .format((java.util.Date) item.get("fecha_limite")) %>
                     </td>
                     <td>
-                      <a class="btn btn-sm btn-info" href="<%=request.getContextPath()%>/ServletA?action=editar&id=<%=item.get("id_registro")%>&id_form=<%= item.get("id_formulario") %>">Editar</a>
-                      <a class="btn btn-sm btn-warning" href="<%=request.getContextPath()%>/ServletA?action=descartar&id=<%=item.get("id_registro")%>">Descartar</a>
+                      <a class="btn btn-sm btn-info" href="<%=request.getContextPath()%>/encuestador/ServletA?action=editar&id=<%=item.get("id_registro")%>&id_form=<%= item.get("id_formulario") %>">Editar</a>
+                      <a class="btn btn-sm btn-warning" href="<%=request.getContextPath()%>/encuestador/ServletA?action=descartar&id=<%=item.get("id_registro")%>">Descartar</a>
                     </td>
                   </tr>
                   <%
