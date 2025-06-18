@@ -1,27 +1,24 @@
 package com.example.unmujeres.servlets.administrador;
 import com.example.unmujeres.beans.Zona;
 import com.example.unmujeres.daos.RegistroCordiDao;
-import com.example.unmujeres.daos.ZonaDAO;
+import com.example.unmujeres.daos.administrador.ZonaDao;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.ArrayList;
+
 
 @WebServlet(name = "CrearCordiServlet", value = "/CrearCordiServlet")
 public class CrearCordiServlet extends HttpServlet {
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-      ZonaDAO zonaDao = new ZonaDAO();
-       List<Zona> listaZonas = null;
-       try {
-           listaZonas = zonaDao.listarZonas();
-       } catch (SQLException e) {
-           throw new RuntimeException(e);
-       }
+       ZonaDao zonaDao = new ZonaDao();
+       ArrayList<Zona> listaZonas = zonaDao.obtenerZonas(); // Debes implementar estoAdd commentMore actions
        request.setAttribute("listaZonas", listaZonas);
+
       request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request,response);
    }
 
@@ -39,14 +36,9 @@ public class CrearCordiServlet extends HttpServlet {
       if (dniStr == null || dniStr.isEmpty() || correo == null || correo.isEmpty()) {
          request.setAttribute("error", "Los campos DNI y correo son obligatorios");
 
-         // Recargar zonas también en caso de error
-         ZonaDAO zonaDao = new ZonaDAO();
-          List<Zona> listaZonas = null;
-          try {
-              listaZonas = zonaDao.listarZonas();
-          } catch (SQLException e) {
-              throw new RuntimeException(e);
-          }
+          // Recargar zonas también en caso de error
+          ZonaDao zonaDao = new ZonaDao();
+          ArrayList<Zona> listaZonas = zonaDao.obtenerZonas();
           request.setAttribute("listaZonas", listaZonas);
          request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request, response);
          return;
@@ -64,14 +56,9 @@ public class CrearCordiServlet extends HttpServlet {
       } catch (NumberFormatException e) {
          request.setAttribute("error", "DNI debe ser un número válido");
 
-         // También recarga zonas para mostrar el form con error
-         ZonaDAO zonaDao = new ZonaDAO();
-          List<Zona> listaZonas = null;
-          try {
-              listaZonas = zonaDao.listarZonas();
-          } catch (SQLException ex) {
-              throw new RuntimeException(ex);
-          }
+          // También recarga zonas para mostrar el form con errorAdd commentMore actions
+          ZonaDao zonaDao = new ZonaDao();
+          ArrayList<Zona> listaZonas = zonaDao.obtenerZonas();
           request.setAttribute("listaZonas", listaZonas);
 
          request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request, response);

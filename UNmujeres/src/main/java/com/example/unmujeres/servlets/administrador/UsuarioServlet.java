@@ -1,7 +1,7 @@
 package com.example.unmujeres.servlets.administrador;
 
 import com.example.unmujeres.beans.Usuario;
-import com.example.unmujeres.daos.UsuarioDAO;
+import com.example.unmujeres.daos.administrador.UsuarioDao;
 import com.example.unmujeres.dtos.UsuarioDto;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -20,8 +20,8 @@ public class UsuarioServlet extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
 
-        UsuarioDAO usuarioDAO = new UsuarioDAO();
-        ArrayList<UsuarioDto> list = usuarioDAO.listar();
+        UsuarioDao UsuarioDao = new UsuarioDao();
+        ArrayList<UsuarioDto> list = UsuarioDao.listar();
 
        //mandar lista a la vista -> listaUsuarios
         request.setAttribute("lista", list);
