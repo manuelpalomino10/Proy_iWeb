@@ -143,25 +143,38 @@ public class RegistroRespuestasDAO extends BaseDAO {
     }
 
 
-    public ArrayList<Integer> countRegByForm() {
+    public ArrayList<Integer> countRegByForm(int idUser) {
         String sql = "SELECT " +
-                "    f.idformulario, " +
-                "    COUNT(DISTINCT reg.idregistro_respuestas) " +
-                "FROM registro_respuestas reg " +
-                "INNER JOIN enc_has_formulario ehf " +
-                "    ON reg.idenc_has_formulario = ehf.idenc_has_formulario " +
-                "INNER JOIN formulario f " +
-                "    ON ehf.idformulario = f.idformulario " +
-                "WHERE reg.estado = 'C' " +
-                "GROUP BY f.idformulario";
+                "   f.idformulario, " +
+                "   f.nombre AS nombre_formulario, " +
+                "   COUNT(rr.idregistro_respuestas) AS total_registros_completados " +
+                "FROM enc_has_formulario ehf_principal " +
+                "JOIN usuario u_principal " +
+                "   ON ehf_principal.enc_idusuario = u_principal.idusuario " +
+                "JOIN formulario f " +
+                "   ON ehf_principal.idformulario = f.idformulario " +
+                "JOIN usuario u_zona " +
+                "   ON u_principal.idzona = u_zona.idzona " +
+                "JOIN enc_has_formulario ehf_zona " +
+                "   ON u_zona.idusuario = ehf_zona.enc_idusuario " +
+                "   AND ehf_principal.idformulario = ehf_zona.idformulario " +
+                "LEFT JOIN registro_respuestas rr " +
+                "   ON ehf_zona.idenc_has_formulario = rr.idenc_has_formulario " +
+                "   AND rr.estado = 'C' " +
+                "WHERE " +
+                "   u_principal.idusuario = ? " +  // Parámetro para el idusuario
+                "GROUP BY " +
+                "   f.idformulario, f.nombre";
         ArrayList<Integer> totales = new ArrayList<>();
-        try (Connection con = this.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery()) {
 
+        try (Connection con = this.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idUser);
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                totales.add(rs.getInt(2));
+                totales.add(rs.getInt(3));
             }
 
         } catch (SQLException e) {

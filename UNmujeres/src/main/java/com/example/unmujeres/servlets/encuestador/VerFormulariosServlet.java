@@ -47,18 +47,24 @@ public class VerFormulariosServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
-            return;
-        }
+//        if (session == null) {
+//            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
+//            return;
+//        }
         Usuario user = (Usuario) session.getAttribute("usuario");
-        if (user == null || user.getIdUsuario()==0 || user.getIdroles()==0) {
-            session.setAttribute("error", "Sesión inválida o usuario no autenticado.");
-            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
-            return;
-        }
+//        if (user == null || user.getIdUsuario()==0 || user.getIdroles()==0) {
+//            session.setAttribute("error", "Sesión inválida o usuario no autenticado.");
+//            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
+//            return;
+//        }
         int idUser = user.getIdUsuario();
         int userRole = user.getIdroles();
+//        if (userRole != 3 || userRole != 2) {
+//            System.out.println("rol incorrecto: "+userRole);
+//            request.setAttribute("error", "Acceso no permitido.");
+//            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
+//            return;
+//        }
 
         String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
         RequestDispatcher view;
@@ -241,6 +247,21 @@ public class VerFormulariosServlet extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
+            return;
+        }
+        Usuario user = (Usuario) session.getAttribute("usuario");
+        if (user == null || user.getIdUsuario()==0 || user.getIdroles()==0) {
+            session.setAttribute("error", "Sesión inválida o usuario no autenticado.");
+            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
+            return;
+        }
+        int idUser = user.getIdUsuario();
+        int userRole = user.getIdroles();
+
         String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
         System.out.println("accion de dopost es: " + action);
         RequestDispatcher view;
@@ -288,7 +309,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     }
                 }
 
-                response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet?action=historial");
+                    response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet?action=historial");
 
                 break;
 
@@ -360,9 +381,15 @@ public class VerFormulariosServlet extends HttpServlet {
                         respuestaDAO.guardarRespuestasOpciones(idRegistro, respuestasOpciones);
                     }
 
-                    // Redirigir a edición para permitir guardar como borrador o completar
-                    response.sendRedirect(request.getContextPath() +
-                            "/VerFormulariosServlet");
+                    if (userRole==3) {
+                        response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet");
+
+                    } else if (userRole==2) {
+                        response.sendRedirect(request.getContextPath() + "/SubirRegistrosServlet");
+                    } else {
+                        response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet");
+                    }
+
 
                 } catch (Exception e) {
                     e.printStackTrace();

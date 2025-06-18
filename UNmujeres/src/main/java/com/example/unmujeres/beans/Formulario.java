@@ -67,7 +67,7 @@ public class Formulario {
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
-    public int getRespuestasCount() {Add commentMore actions
+    public int getRespuestasCount() {
         return respuestasCount;
     }
 
