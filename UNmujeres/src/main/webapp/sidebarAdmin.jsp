@@ -24,7 +24,7 @@
 
     <!-- Nav Item - Dashboard -->
     <li class="nav-item ${pageAct eq 'dashboard' ? 'active' : ''}">
-        <a class="nav-link" href="${pageContext.request.contextPath}/DashboardCuidado">
+        <a class="nav-link" href="${pageContext.request.contextPath}/administrador/DashboardCuidado">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Estadisticas Repuestas</span></a>
     </li>
@@ -47,17 +47,17 @@
         </a>
         <div id="collapseUsuarios" class="collapse" aria-labelledby="headingUsuarios" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded text-dark">
-                <a class="collapse-item" href="${pageContext.request.contextPath}/CrearCordiServlet">
+                <a class="collapse-item" href="${pageContext.request.contextPath}/administrador/CrearCordiServlet">
                     Crear Coordinador
                 </a>
-                <a class="collapse-item" href="${pageContext.request.contextPath}/UsuarioServlet">
+                <a class="collapse-item" href="${pageContext.request.contextPath}/administrador/UsuarioServlet">
                     Lista de Usuarios
                 </a>
             </div>
         </div>
     </li>
     <li class="nav-item ${pageAct eq 'historial' ? 'active' : ''}">
-        <a class="nav-link" href="${pageContext.request.contextPath}/ReportesServlet">
+        <a class="nav-link" href="${pageContext.request.contextPath}/administrador/ReportesServlet">
             <i class="fas fa-fw fa-table"></i>
             <span>Generar Reportes</span>
         </a>

@@ -17,7 +17,7 @@ import java.util.*;
 
 @WebServlet(
         name = "VerFormulariosServlet",
-        value = {"/VerFormulariosServlet", "/ServletA"}, // Múltiples rutas de acceso
+        value = {"/shared/VerFormulariosServlet", "/encuestador/ServletA", "/coordinador/VerFormulariosServlet"}, // Múltiples rutas de acceso
         initParams = {
                 @WebInitParam(name = "config", value = "default") // Parámetro de configuración
         }

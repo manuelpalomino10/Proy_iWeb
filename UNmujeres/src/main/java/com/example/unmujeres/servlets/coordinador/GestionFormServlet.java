@@ -9,7 +9,7 @@ import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@WebServlet(name = "GestionFormServlet", value = "/GestionFormServlet")
+@WebServlet(name = "GestionFormServlet", value = "/coordinador/GestionFormServlet")
 public class GestionFormServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -21,7 +21,7 @@ public class GestionFormServlet extends HttpServlet {
 
         //mandar lista a la vista -> listaUsuarios
         request.setAttribute("lista", list);
-        RequestDispatcher rd = request.getRequestDispatcher("coordinador/gestionFormularios.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("/coordinador/GestionFormularios.jsp");
         rd.forward(request, response);
     }
 
@@ -34,6 +34,6 @@ public class GestionFormServlet extends HttpServlet {
 
         gestionFormDao.cambiarEstado(id, nuevoEstado);
 
-        response.sendRedirect("GestionFormServlet");
+        response.sendRedirect("/coordinador/GestionFormServlet");
     }
 }

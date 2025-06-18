@@ -40,14 +40,14 @@
 
   <!-- Nav Item - Ver Forms Asignados -->
   <li class="nav-item ${pageAct eq 'asignados' ? 'active' : ''}">
-    <a class="nav-link" href="${pageContext.request.contextPath}/ServletA?action=lista">
+    <a class="nav-link" href="${pageContext.request.contextPath}/encuestador/ServletA?action=lista">
       <i class="fas fa-fw fa-table"></i>
       <span>Formularios Asignados</span></a>
   </li>
 
   <!-- Historial Collapse Menu -->
   <li class="nav-item ${pageAct eq 'historial' ? 'active' : ''}">
-    <a class="nav-link" href="${pageContext.request.contextPath}/ServletA?action=historial#borradoresSection">
+    <a class="nav-link" href="${pageContext.request.contextPath}/encuestador/ServletA?action=historial#borradoresSection">
       <i class="fas fa-fw fa-table"></i>
       <span>Historial de Formularios</span></a>
   </li>

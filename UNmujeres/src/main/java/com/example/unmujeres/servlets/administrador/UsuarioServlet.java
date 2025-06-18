@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-@WebServlet(name = "UsuarioServlet", value = "/UsuarioServlet")
+@WebServlet(name = "UsuarioServlet", value = "/administrador/UsuarioServlet")
 public class UsuarioServlet extends HttpServlet {
 
     @Override
@@ -25,7 +25,7 @@ public class UsuarioServlet extends HttpServlet {
 
        //mandar lista a la vista -> listaUsuarios
         request.setAttribute("lista", list);
-        RequestDispatcher rd = request.getRequestDispatcher("administrador/listaUsuarios.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("/administrador/listaUsuarios.jsp");
         rd.forward(request, response);
 
     }
@@ -39,6 +39,6 @@ public class UsuarioServlet extends HttpServlet {
 
         usuarioDAO.cambiarEstado(id, nuevoEstado);
 
-        response.sendRedirect("UsuarioServlet");
+        response.sendRedirect(request.getContextPath()+"/administrador/UsuarioServlet");
     }
 }

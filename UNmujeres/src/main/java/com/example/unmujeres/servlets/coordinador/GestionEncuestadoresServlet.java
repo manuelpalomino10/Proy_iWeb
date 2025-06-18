@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-@WebServlet("/gestion_encuestadores")
+@WebServlet("/coordinador/gestion_encuestadores")
 public class GestionEncuestadoresServlet extends HttpServlet {
 
     private CoordiGestionEncDAO dao;

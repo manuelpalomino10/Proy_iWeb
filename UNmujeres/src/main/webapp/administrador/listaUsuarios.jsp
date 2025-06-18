@@ -54,7 +54,7 @@
                                     <td><%= usuarioDto.getNombreRol() %></td>
                                     <td><%= usuarioDto.getNombreZona() %></td>
                                     <td>
-                                        <form action="${pageContext.request.contextPath}/UsuarioServlet" method="post">
+                                        <form action="<%=request.getContextPath()%>/administrador/UsuarioServlet" method="post">
                                         <input type="hidden" name="id" value="<%= usuarioDto.getId() %>">
                                             <input type="hidden" name="estado" value="<%= usuarioDto.isEstado() ? "true" : "false" %>">
                                             <button type="submit" class="btn <%= usuarioDto.isEstado() ? "btn-danger" : "btn-success" %>">

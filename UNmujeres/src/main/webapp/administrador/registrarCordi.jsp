@@ -30,7 +30,7 @@
 
                         <div class="search-container">
                             <div class="filter-group">
-                                <form method="post" action="<%=request.getContextPath()%>/CrearCordiServlet">
+                                <form method="post" action="<%=request.getContextPath()%>/administrador/CrearCordiServlet">
                                     <div class="mb-3">
                                         <labe>Nombres</labe>
                                         <input type="text" class="form-control" name="nombres">

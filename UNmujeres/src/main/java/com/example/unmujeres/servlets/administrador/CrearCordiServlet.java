@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
-@WebServlet(name = "CrearCordiServlet", value = "/CrearCordiServlet")
+@WebServlet(name = "CrearCordiServlet", value = "/administrador/CrearCordiServlet")
 public class CrearCordiServlet extends HttpServlet {
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -19,7 +19,7 @@ public class CrearCordiServlet extends HttpServlet {
        ArrayList<Zona> listaZonas = zonaDao.obtenerZonas(); // Debes implementar estoAdd commentMore actions
        request.setAttribute("listaZonas", listaZonas);
 
-      request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request,response);
+      request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request,response);
    }
 
    @Override
@@ -40,7 +40,7 @@ public class CrearCordiServlet extends HttpServlet {
           ZonaDao zonaDao = new ZonaDao();
           ArrayList<Zona> listaZonas = zonaDao.obtenerZonas();
           request.setAttribute("listaZonas", listaZonas);
-         request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request, response);
+         request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);
          return;
       }
 
@@ -61,7 +61,7 @@ public class CrearCordiServlet extends HttpServlet {
           ArrayList<Zona> listaZonas = zonaDao.obtenerZonas();
           request.setAttribute("listaZonas", listaZonas);
 
-         request.getRequestDispatcher("administrador/registrarCordi.jsp").forward(request, response);
+         request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);
       }
    }
 }

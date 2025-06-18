@@ -16,12 +16,10 @@ public class SessionFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
         HttpSession session = req.getSession(false);
 
-
-        System.out.println("FILTRO DE SESSION");
-        System.out.println("SESSIONFILTER: Verificando sesión para acceder a: " + req.getRequestURI());
+        System.out.println("SESSION FILTER: Verificando sesión para acceder a: " + req.getRequestURI());
         // 1. Verificar sesión activa
         if (session == null || session.getAttribute("usuario") == null) {
-            System.out.println("SESSIONFILTER: sesión nula o invalido");
+            System.out.println("SESSION FILTER: sesión nula o invalido");
             res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
@@ -30,11 +28,11 @@ public class SessionFilter implements Filter {
         Usuario user = (Usuario) session.getAttribute("usuario");
         if (user == null || user.getIdUsuario() <= 0 || user.getIdroles() <= 0) {
             session.invalidate();
-            System.out.println("SESSIONFILTER: sesión con usuario invalido o nulo");
+            System.out.println("SESSION FILTER: sesión con usuario invalido o nulo");
             res.sendRedirect(req.getContextPath() + "/login?error=invalid_user");
             return;
         }
-
+        System.out.println("SESSION FILTER: ACEPTADO");
         chain.doFilter(request, response);
     }
 }
