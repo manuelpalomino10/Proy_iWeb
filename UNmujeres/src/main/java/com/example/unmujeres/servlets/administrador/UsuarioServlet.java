@@ -20,8 +20,8 @@ public class UsuarioServlet extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
 
-        UsuarioDao UsuarioDao = new UsuarioDao();
-        ArrayList<UsuarioDto> list = UsuarioDao.listar();
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        ArrayList<UsuarioDto> list = usuarioDAO.listar();
 
        //mandar lista a la vista -> listaUsuarios
         request.setAttribute("lista", list);
