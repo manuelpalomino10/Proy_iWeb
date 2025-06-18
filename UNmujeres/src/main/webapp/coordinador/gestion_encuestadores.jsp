@@ -50,7 +50,7 @@
                                 <th>Acciones</th>
                             </tr>
                             </thead>
-                            <tbody
+                            <tbody>
                             <c:forEach var="enc" items="${listaEncuestadores}">
                                 <tr>
                                     <td><c:out value="${enc.nombres} ${enc.apellidos}"/></td>
@@ -181,6 +181,7 @@
                 </div>
             </div>
         </div>
+    </div>
 </div>
 
 
