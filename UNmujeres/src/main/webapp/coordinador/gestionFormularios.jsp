@@ -56,7 +56,7 @@
                     </form>
                   </td>
                   <td>
-                    <form action="${pageContext.request.contextPath}/coordinador//EliminarFormServlet" method="post" onsubmit="return confirm('¿Estás seguro de eliminar este formulario?');">
+                    <form action="${pageContext.request.contextPath}/coordinador/EliminarFormServlet" method="post" onsubmit="return confirm('¿Estás seguro de eliminar este formulario?');">
                       <input type="hidden" name="id" value="<%= formularioDto.getId() %>">
                       <button type="submit" class="btn btn-danger btn-sm">
                         <i class="fas fa-trash-alt"></i> Eliminar

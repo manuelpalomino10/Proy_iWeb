@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 @MultipartConfig
-@WebServlet(name = "SubirRegistrosServlet", value = "/SubirRegistrosServlet")
+@WebServlet(name = "SubirRegistrosServlet", value = "/coordinador/SubirRegistrosServlet")
 public class SubirRegistrosServlet extends HttpServlet {
 
     EncHasFormularioDAO ehfDAO = new EncHasFormularioDAO();
@@ -112,7 +112,7 @@ public class SubirRegistrosServlet extends HttpServlet {
         if (idEhfParam == null || idEhfParam.trim().isEmpty()) {
             //request.setAttribute("error", "Imposible encontrar un formulario nulo, es requerido elegir uno.");
             session.setAttribute("error", "Imposible encontrar un formulario nulo, es requerido elegir uno.");
-            request.getRequestDispatcher("/SubirRegistrosServlet").forward(request, response);
+            request.getRequestDispatcher("/coordinador/SubirRegistrosServlet").forward(request, response);
             return;
         }
 
@@ -123,7 +123,7 @@ public class SubirRegistrosServlet extends HttpServlet {
             System.out.println("Error en el parametro idEhf");
             //.getSession().setAttribute("error", e.getMessage());
             session.setAttribute("error", "Imposible encontrar ese formulario.");
-            response.sendRedirect(request.getContextPath() + "/SubirRegistrosServlet");
+            response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
             return;
         }
 
@@ -132,14 +132,14 @@ public class SubirRegistrosServlet extends HttpServlet {
         if (filePart == null || filePart.getSize() == 0) {  //Validar que exista y no esté vacío
             //request.setAttribute("error", "Debe seleccionar un archivo.");
             session.setAttribute("error", "Debe seleccionar un archivo.");
-            response.sendRedirect(request.getContextPath() + "/SubirRegistrosServlet");
+            response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
             return;
         }
         String fileName = filePart.getSubmittedFileName();
         if (fileName == null || !fileName.toLowerCase().endsWith(".csv")) {    //Validar extensión .csv
             //request.setAttribute("error", "El archivo debe ser de tipo CSV (.csv)");
             session.setAttribute("error", "El archivo debe ser de tipo CSV (.csv).");
-            response.sendRedirect(request.getContextPath() + "/SubirRegistrosServlet");
+            response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
             return;
         }
 
@@ -183,10 +183,10 @@ public class SubirRegistrosServlet extends HttpServlet {
         } catch (SQLException | IOException e) {
             e.printStackTrace();
             session.setAttribute("error", e.getMessage());
-            response.sendRedirect(request.getContextPath() + "/SubirRegistrosServlet");
+            response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
             return;
         } finally {
-            response.sendRedirect(request.getContextPath() + "/SubirRegistrosServlet");
+            response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
         }
 
 
