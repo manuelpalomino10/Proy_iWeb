@@ -1,10 +1,10 @@
-package com.example.unmujeres.daos.administrador;
+package com.example.unmujeres.daos;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class RegistroCordiDao extends BaseDao {
+public class RegistroCordiDao extends BaseDAO {
     public void nuevoCordi(String nombres, String apellidos, int dni, String correo, int idZona) {
 
         String sql = "INSERT INTO usuario (nombres, apellidos, DNI, correo, contraseña, estado, idroles, fecha_incorporacion, idzona) " +

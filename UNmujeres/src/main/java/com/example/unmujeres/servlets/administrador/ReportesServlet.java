@@ -14,14 +14,12 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 import java.io.*;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
-@WebServlet(name = "ReportesServlet", value = "/ReportesServlet")
+@WebServlet(name = "ReportesServlet", value = "/administrador/ReportesServlet")
 public class ReportesServlet extends HttpServlet {
 
     ZonaDAO zonaDAO = new ZonaDAO();
@@ -37,19 +35,8 @@ public class ReportesServlet extends HttpServlet {
 
         // Obtener sesión sin crear una nueva
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            System.out.println("Usuario no autenticado: no hay sesion");
-            session.setAttribute("error", "Sesión inválida o usuario no autenticado.");
-            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
-            return;
-        }
+
         Usuario user = (Usuario) session.getAttribute("usuario");
-        if (user == null || user.getIdUsuario()==0 || user.getIdroles()==0) {
-            System.out.println("Usuario no autenticado: no hay usuario, ni rol ni id");
-            session.setAttribute("error", "Sesión inválida o usuario no autenticado.");
-            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
-            return;
-        }
         int idUser = user.getIdUsuario();
         int userRole = user.getIdroles();
 
@@ -71,13 +58,14 @@ public class ReportesServlet extends HttpServlet {
             //request.setAttribute("error", "Error en el parametro zona o rol");
             System.out.println("Error en parametros de zona o rol");
             session.setAttribute("error", "Error en el parámetro zona o rol. No se filtran registros");
-            request.getRequestDispatcher("/administrador/listaReportes.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/administrador/ReportesServlet");
             return;
         }
 
         // Variables para almacenar las fechas. Inicialmente nulas.
         String fi=null,ff = null;
-        if (dateRangeParam != null && !dateRangeParam.trim().isEmpty()) {
+        if (dateRangeParam != null && dateRangeParam.equals(null) && !dateRangeParam.trim().isEmpty()) {
+            System.out.println("dateRangeParam: " + dateRangeParam + ", pero es no nulo por entrar a validar");
             try {
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -107,13 +95,13 @@ public class ReportesServlet extends HttpServlet {
                 System.out.println("error de parse de fecha");
                 session.setAttribute("error", "Debe seleccionar un rango de fechas válido (DD-MM-YYYY - DD-MM-YYYY).");
                 //request.getRequestDispatcher("/administrador/listaReportes.jsp").forward(request, response);
-                response.sendRedirect(request.getContextPath() + "/ReportesServlet");
+                response.sendRedirect(request.getContextPath() + "/administrador/ReportesServlet");
                 return;
             } catch (IllegalArgumentException e) {
                 System.out.println("error de formato de fecha");
                 session.setAttribute("error", e.getMessage());
                 //request.getRequestDispatcher("/administrador/listaReportes.jsp").forward(request, response);
-                response.sendRedirect(request.getContextPath() + "/ReportesServlet");
+                response.sendRedirect(request.getContextPath() + "/administrador/ReportesServlet");
                 return;
             }
         }
@@ -151,7 +139,6 @@ public class ReportesServlet extends HttpServlet {
                     System.out.println("Error el parametro idForm es nulo o vacío");
                     //request.setAttribute("error", "Imposible obtener un formulario nulo, es requerido elegir uno.");
                     session.setAttribute("error", "Imposible obtener un formulario nulo.");
-                    //request.getRequestDispatcher("/administrador/listaReportes.jsp").forward(request, response);
                     response.sendRedirect(request.getContextPath() + "/ReportesServlet");
                     return;
                 } else {
@@ -180,7 +167,7 @@ public class ReportesServlet extends HttpServlet {
                         //request.setAttribute("error", "El archivo CSV original no se encontró.");
                         session.setAttribute("error", "El archivo CSV de plantilla no se encontró.");
                         System.out.println("El archivo CSV de plantilla no se encontró para este formulario.");
-                        response.sendRedirect(request.getContextPath() + "/ReportesServlet");
+                        response.sendRedirect(request.getContextPath() + "/administrador/ReportesServlet");
 //                        request.getRequestDispatcher("/administrador/listaReportes.jsp").forward(request, response);
                         return;
                     }
@@ -243,8 +230,8 @@ public class ReportesServlet extends HttpServlet {
                         os.flush();
                     } catch (IOException ioe) {
                         //request.setAttribute("error", "Error al enviar el archivo: " + ioe.getMessage());
-                        request.getSession().setAttribute("error", "Error al enviar el archivo: " + ioe.getMessage());
-                        request.getRequestDispatcher("/ReportesServlet?action=listaReportes").forward(request, response);
+                        session.setAttribute("error", "Error al enviar el archivo: " + ioe.getMessage());
+                        request.getRequestDispatcher("/administrador/ReportesServlet?action=listaReportes").forward(request, response);
                         return;
                     } finally {
                         tempFile.delete();
@@ -253,8 +240,8 @@ public class ReportesServlet extends HttpServlet {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    request.getSession().setAttribute("error", "Error inesperado: " + e.getMessage());
-                    request.getRequestDispatcher("/ReportesServlet?action=listaReportes").forward(request, response);
+                    session.setAttribute("error", "Error inesperado: " + e.getMessage());
+                    request.getRequestDispatcher("/administrador/ReportesServlet?action=listaReportes").forward(request, response);
                     return;
                 }
             break;

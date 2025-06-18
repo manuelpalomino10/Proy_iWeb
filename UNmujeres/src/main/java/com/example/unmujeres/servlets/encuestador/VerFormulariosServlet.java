@@ -17,7 +17,7 @@ import java.util.*;
 
 @WebServlet(
         name = "VerFormulariosServlet",
-        value = {"/VerFormulariosServlet", "/ServletA"}, // Múltiples rutas de acceso
+        value = {"/shared/VerFormulariosServlet", "/encuestador/ServletA", "/coordinador/VerFormulariosServlet"}, // Múltiples rutas de acceso
         initParams = {
                 @WebInitParam(name = "config", value = "default") // Parámetro de configuración
         }
@@ -47,18 +47,24 @@ public class VerFormulariosServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
-            return;
-        }
+//        if (session == null) {
+//            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
+//            return;
+//        }
         Usuario user = (Usuario) session.getAttribute("usuario");
-        if (user == null || user.getIdUsuario()==0 || user.getIdroles()==0) {
-            session.setAttribute("error", "Sesión inválida o usuario no autenticado.");
-            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
-            return;
-        }
+//        if (user == null || user.getIdUsuario()==0 || user.getIdroles()==0) {
+//            session.setAttribute("error", "Sesión inválida o usuario no autenticado.");
+//            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
+//            return;
+//        }
         int idUser = user.getIdUsuario();
         int userRole = user.getIdroles();
+//        if (userRole != 3 || userRole != 2) {
+//            System.out.println("rol incorrecto: "+userRole);
+//            request.setAttribute("error", "Acceso no permitido.");
+//            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
+//            return;
+//        }
 
         String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
         RequestDispatcher view;
@@ -201,7 +207,7 @@ public class VerFormulariosServlet extends HttpServlet {
                 RegistroRespuestas registro = registroDAO.getById(idReg);
 
                 if (registro == null) {
-                    response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet");
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
 
                 } else {
                     request.setAttribute("registro", registro);
@@ -227,7 +233,7 @@ public class VerFormulariosServlet extends HttpServlet {
                         System.out.println("Se eliminara el registro id: " + IdReg);
                         registroDAO.delete(IdReg);
                     }
-                    response.sendRedirect(request.getContextPath()+"/VerFormulariosServlet?action=historial");
+                    response.sendRedirect(request.getContextPath()+"/encuestador/VerFormulariosServlet?action=historial");
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -303,7 +309,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     }
                 }
 
-                    response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet?action=historial");
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
 
                 break;
 
@@ -376,12 +382,12 @@ public class VerFormulariosServlet extends HttpServlet {
                     }
 
                     if (userRole==3) {
-                        response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet");
+                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
 
                     } else if (userRole==2) {
-                        response.sendRedirect(request.getContextPath() + "/SubirRegistrosServlet");
+                        response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
                     } else {
-                        response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet");
+                        response.sendRedirect(request.getContextPath() + "/administrador/VerFormulariosServlet");
                     }
 
 

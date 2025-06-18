@@ -52,7 +52,12 @@ public class SubirRegistrosServlet extends HttpServlet {
         }
         int idUser = user.getIdUsuario();
         int userRole = user.getIdroles();
-        //int idUser = 7;
+        if (userRole != 2) {
+            System.out.println("rol incorrecto: "+userRole);
+            request.setAttribute("error", "Acceso no permitido.");
+            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
+            return;
+        }
 
         String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
         RequestDispatcher view;

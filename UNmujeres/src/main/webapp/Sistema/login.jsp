@@ -83,7 +83,7 @@
                             </div>
                             <% } %>
 
-                            <form class="user" action="login" method="post">
+                            <form class="user" action="${pageContext.request.contextPath}/login" method="post">
                                 <!-- Campo para Email -->
                                 <div class="form-group">
                                     <input type="email" class="form-control form-control-user"

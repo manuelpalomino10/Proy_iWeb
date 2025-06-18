@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
-@WebServlet("/DashboardCuidado")
+@WebServlet("/administrador/DashboardCuidado")
 public class DashboardServiceServlet extends HttpServlet {
 
     private final EstadisticasCuidadoDAO estadisticasDAO = new EstadisticasCuidadoDAO();

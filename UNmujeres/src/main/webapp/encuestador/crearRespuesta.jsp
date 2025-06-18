@@ -9,6 +9,7 @@
 <%@ page import="com.example.unmujeres.beans.Pregunta" %>
 <%@ page import="com.example.unmujeres.beans.Seccion" %>
 <%@ page import="com.example.unmujeres.beans.OpcionPregunta" %>
+<%@ page import="com.example.unmujeres.beans.Usuario" %>
 <%
     // Se obtiene la lista de preguntas y las opciones desde el request.
     ArrayList<Pregunta> preguntas = (ArrayList<Pregunta>) request.getAttribute("preguntas");
@@ -36,7 +37,7 @@
                 <% if (preguntas != null && !preguntas.isEmpty()) {
                     int currentSeccionId = -1;
                 %>
-                <form id="respuestaForm" method="POST" action="<%=request.getContextPath()%>/VerFormulariosServlet?action=guardar">
+                <form id="respuestaForm" method="POST" action="<%=request.getContextPath()%>/encuestador/VerFormulariosServlet?action=guardar">
                     <input type="hidden" name="idasignacion" value="<%= request.getParameter("id_asig") %>" />
 
 
@@ -141,11 +142,13 @@
         </span>
             <span class="text">Registrar Respuesta</span>
         </button>
-
+        <% Usuario usuarioSesion = (Usuario) session.getAttribute("usuario"); // Obtiene el usuario de la sesión
+            if (usuarioSesion != null && usuarioSesion.getIdroles() == 3) { %>
         <button type="submit" form="respuestaForm" name="acto" value="borrador" class="btn btn-secondary btn-icon-split mr-2">
             <span class="icon text-white-50"><i class="fas fa-save"></i></span>
             <span class="text">Guardar como Borrador</span>
         </button>
+        <% } %>
     </div>
 </div>
 </div>

@@ -54,7 +54,7 @@
                                              class="profile-img" alt="Foto de perfil"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <img id="currentProfileImage" src="img/perfil-del-usuario.png"
+                                        <img id="currentProfileImage" src="${pageContext.request.contextPath}/img/perfil-del-usuario.png"
                                              class="profile-img" alt="Foto de perfil por defecto"/>
                                     </c:otherwise>
                                 </c:choose>
@@ -159,7 +159,7 @@
                         <br>
                         <div class="text-center">
                             <div class="card-body">
-                                <a href="editarPasswordCoordi" class="btn btn-primary">
+                                <a href="${pageContext.request.contextPath}/editarPasswordCoordi" class="btn btn-primary">
                                     <i class="fas fa-key mr-2"></i>Editar Contraseña
                                 </a>
                             </div>

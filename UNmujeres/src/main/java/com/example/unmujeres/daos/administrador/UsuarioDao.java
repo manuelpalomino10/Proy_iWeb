@@ -1,12 +1,13 @@
 package com.example.unmujeres.daos.administrador;
 
 import com.example.unmujeres.beans.Usuario;
+import com.example.unmujeres.daos.BaseDAO;
 import com.example.unmujeres.dtos.UsuarioDto;
 
 import java.sql.*;
 import java.util.ArrayList;
 
-public class UsuarioDao extends BaseDao {
+public class UsuarioDao extends BaseDAO {
 
     public ArrayList<UsuarioDto> listar() {
         ArrayList<UsuarioDto> lista = new ArrayList<>();

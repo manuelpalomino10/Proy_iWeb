@@ -25,9 +25,8 @@
   <!-- Heading -->
   <div class="sidebar-heading">FUNCIONES</div>
 
-  <!-- Gestión de Encuestadores -->
   <li class="nav-item ${pageAct == 'encuestadores' ? 'active' : ''}">
-    <a class="nav-link" href="${pageContext.request.contextPath}/gestion_encuestadores">
+    <a class="nav-link" href="${pageContext.request.contextPath}/coordinador/gestion_encuestadores">
       <i class="fas fa-fw fa-users"></i>
       <span>Gestión de Encuestadores</span>
     </a>
@@ -35,14 +34,14 @@
 
   <!-- Gestión de Formularios -->
   <li class="nav-item ${pageAct == 'formularios' ? 'active' : ''}">
-    <a class="nav-link" href="${pageContext.request.contextPath}/SubirRegistrosServlet">
-      <i class="fas fa-fw fa-file-alt"></i>
+    <a class="nav-link" href="${pageContext.request.contextPath}/coordinador/GestionFormServlet">
+    <i class="fas fa-fw fa-file-alt"></i>
       <span>Gestión de Formularios</span>
     </a>
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" href="SubirRegistrosServlet">
+    <a class="nav-link" href="${pageContext.request.contextPath}/coordinador/SubirRegistrosServlet">
       <i class="fas fa-fw fa-edit"></i>
       <span>Formularios</span>
     </a>

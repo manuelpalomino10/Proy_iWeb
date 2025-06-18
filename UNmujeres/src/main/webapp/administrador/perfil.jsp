@@ -52,7 +52,7 @@
                                              class="profile-img" alt="Foto de perfil" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <img id="currentProfileImage" src="img/perfil-del-usuario.png"
+                                        <img id="currentProfileImage" src="${pageContext.request.contextPath}/img/perfil-del-usuario.png"
                                              class="profile-img" alt="Foto de perfil por defecto" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;"/>
                                     </c:otherwise>
                                 </c:choose>
@@ -97,7 +97,7 @@
 
                         <div class="text-center">
                             <div class="card-body">
-                                <a href="editarPasswordAdmin" class="btn btn-primary" >
+                                <a href="${pageContext.request.contextPath}/editarPasswordAdmin" class="btn btn-primary" >
                                     <i class="fas fa-key mr-2"></i>Editar Contraseña
                                 </a>
                             </div>

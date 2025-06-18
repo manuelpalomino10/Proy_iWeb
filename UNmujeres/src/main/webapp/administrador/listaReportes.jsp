@@ -53,7 +53,7 @@
 
           <!-- ------------- FORMULARIO DE FILTROS ------------- -->
           <div class="container">
-            <form id="filtros" method="GET" action="<%=request.getContextPath()%>/ReportesServlet?action=listaReportes" class="row g-3">
+            <form id="filtros" method="GET" action="<%=request.getContextPath()%>/administrador/ReportesServlet?action=listaReportes" class="row g-3">
               <input type="hidden" name="action" value="listaReportes" />
 
               <!-- Sección 8 (Zona, Rol y Fecha) -->
@@ -161,7 +161,7 @@
                         <%=reporte.getFechaInicio()==null?"" : reporte.getFechaInicio()%> - <%=reporte.getFechaFin()==null?"" : reporte.getFechaFin()%>
                     </td>
                     <td><%=reporte.getTotalRegistros()%></td>
-                    <td><a class="btn btn-primary" href="<%=request.getContextPath()%>/ReportesServlet?action=descargar&id_form=<%=reporte.getIdFormulario()%>&zona=<%=reporte.getIdZona()%>&rol=<%=reporte.getIdRol()%>&daterange=<%=dateRange%>">Descargar Reporte</a></td>
+                    <td><a class="btn btn-primary" href="<%=request.getContextPath()%>/administrador/ReportesServlet?action=descargar&id_form=<%=reporte.getIdFormulario()%>&zona=<%=reporte.getIdZona()%>&rol=<%=reporte.getIdRol()%>&daterange=<%=dateRange%>">Descargar Reporte</a></td>
 
                   </tr>
                   <% } %>

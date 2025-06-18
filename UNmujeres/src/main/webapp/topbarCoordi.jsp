@@ -38,7 +38,7 @@
                     </c:when>
                     <c:otherwise>
                         <img class="img-profile rounded-circle"
-                             src="${pageContext.request.contextPath}/img/perfil-del-usuario.png?"
+                             src="${pageContext.request.contextPath}/img/perfil-del-usuario.png"
                              style="width: 2.5rem; height: 2.5rem; object-fit: cover; border-radius: 50%;">
                     </c:otherwise>
                 </c:choose>
@@ -46,7 +46,7 @@
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                  aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="perfilCOORD">
+                <a class="dropdown-item" href="${pageContext.request.contextPath}/perfilCOORD">
                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     Perfil
                 </a>
