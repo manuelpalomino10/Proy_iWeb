@@ -1,6 +1,6 @@
 package com.example.unmujeres.servlets.administrador;
 import com.example.unmujeres.beans.Zona;
-import com.example.unmujeres.daos.administrador.RegistroCordiDao;
+import com.example.unmujeres.daos.RegistroCordiDao;
 import com.example.unmujeres.daos.administrador.ZonaDao;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;

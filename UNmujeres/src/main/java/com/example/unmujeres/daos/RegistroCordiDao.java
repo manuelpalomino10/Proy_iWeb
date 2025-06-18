@@ -1,4 +1,4 @@
-package com.example.unmujeres.daos.administrador;
+package com.example.unmujeres.daos;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -39,17 +39,17 @@
 
     <filter-mapping>
         <filter-name>AdminFilter</filter-name>
-        <url-pattern>/admin/*</url-pattern>
+        <url-pattern>/administrador/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
         <filter-name>CordiFilter</filter-name>
-        <url-pattern>/coord/*</url-pattern>
+        <url-pattern>/coordinador/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>
         <filter-name>EncFilter</filter-name>
-        <url-pattern>/enc/*</url-pattern>
+        <url-pattern>/encuestador/*</url-pattern>
     </filter-mapping>
 
     <filter-mapping>

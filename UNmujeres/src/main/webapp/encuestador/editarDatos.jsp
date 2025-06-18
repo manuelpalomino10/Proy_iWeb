@@ -100,7 +100,7 @@
                             <br>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary">Guardar</button>
-                                <a href="perfil" class="btn btn-secondary">Cancelar</a>
+                                <a href="${pageContext.request.contextPath}/perfil" class="btn btn-secondary">Cancelar</a>
                             </div>
                         </form>
                         <br>
@@ -148,7 +148,7 @@
             <div class="modal-body">Los cambios no guardados como borrador o completado no se guardarán. Haz click en "Cerrar sesión" para terminar.</div>
             <div class="modal-footer">
                 <button class="btn btn-info" type="button" data-dismiss="modal">Seguir Aquí</button>
-                <a class="btn btn-danger" href="login.html">Cerrar sesión</a>
+                <a class="btn btn-danger" href="${pageContext.request.contextPath}/logout">Cerrar sesión</a>
             </div>
         </div>
     </div>

@@ -6,7 +6,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@WebFilter(urlPatterns = {"/encuestador"})
+@WebFilter(urlPatterns = {"/encuestador/*"})
 public class EncFilter extends SessionFilter {
 
     @Override

@@ -45,7 +45,7 @@
   </li>
 
   <li class="nav-item">
-    <a class="nav-link" href="SubirRegistrosServlet">
+    <a class="nav-link" href="${pageContext.request.contextPath}/SubirRegistrosServlet">
       <i class="fas fa-fw fa-edit"></i>
       <span>Formularios</span>
     </a>

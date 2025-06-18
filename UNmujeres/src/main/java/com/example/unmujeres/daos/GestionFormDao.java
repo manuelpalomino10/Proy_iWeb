@@ -1,4 +1,4 @@
-package com.example.unmujeres.daos.coordinador;
+package com.example.unmujeres.daos;
 import com.example.unmujeres.dtos.FormularioDto;
 
 import java.sql.Connection;

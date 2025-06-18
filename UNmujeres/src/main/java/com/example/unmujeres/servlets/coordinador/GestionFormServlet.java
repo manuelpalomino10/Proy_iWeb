@@ -1,6 +1,6 @@
 package com.example.unmujeres.servlets.coordinador;
 
-import com.example.unmujeres.daos.coordinador.GestionFormDao;
+import com.example.unmujeres.daos.GestionFormDao;
 import com.example.unmujeres.dtos.FormularioDto;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
