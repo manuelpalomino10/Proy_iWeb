@@ -79,7 +79,7 @@
                                                     .format((java.util.Date) item.get("fecha_limite")) %>
                                         </td>
 
-                                        <td><a class="btn btn-success" href="<%=request.getContextPath()%>/ServletA?action=guardar&id_asig=<%= item.get("id_asignacion") %>&id_form=<%= item.get("id_formulario") %>">Crear Registro</a></td>
+                                        <td><a class="btn btn-success" href="<%=request.getContextPath()%>/encuestador/ServletA?action=guardar&id_asig=<%= item.get("id_asignacion") %>&id_form=<%= item.get("id_formulario") %>">Crear Registro</a></td>
 
 
                                     </tr>

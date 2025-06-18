@@ -207,7 +207,7 @@ public class VerFormulariosServlet extends HttpServlet {
                 RegistroRespuestas registro = registroDAO.getById(idReg);
 
                 if (registro == null) {
-                    response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet");
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
 
                 } else {
                     request.setAttribute("registro", registro);
@@ -233,7 +233,7 @@ public class VerFormulariosServlet extends HttpServlet {
                         System.out.println("Se eliminara el registro id: " + IdReg);
                         registroDAO.delete(IdReg);
                     }
-                    response.sendRedirect(request.getContextPath()+"/VerFormulariosServlet?action=historial");
+                    response.sendRedirect(request.getContextPath()+"/encuestador/VerFormulariosServlet?action=historial");
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -309,7 +309,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     }
                 }
 
-                    response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet?action=historial");
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
 
                 break;
 
@@ -382,12 +382,12 @@ public class VerFormulariosServlet extends HttpServlet {
                     }
 
                     if (userRole==3) {
-                        response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet");
+                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
 
                     } else if (userRole==2) {
-                        response.sendRedirect(request.getContextPath() + "/SubirRegistrosServlet");
+                        response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
                     } else {
-                        response.sendRedirect(request.getContextPath() + "/VerFormulariosServlet");
+                        response.sendRedirect(request.getContextPath() + "/administrador/VerFormulariosServlet");
                     }
 
 
