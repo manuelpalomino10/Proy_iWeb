@@ -88,29 +88,28 @@ INSERT INTO enc_has_formulario (idenc_has_formulario,enc_idusuario,idformulario,
 
 INSERT INTO registro_respuestas (idregistro_respuestas, fecha_registro, estado, idenc_has_formulario) VALUES
 -- encuestador 7
-(1, '2025-02-11', 'C', 1), (2, '2025-02-12', 'C', 1),(3, '2025-02-13', 'B', 1), (4, '2025-02-13', 'B', 1),
-(5, '2024-10-10', 'B', 2), (6, '2025-10-11', 'B', 2),
+(1, '2025-02-11', 'B', 1), (2, '2025-02-12', 'C', 1),(3, '2025-02-13', 'B', 1), (4, '2025-02-13', 'B', 1),
 (7, '2025-04-01', 'B', 3), (8, '2025-04-04', 'B', 3),
-(9, '2025-01-03', 'B', 4), (10, '2025-01-04', 'B', 4),
-(11, '2025-02-01', 'B', 5), (12, '2025-02-02', 'B', 5),
-(13, '2025-03-13', 'B', 6), (14, '2025-03-14', 'B', 6),
-(15, '2024-12-21', 'B', 7), (16, '2024-12-22', 'B', 7),
+(9, '2025-01-03', 'C', 4), (10, '2025-01-04', 'C', 4),
+(11, '2025-02-01', 'C', 5), (12, '2025-02-02', 'C', 5),
+(13, '2025-03-13', 'C', 6), (14, '2025-03-14', 'C', 6),
+(15, '2024-12-21', 'C', 7), (16, '2024-12-22', 'C', 7),
 -- encuestador 8
-(17, '2025-02-16', 'C', 8), (18, '2025-02-16', 'B', 8),(19, '2025-02-17', 'B', 8),
-(20, '2025-03-17', 'B', 9), (21, '2025-03-20', 'B', 9),
-(22, '2025-03-17', 'B', 10), (23, '2025-03-20', 'B', 10),
-(24, '2025-03-17', 'B', 11), (25, '2025-03-20', 'B', 11),
-(26, '2025-03-17', 'B', 12), (27, '2025-03-20', 'B', 12),
+(17, '2025-02-16', 'C', 8), (18, '2025-02-16', 'C', 8),(19, '2025-02-17', 'C', 8),
+
+(22, '2025-03-17', 'C', 10), (23, '2025-03-20', 'C', 10),
+(24, '2025-03-17', 'C', 11), (25, '2025-03-20', 'C', 11),
+(26, '2025-03-17', 'C', 12), (27, '2025-03-20', 'C', 12),
 -- encuestador 9
-(28, '2025-03-01', 'C', 13), (29, '2025-03-02', 'B', 13),
-(30, '2024-03-03', 'B', 14),
-(31, '2024-12-26', 'B', 15),
+(28, '2025-03-01', 'C', 13), (29, '2025-03-02', 'C', 13),
+(30, '2024-03-03', 'C', 14),
+(31, '2024-12-26', 'C', 15),
 -- encuestador 10
 (32, '2025-03-10', 'C', 17),
-(33, '2024-11-12', 'B', 18),
+
 -- encuestador 11
-(34, '2025-02-12', 'B', 20),
-(35, '2025-03-19', 'B', 21);
+(34, '2025-02-12', 'C', 20),
+(35, '2025-03-19', 'C', 21);
 
 INSERT INTO seccion (idseccion, nombre_sec,idformulario) VALUES
 -- form 1 REAL con 5 secciones
@@ -171,7 +170,7 @@ INSERT INTO pregunta (idpregunta, enunciado, tipo_dato, idseccion,requerido) VAL
 			(12, '¿Por qué no usa guarderías o centros de cuidado?',  'combobox', 4,0),
 				(13, '¿Hay personas adultas mayores en el hogar?', 'combobox', 5,1),
 				(14, '¿Cuántas personas adultas mayores hay en el hogar? ', 'int', 5,0),
-				(15, '¿Padecen alguna enfermedad? ', 'combobox', 5,0),
+				(15, '¿Padecen alguna enfermedad? ', default, 5,0),
                 (16, '¿Usan apoyos para movilizarse como sillas de rueda, bastón, muletas?', 'combobox', 5,0),
 					(17, '¿Hay personas con discapacidad o enfermedad crónica en el hogar?', 'combobox', 6,1),
 					(18, '¿Cuántas personas con discapacidad o con enfermedad crónica hay en el hogar?', default, 6,0),
@@ -473,6 +472,49 @@ INSERT INTO opcion_pregunta (idopcion_pregunta, opcion, idpregunta) VALUES
 	(117, 'Media', 154),
 	(118, 'Baja', 154);
 
--- INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) VALUES
--- se hace con el archivo respuestas_insert.sql
+
+INSERT INTO respuesta(`idrespuesta`,`respuesta`,`idpregunta`,`idregistro_respuestas`) VALUES 
+(1,'2025-02-11',1,1), 
+(2,'Juan Pérez López',2,1),
+(3,'A.H. Santo Tomás',3,1), 
+(4,'Lima',4,1),
+(5,'Ana Zuñiga Ocazo',5,1),
+(6,'48',6,1),
+(7,'Calle San Carlos 743',7,1),
+(8,'968123486',8,1),
+(9,'Sí',9,1), 
+(10,'1',10,1), 
+(11,'No',11,1), 
+(12,'Prefiere cuidador familiar',12,1), 
+(13,'Sí',13,1), 
+(14,'2',14,1), 
+(15,'Sí',15,1), 
+(16,'Dolores crónicos',16,1), 
+(17,'Sí',17,1),
+(18,'Sí',18,1),
+(19,'Dolores crónicos',19,1),
+(20,'Dolores crónicos',20,1),
+(21,'Sí',21,1),
+(22,'Dolores crónicos',22,1),
+(23,'Sí',23,1),
+(24,'Sí',24,1),
+(25,'Dolores crónicos',25,1),
+(26,'Sí',26,1),
+(27,'Sí',27,1),
+(28,NULL,28,1),
+(29,NULL,29,1),
+
+
+(36,NULL,36,3),
+(37,NULL,37,3), 
+(38,NULL,38,3), 
+(39,NULL,39,3), 
+(40,NULL,40,3), 
+(41,NULL,41,3), 
+(42,NULL,42,3), 
+(43,NULL,43,3), 
+(44,NULL,44,3), 
+(45,NULL,45,3);
+
+
 
