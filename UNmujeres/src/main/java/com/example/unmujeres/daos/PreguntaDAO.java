@@ -13,7 +13,7 @@ public class PreguntaDAO extends BaseDAO{
     public ArrayList<Pregunta> getPreguntasConOpcionesPorFormulario(int idFormulario) {
         ArrayList<Pregunta> preguntas = new ArrayList<>();
 
-        String sql = "SELECT f.idformulario, p.idpregunta, p.enunciado, p.tipo_dato, " +
+        String sql = "SELECT f.idformulario, p.idpregunta, p.enunciado, p.tipo_dato, p.requerido," +
                 "s.idseccion, s.nombre_sec " +
                 "FROM pregunta p " +
                 "INNER JOIN seccion s ON p.idseccion = s.idseccion " +
@@ -33,6 +33,7 @@ public class PreguntaDAO extends BaseDAO{
                     pregunta.setIdPregunta(rs.getInt("idpregunta"));
                     pregunta.setEnunciado(rs.getString("enunciado"));
                     pregunta.setTipoDato(rs.getString("tipo_dato"));
+                    pregunta.setRequerido(rs.getBoolean("requerido"));
 
                     // Configurar la sección
                     Seccion seccion = new Seccion();

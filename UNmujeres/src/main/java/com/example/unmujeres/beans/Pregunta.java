@@ -5,6 +5,7 @@ public class Pregunta {
     private String enunciado;
     private String tipoDato;
     private Seccion seccion;
+    private Boolean requerido;
 
     public Pregunta() {
     }
@@ -35,5 +36,12 @@ public class Pregunta {
     }
     public void setSeccion(Seccion seccion) {
         this.seccion = seccion;
+    }
+
+    public Boolean getRequerido() {
+        return requerido;
+    }
+    public void setRequerido(Boolean requerido) {
+        this.requerido = requerido;
     }
 }

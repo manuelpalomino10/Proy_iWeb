@@ -128,7 +128,30 @@ public class VerFormulariosServlet extends HttpServlet {
                 break;
             case "guardar":
                 System.out.println("Se crea nueva respuesta");
-                int idFormulario = Integer.parseInt(request.getParameter("id_form"));
+
+                String idFormParam1 = request.getParameter("id_form");
+
+                int idFormulario;
+                if (idFormParam1 != null) {
+                    try {
+                        idFormulario = Integer.parseUnsignedInt(idFormParam1);
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Parámetro de form inválido");
+                        session.setAttribute("error", "Parámetro de formulario inválido");
+                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
+                        return;
+
+//                    } catch (IllegalArgumentException e) {
+//                    session.setAttribute("error", "Validar que pertenezca al usuario");
+//                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
+//                    return;
+                    }
+                } else {
+                    session.setAttribute("error", "El parámetros de formulario no puede ser nulo");
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
+                    return;
+                }
 
                 // Convertir a estructura para la vista
                 ArrayList<Pregunta> preguntas = preguntaDAO.getPreguntasConOpcionesPorFormulario(idFormulario);
@@ -391,7 +414,7 @@ public class VerFormulariosServlet extends HttpServlet {
                 break;
 
             case "guardar":
-
+                
                 String acto = request.getParameter("acto");
                 System.out.println("se hace acto en dopost: " + acto);
                 String nuevoEstado = "B";
@@ -446,6 +469,14 @@ public class VerFormulariosServlet extends HttpServlet {
                     return;
                 }
 
+                
+                String url;
+                if (userRole == 3) {
+                    url = request.getContextPath() + "/encuestador/VerFormulariosServlet";
+                } else if (userRole == 2) {
+                    url = request.getContextPath() + "/coordinador/SubirRegistrosServlet";
+                } else {url = request.getContextPath();}
+
                 try {
                     System.out.println("El id de asignación es: " + idEncHasFormulario);
                     EncHasFormulario ehf = ehfDAO.getById(idEncHasFormulario);
@@ -478,12 +509,19 @@ public class VerFormulariosServlet extends HttpServlet {
                                     }
                                 } else {
                                     String valor = request.getParameter(paramName);
-                                    if (valor != null && !valor.trim().isEmpty()) {
-                                        // Solo validamos si se ingresó algún valor
+                                    //Validamos diferente para marcar registro en borrador o completado
+                                    if ("B".equals(nuevoEstado)) {
+                                        if (valor != null && !valor.trim().isEmpty()) {
+                                            // Solo validamos si se ingresó algún valor
+                                            String errorMsg = validarPregunta(pregunta, valor);
+                                            if (errorMsg != null) {
+                                                errores.put(idPregunta, errorMsg);
+                                            }
+                                        }
+                                    } else {
                                         String errorMsg = validarPregunta(pregunta, valor);
                                         if (errorMsg != null) {
-                                            errores.put(idPregunta, errorMsg);
-                                        }
+                                            errores.put(idPregunta, errorMsg);}
                                     }
                                 }
                             }
@@ -494,14 +532,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     if (!errores.isEmpty()) {
                         //request.setAttribute("error", errores);
                         session.setAttribute("validationErrors", errores);
-                        if (userRole == 3) {
-                            //response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
-                            //request.setAttribute("id_form", idForm);
-                            response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
-                        } else if (userRole == 2) {
-                            response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
-
-                        }
+                        response.sendRedirect(url);
                         return;
                     }
 
@@ -555,22 +586,17 @@ public class VerFormulariosServlet extends HttpServlet {
                         respuestaDAO.guardarRespuestasOpciones(idRegistro, respuestasOpciones);
                     }
 
-                    // 7. Redirección según el rol del usuario
-                    if (userRole == 3) {
-                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
-                    } else if (userRole == 2) {
-                        response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
-                    }
+                    session.setAttribute("success", "Registro creado con exito");
+                    response.sendRedirect(url);
 
                 } catch (Exception e) {
                     e.printStackTrace();
                     request.setAttribute("error", "Error al guardar las respuestas");
                     session.setAttribute("error", "Error al guardar las respuestas");
-                    if (userRole == 3) {
-                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet");
-                    } else if (userRole == 2) {
-                        response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
-                    }
+
+                    // cambiar para devolver a la misma vista.
+                    response.sendRedirect(url);
+
                 }
 
             break;
@@ -578,17 +604,16 @@ public class VerFormulariosServlet extends HttpServlet {
         }
     }
 
-    // -----------------------------------------------------
+
     // MÉTODO PRIVADO PARA VALIDAR EL VALOR DE UNA PREGUNTA
     private String validarPregunta(Pregunta pregunta, String valor) {
-        // Se asume que cada 'Pregunta' tiene un método getTipo()
         // y, opcionalmente, isRequerida() y getOpciones() (para combobox)
         String tipo = pregunta.getTipoDato();
 
-//        // Si el campo es requerido y el valor es nulo o vacío, se retorna un error.
-//        if (pregunta.isRequerida() && (valor == null || valor.trim().isEmpty())) {
-//            return "El campo es obligatorio.";
-//        }
+        // Si el campo es requerido y el valor es nulo o vacío, se retorna un error.
+        if (pregunta.getRequerido() && (valor == null || valor.trim().isEmpty())) {
+            return "El campo es obligatorio.";
+        }
 
         // Si el valor no es obligatorio y está vacío, se acepta (retornamos null, sin error)
         if (valor == null || valor.trim().isEmpty()) {
@@ -605,11 +630,11 @@ public class VerFormulariosServlet extends HttpServlet {
             }
         } else if ("date".equalsIgnoreCase(tipo)) {
             try {
+                System.out.println("Date: " + valor);
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDate vDate = LocalDate.parse(valor, inputFormatter);
-                // Suponiendo que el formato esperado es "yyyy-MM-dd" (como lo envía un input type="date")
-                valor = vDate.format(sqlFormatter);
+                LocalDate.parse(valor.trim(), sqlFormatter);
+
 
             } catch (DateTimeParseException e) {
                 return "Introduzca una fecha válida (dd-mm-yyyy).";
@@ -621,11 +646,20 @@ public class VerFormulariosServlet extends HttpServlet {
                 return "La opción seleccionada no es válida.";
             }
         }
-        // Si es "default" u otro tipo de texto, puede agregarse validación adicional (por ejemplo, longitud o patrón).
-        // En este ejemplo, se acepta cualquier texto.
 
         // Si no se encontró ningún error, se retorna null.
         return null;
+    }
+
+    private String getRedirectUrl(int userRole) {
+        if (userRole == 3) {
+            return getServletContext().getContextPath() + "/encuestador/VerFormulariosServlet";
+        } else if (userRole == 2) {
+            return getServletContext().getContextPath() + "/coordinador/SubirRegistrosServlet";
+        } else {
+            // Valor por defecto en caso de otro rol
+            return getServletContext().getContextPath() + "/paginaDefault";
+        }
     }
 
     @Override
