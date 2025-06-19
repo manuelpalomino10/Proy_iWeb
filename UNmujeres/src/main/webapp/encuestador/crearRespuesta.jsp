@@ -25,7 +25,14 @@
 <body id="page-top">
 
 <div id="wrapper">
+
+    <% Usuario usuarioSesion = (Usuario) session.getAttribute("usuario"); // Obtiene el usuario de la sesión
+        if (usuarioSesion != null && usuarioSesion.getIdroles() == 3) { %>
     <jsp:include page="../sidebarEnc.jsp" />
+    <% } else if (usuarioSesion != null && usuarioSesion.getIdroles() == 2) { %>
+    <jsp:include page="../sidebarCoordi.jsp" />
+    <% } %>
+
 
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
@@ -144,7 +151,7 @@
         </span>
             <span class="text">Registrar Respuesta</span>
         </button>
-        <% Usuario usuarioSesion = (Usuario) session.getAttribute("usuario"); // Obtiene el usuario de la sesión
+        <% 
             if (usuarioSesion != null && usuarioSesion.getIdroles() == 3) { %>
         <button type="submit" form="respuestaForm" name="acto" value="borrador" class="btn btn-secondary btn-icon-split mr-2">
             <span class="icon text-white-50"><i class="fas fa-save"></i></span>
