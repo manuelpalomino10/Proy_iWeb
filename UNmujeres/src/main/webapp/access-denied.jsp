@@ -1,4 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
+
+<%
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    response.setHeader("Pragma", "no-cache");
+    response.setDateHeader("Expires", 0);
+%>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -60,7 +67,7 @@
     <div class="card">
         <h1>🔒 Acceso Denegado</h1>
         <p>No tienes permisos para acceder a esta sección del sistema.</p>
-        <a href="login" class="btn">Volver al Login</a>
+        <a href="${pageContext.request.contextPath}/logout" class="btn">Volver al Login</a>
     </div>
 </div>
 </body>
