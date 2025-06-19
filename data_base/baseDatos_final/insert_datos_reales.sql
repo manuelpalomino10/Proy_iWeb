@@ -89,6 +89,7 @@ INSERT INTO enc_has_formulario (idenc_has_formulario,enc_idusuario,idformulario,
 INSERT INTO registro_respuestas (idregistro_respuestas, fecha_registro, estado, idenc_has_formulario) VALUES
 -- encuestador 7
 (1, '2025-02-11', 'C', 1), (2, '2025-02-12', 'C', 1),(3, '2025-02-13', 'B', 1), (4, '2025-02-13', 'B', 1),
+(5, '2024-10-10', 'B', 2), (6, '2025-10-11', 'B', 2),
 (7, '2025-04-01', 'B', 3), (8, '2025-04-04', 'B', 3),
 (9, '2025-01-03', 'B', 4), (10, '2025-01-04', 'B', 4),
 (11, '2025-02-01', 'B', 5), (12, '2025-02-02', 'B', 5),
@@ -344,22 +345,22 @@ INSERT INTO opcion_pregunta (idopcion_pregunta, opcion, idpregunta) VALUES
 (17, 'Sí', 20), (18, 'No', 20),
 
 -- Opciones Sí/No para pregunta 21
-(17, 'Sí', 21), (18, 'No', 21),
+(19, 'Sí', 21), (20, 'No', 21),
 
 -- Opciones Sí/No para pregunta 23
-(19, 'Sí', 23), (20, 'No', 23),
+(21, 'Sí', 23), (22, 'No', 23),
 
 -- Opciones Sí/No para pregunta 24
-(21, 'Sí', 24), (22, 'No', 24),
+(23, 'Sí', 24), (24, 'No', 24),
 
 -- Opciones Sí/No para pregunta 26
-(23, 'Sí', 26), (24, 'No', 26),
+(25, 'Sí', 26), (26, 'No', 26),
 
 -- Opciones Sí/No para pregunta 27
-(25, 'Sí', 27), (26, 'No', 27),
+(27, 'Sí', 27), (28, 'No', 27),
 
 -- Opciones Sí/No para pregunta 28
-(27, 'Sí', 28), (28, 'No', 28),
+(29, 'Sí', 28), (30, 'No', 28),
 
 -- Pregunta 39 (Situación actual de empleo - Form 3)
 (31, 'Desempleada', 39),
