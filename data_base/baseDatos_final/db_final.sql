@@ -163,7 +163,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `iweb_proy`.`seccion` (
   `idseccion` INT NOT NULL AUTO_INCREMENT,
-  `nombre_sec` VARCHAR(40) NOT NULL,
+  `nombre_sec` VARCHAR(200) NOT NULL,
   `idformulario` INT NOT NULL,
   PRIMARY KEY (`idseccion`),
   INDEX `fk_seccion_formulario1_idx` (`idformulario` ASC) VISIBLE,
