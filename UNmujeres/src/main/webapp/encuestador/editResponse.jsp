@@ -44,6 +44,16 @@
                         <h1 class="h3 mb-0 text-gray-800">Editar respuesta</h1>
                     </div>
 
+
+                    <% if (session.getAttribute("error") != null) { %>
+                    <div>
+                        <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
+                        </div>
+                    </div>
+                    <% session.removeAttribute("error"); %>
+                    <% } %>
+
+
                     <%
                         if (respuestas != null && !respuestas.isEmpty()) {
                             // Variable para controlar el cambio de sección.
@@ -51,7 +61,7 @@
                     %>
                         <form id="respuestaForm" method="POST" action="<%=request.getContextPath()%>/encuestador/VerFormulariosServlet?action=editar">
                         <!-- Campo hidden para el id del registro de respuestas -->
-                        <input type="hidden" name="idregistro_respuestas" value="<%= registro.getIdRegistroRespuestas() %>" />
+                        <input type="hidden" name="id" value="<%= registro.getIdRegistroRespuestas() %>" />
                     <%
                         // Recorrer cada respuesta (la cual contiene la pregunta y sección asociada)
                         for (Respuesta respuesta : respuestas) {
@@ -171,7 +181,7 @@
 <%--            </div>--%>
 
 
-            <div class="text-center mt-4">
+            <div class="text-center mt-4 fixed-bottom">
                 <button id="completadoBtn" type="button" class="btn btn-success btn-icon-split mr-2">
                         <span class="icon text-white-50">
                             <i class="fas fa-check"></i>

@@ -75,7 +75,4 @@ public class EncHasFormularioDAO extends BaseDAO {
         return asig;
     }
 
-//    public EncHasFormulario> getByEhf(int idEnc) {
-//
-//    }
 }

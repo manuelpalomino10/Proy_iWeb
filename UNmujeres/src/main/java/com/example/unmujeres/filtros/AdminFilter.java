@@ -16,11 +16,10 @@ public class AdminFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         Usuario user = (Usuario) req.getSession().getAttribute("usuario");
-        System.out.println("FILTRO DE ADMINISTRADOR");
 
         // Validación de rol
         if (user.getIdroles() != 1) {
-            System.out.println("F_ADMIN: DENEGADO");
+            System.out.println("FILTRO ADMIN: DENEGADO");
             res.sendRedirect(req.getContextPath() + "/access-denied.jsp");
             return;
         }
@@ -29,7 +28,7 @@ public class AdminFilter implements Filter {
         res.setHeader("Pragma", "no-cache");
         res.setDateHeader("Expires", 0);
                 
-        System.out.println("F_ADMIN: ACEPTADO");
+        System.out.println("FILTRO ADMIN: ACEPTADO");
         chain.doFilter(request, response);
     }
 }

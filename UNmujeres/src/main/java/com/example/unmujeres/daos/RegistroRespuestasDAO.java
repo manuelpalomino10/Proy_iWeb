@@ -80,6 +80,30 @@ public class RegistroRespuestasDAO extends BaseDAO {
 
     public void save(RegistroRespuestas reg) {}
 
+    public ArrayList<Integer> getIDsByUsuario(int idUsuario) {
+        ArrayList<Integer> ids = new ArrayList<>();
+        String sql = "SELECT reg.idregistro_respuestas " +
+                "FROM registro_respuestas reg " +
+                "INNER JOIN enc_has_formulario ehf " +
+                "    ON reg.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "WHERE ehf.enc_idusuario = ?";
+        try (Connection con = this.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);) {
+            ps.setInt(1, idUsuario);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Integer id = rs.getInt(1);
+                    ids.add(id);
+                }
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ids;
+
+    }
+
 
     public void delete(int id) {
         String sql = "DELETE FROM registro_respuestas WHERE idregistro_respuestas = ?";

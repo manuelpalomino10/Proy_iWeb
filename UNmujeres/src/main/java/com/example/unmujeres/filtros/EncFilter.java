@@ -16,11 +16,10 @@ public class EncFilter extends SessionFilter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
         Usuario user = (Usuario) req.getSession().getAttribute("usuario");
-        System.out.println("FILTRO DE ENCUESTADOR");
 
         // Validación de rol
         if (user.getIdroles() != 3) {
-            System.out.println("F_ENC: DENEGADO");
+            System.out.println("FILTRO ENC: DENEGADO");
             res.sendRedirect(req.getContextPath() + "/access-denied.jsp");
             return;
         }
@@ -29,7 +28,7 @@ public class EncFilter extends SessionFilter {
         res.setHeader("Pragma", "no-cache");
         res.setDateHeader("Expires", 0);
                 
-        System.out.println("F_ENC: ACEPTADO");
+        System.out.println("FILTRO ENC: ACEPTADO");
         chain.doFilter(request, response);
     }
 }

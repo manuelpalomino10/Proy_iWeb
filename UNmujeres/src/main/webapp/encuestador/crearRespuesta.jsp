@@ -43,6 +43,44 @@
                     <h1 class="h3 mb-0 text-gray-800">Crear nueva respuesta</h1>
                 </div>
 
+
+                <% if (session.getAttribute("error") != null) { %>
+                <div>
+                    <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
+                    </div>
+                </div>
+                <% session.removeAttribute("error"); %>
+                <% } %>
+
+
+
+                <%
+                    Map<Integer, String> errores = (Map<Integer, String>) session.getAttribute("validationErrors");
+                    if (errores != null) {
+                %>
+                <div class="alert alert-danger">
+                    <ul>
+                        <%
+                        for (Map.Entry<Integer, String> entry : errores.entrySet()) {
+                        %>
+                        <li><strong>Pregunta <%= entry.getKey() %>:</strong> <%= entry.getValue() %></li>
+                        <%
+                        }
+                        session.removeAttribute("validationErrors");
+                        %>
+                    </ul>
+                </div>
+                <%
+                    }
+                    Map<Integer, String> valoresForm = (Map<Integer, String>) session.getAttribute("valoresFormulario");
+                    if (valoresForm != null) {
+                        // Puedes copiar esos datos a un atributo de la request y luego removerlos
+                        //request.setAttribute("valoresFormulario", valoresForm);
+                        session.removeAttribute("valoresFormulario");
+                    }
+                %>
+
+
                 <% if (preguntas != null && !preguntas.isEmpty()) {
                     int currentSeccionId = -1;
                 %>
@@ -94,10 +132,16 @@
                                     if (opciones != null) {
 
                                         for (OpcionPregunta opcion : opciones) {
+                                            String opcSelected = null;
                                             // Se filtran las opciones correspondientes a la pregunta actual
                                             if (opcion.getPregunta().getIdPregunta() == pregunta.getIdPregunta()) {
+                                                if (valoresForm!=null) {
+                                                    if (opcion.getOpcion().equals(valoresForm.get(pregunta.getIdPregunta()))) {
+                                                        opcSelected = "selected";
+                                                    }
+                                                }
                                 %>
-                                <option value="<%= opcion.getOpcion() %>">
+                                <option value="<%= opcion.getOpcion() %>"<%=opcSelected%> >
                                     <%= opcion.getOpcion() %>
                                 </option>
                                 <%
@@ -115,12 +159,24 @@
                                 } else if ("date".equalsIgnoreCase(pregunta.getTipoDato())) {
                                     inputType = "date";
                                 }
+                                String inputValue = "";
+                                if (valoresForm!=null){
+                                    inputValue = valoresForm.get(pregunta.getIdPregunta()) != null ? valoresForm.get(pregunta.getIdPregunta()) : "";
+                                }
+                                String inputError= "";
+                                if (errores!=null) {
+                                    if (errores.containsKey(pregunta.getIdPregunta())) {
+                                        inputError = "falta_respuesta";
+                                    }
+                                }
                             %>
                             <input type="<%= inputType %>"
-                                   class="form-control"
+                                   class="form-control <%= inputError %>"
                                    id="pregunta_<%= pregunta.getIdPregunta() %>"
                                    name="pregunta_<%= pregunta.getIdPregunta() %>"
-                                   value=""/>
+
+                                   value="<%= inputValue %>" />
+<%--                                   value=""/>--%>
                             <%
                                 }
                             %>
@@ -144,7 +200,7 @@
     <% } %>
 
     <!-- Botones de acción -->
-    <div class="text-center mt-4">
+    <div class="text-center mt-4 fixed-bottom">
         <button id="completadoBtn" type="button" class="btn btn-success btn-icon-split mr-2" >
         <span class="icon text-white-50">
             <i class="fas fa-check"></i>
@@ -169,8 +225,9 @@
         </div>
     </div>
 </footer>
-</div>
-</div>
+
+
+
 
 <jsp:include page="../footer.jsp" />
 
@@ -191,7 +248,7 @@
 
             if (faltantes.length > 0) {
                 event.preventDefault();
-                alert("Complete todas las respuestas antes de continuar.");
+                alert("Complete todas las respuestas requeridas antes de continuar.");
             } else {
                 // Si la validación pasa, se muestra el modal manualmente.
                 $('#SaveRegModal').modal('show');
