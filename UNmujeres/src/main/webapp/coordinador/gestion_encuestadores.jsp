@@ -81,10 +81,20 @@
                                                 </c:otherwise>
                                             </c:choose>
                                         </button>
-                                            <a class="btn btn-sm btn-primary"
-                                           href="${pageContext.request.contextPath}/coordinador/gestion_encuestadores?idusuario=${enc.idUsuario}">
-                                            Asignar
-                                        </a>
+                                        <c:choose>
+                                            <c:when test="${enc.estado}">
+                                                <a class="btn btn-sm btn-primary"
+                                                   href="${pageContext.request.contextPath}/coordinador/gestion_encuestadores?idusuario=${enc.idUsuario}">
+                                                    Asignar
+                                                </a>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a class="btn btn-sm btn-secondary disabled" tabindex="-1" aria-disabled="true" data-toggle="tooltip"
+                                                   title="No se puede asignar porque el encuestador est\u00E1 baneado">
+                                                    Asignar
+                                                </a>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
                                 </tr>
                             </c:forEach>
