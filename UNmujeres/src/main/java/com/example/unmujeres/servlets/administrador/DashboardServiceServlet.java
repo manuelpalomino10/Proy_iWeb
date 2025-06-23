@@ -18,34 +18,32 @@ public class DashboardServiceServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         try {
-            // 1. Asistencia a guarderías
-            Map<String, Integer> asistenciaGuarderia = estadisticasDAO.obtenerAsistenciaGuarderia();
-            request.setAttribute("asistenciaGuarderia", asistenciaGuarderia);
+            Map<Integer, Map<String, Integer>> respuestasSiNo = estadisticasDAO.obtenerTodasRespuestasSiNo();
 
-            // 2. Motivos por los que no usan guarderías
-            Map<String, Integer> motivosNoGuarderia = estadisticasDAO.obtenerMotivosNoGuarderia();
-            request.setAttribute("motivosNoGuarderia", motivosNoGuarderia);
-
-            // 3. Enfermedades en adultos mayores
-            Map<String, Integer> adultosMayoresEnfermos = estadisticasDAO.obtenerAdultosMayoresEnfermos();
-            request.setAttribute("adultosMayoresEnfermos", adultosMayoresEnfermos);
-
-            // 4. Hogares con niños y adultos mayores
-            Map<String, Integer> hogaresNinosAncianos = estadisticasDAO.obtenerHogaresConNinosYAncianos();
-            request.setAttribute("hogaresNinosAncianos", hogaresNinosAncianos);
-
-            // 5. Tiempo promedio de cuidado
-            double tiempoPromedio = estadisticasDAO.obtenerTiempoPromedioCuidado();
-            request.setAttribute("tiempoPromedioCuidado", tiempoPromedio);
-
-            // jsp
-            request.getRequestDispatcher("/DashboardCuidado.jsp").forward(request, response);
+            // Puedes hacer esto si sabes los ID y quieres pasarlos por separado
+            request.setAttribute("respuesta9", respuestasSiNo.get(9));
+            request.setAttribute("respuesta11", respuestasSiNo.get(11));
+            request.setAttribute("respuesta12", respuestasSiNo.get(12));
+            request.setAttribute("respuesta13", respuestasSiNo.get(13));
+            request.setAttribute("respuesta16", respuestasSiNo.get(16));
+            request.setAttribute("respuesta17", respuestasSiNo.get(17));
+            request.setAttribute("respuesta20", respuestasSiNo.get(20));
+            request.setAttribute("respuesta21", respuestasSiNo.get(21));
+            request.setAttribute("respuesta23", respuestasSiNo.get(23));
+            request.setAttribute("respuesta24", respuestasSiNo.get(24));
+            request.setAttribute("respuesta26", respuestasSiNo.get(26));
+            request.setAttribute("respuesta27", respuestasSiNo.get(27));
+            request.setAttribute("respuesta28", respuestasSiNo.get(28));
 
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al cargar");
         }
+
+        request.getRequestDispatcher("/DashboardCuidado.jsp").forward(request, response);
     }
 }
+
+
 
