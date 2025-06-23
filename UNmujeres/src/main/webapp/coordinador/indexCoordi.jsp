@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <%
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -7,10 +8,13 @@
     response.setDateHeader("Expires", 0);
 %>
 
+
+
+
 <!DOCTYPE html>
 <html lang="es">
 
-<jsp:include page="../header.jsp" />
+<jsp:include page="/header.jsp" />
 
 <body id="page-top">
 
@@ -18,7 +22,7 @@
 <div id="wrapper">
 
     <!-- Sidebar -->
-    <jsp:include page="../sidebarEnc.jsp" />
+    <jsp:include page="/sidebarCoordi.jsp" />
     <!-- End of Sidebar -->
 
     <!-- Content Wrapper -->
@@ -28,7 +32,7 @@
         <div id="content">
 
             <!-- Topbar -->
-            <jsp:include page="../topbarEnc.jsp" />
+            <jsp:include page="../topbarCoordi.jsp" />
             <!-- End of Topbar -->
 
             <!-- Begin Page Content -->
@@ -36,122 +40,87 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Resumen</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Resumen Coordinador</h1>
                 </div>
 
-                <!-- Content Row 1: Formularios Asignados - Completados - Pendientes -->
+                <!-- Content Row 1: Tarjetas de resumen -->
                 <div class="row">
-                    <!-- Formularios Asignados -->
-                    <div class="col-md-4 mb-4">
+
+                    <!-- Total Encuestadores -->
+                    <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-primary shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            FORMULARIOS DISPONIBLES PARA TI
+                                            Total de Encuestadores en mi Zona
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">${formulariosAsignados}</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <c:out value="${totalEncuestadores != null ? totalEncuestadores : '0'}"/>
+                                        </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-list-alt fa-2x text-gray-300"></i>
+                                        <i class="fas fa-users fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Formularios Completados -->
-                    <div class="col-md-4 mb-4">
+                    <!-- Encuestadores Activos -->
+                    <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-success shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            FORMULARIOS COMPLETADOS ESTA SEMANA
+                                            Encuestadores Activos
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">${completadosUltimos7Dias}</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <c:out value="${encuestadoresActivos != null ? encuestadoresActivos : '0'}"/>
+                                        </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-check-double fa-2x text-gray-300"></i>
+                                        <i class="fas fa-user-check fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Formularios Pendientes -->
-                    <div class="col-md-4 mb-4">
+                    <!-- Encuestadores Baneados -->
+                    <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-warning shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            FORMULARIOS GUARDADOS COMO BORRADOR
+                                            Encuestadores Baneados
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">${borradores}</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <c:out value="${encuestadoresBaneados != null ? encuestadoresBaneados : '0'}"/>
+                                        </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
+                                        <i class="fas fa-user-slash fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Content Row 2: Último Formulario Registrado - Formularios por Vencer -->
-                <div class="row">
-                    <!-- Último Formulario Registrado -->
-                    <div class="col-md-6 mb-4">
+                    <!-- Formularios Asignados -->
+                    <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-info shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                            ÚLTIMO FORMULARIO REGISTRADO EN LA PLATAFORMA
+                                            Formularios Asignados en mi Zona
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">${ultimoFormularioRegistrado}</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Formularios por Vencer -->
-                    <div class="col-md-6 mb-4">
-                        <div class="card border-left-danger shadow h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                            FORMULARIOS QUE VENCEN PRONTO
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <c:out value="${formulariosAsignados != null ? formulariosAsignados : '0'}"/>
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">${formulariosPorVencer}</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Content Row 3: Total de Respuestas - Formularios asignados hoy -->
-                <div class="row">
-                    <!-- Total de Respuestas Registradas en la plataforma -->
-                    <div class="col-md-6 mb-4">
-                        <div class="card border-left-secondary shadow h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
-                                            TOTAL DE RESPUESTAS REGISTRADAS EN LA PLATAFORMA
-                                        </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">${totalRespuestas}</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
@@ -160,21 +129,134 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="row">
 
-                    <!-- Formularios Asignados Hoy -->
-                    <div class="col-md-6 mb-4">
-                        <div class="card border-left-dark shadow h-100 py-2">
+                    <!-- Formularios Completados -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                            RESPUESTAS COMPLETADAS HOY
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Respuestas Completadas por Zona
                                         </div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">${formulariosAsignadosHoy}</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <c:out value="${formulariosCompletados != null ? formulariosCompletados : '0'}" />
+                                        </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-calendar-day fa-2x text-gray-300"></i>
+                                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formularios en Borrador -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-secondary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                            Formularios en Borrador
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <c:out value="${formulariosBorrador != null ? formulariosBorrador : '0'}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-edit fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tasa de Avance -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Nivel de Cumplimiento de Formularios
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <fmt:formatNumber value="${tasaAvance > 100 ? 100 : (tasaAvance != null ? tasaAvance : 0.0)}" type="number" maxFractionDigits="1" />%
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-tachometer-alt fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Distrito Más Activo -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Distrito Más Activo
+                                        </div>
+                                        <div class="h6 mb-0 font-weight-bold text-gray-800">
+                                            <c:out value="${distritoMasActivo != null ? distritoMasActivo : 'Sin datos'}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-map-marker-alt fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+                <!-- Content Row 2: Gráficos -->
+                <div class="row">
+
+                    <!-- Gráfico de Área: Formularios Completados por Zona -->
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Cantidad de Formularios Completados por Zona</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-area" style="height: 300px;">
+                                    <canvas id="myAreaChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico de Torta: Porcentaje Activos vs Baneados -->
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Porcentaje de Encuestadores Activos vs Baneados</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-pie pt-4 pb-2" style="height: 250px;">
+                                    <canvas id="myPieChart"></canvas>
+                                </div>
+                                <div class="mt-4 text-center small">
+                                    <span class="mr-2">
+                                        <i class="fas fa-circle text-primary"></i> Activos
+                                    </span>
+                                    <span class="mr-2">
+                                        <i class="fas fa-circle text-warning"></i> Baneados
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -182,274 +264,312 @@
                 </div>
 
 
-                <br>
-
-                <!-- NUEVOS GRÁFICOS -->
                 <div class="row">
-                    <!-- Gráfico de Barras: Formularios más respondidos -->
-                    <div class="col-lg-7">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Cantidad de Respuestas por formularios</h6>
-                            </div>
-                            <div class="card-body" style="height: 400px;">
-                                <canvas id="barChartFormularios" style="width: 100%; height: 100%;"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gráfico de Pastel: Formularios más utilizados -->
-                    <div class="col-lg-5">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Tipos de formularios</h6>
-                            </div>
-                            <div class="card-body" style="height: 400px;">
-                                <canvas id="pieChartTipos" style="width: 100%; height: 100%;"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <!-- Gráfico: Formularios completados por distrito -->
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <!-- Gráfico de barras horizontales: Cantidad de respuestas por distrito -->
                     <div class="col-xl-6 col-lg-6">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Formularios por zona geográfica</h6>
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Respuestas por Distrito</h6>
                             </div>
                             <div class="card-body">
-                                <canvas id="barChartZonas" style="width:100%; height:350px;"></canvas>
+                                <div class="chart-bar d-flex justify-content-center align-items-center" style="height: 350px;">
+                                    <canvas id="graficoDistrito"></canvas>
+                                </div>
+
                             </div>
                         </div>
                     </div>
+                    <script>
+                        const labelsDistrito = [
+                            <c:forEach var="entry" items="${respuestasPorDistrito}">
+                            '<c:out value="${entry.key}" />',
+                            </c:forEach>
+                        ];
+                        const dataDistrito = [
+                            <c:forEach var="entry" items="${respuestasPorDistrito}">
+                            <c:out value="${entry.value}" />,
+                            </c:forEach>
+                        ];
 
-                    <!-- Gráfico: Estado de respuestas -->
+                        new Chart(document.getElementById("graficoDistrito"), {
+                            type: 'bar',
+                            data: {
+                                labels: labelsDistrito,
+                                datasets: [{
+                                    label: 'Cantidad de respuestas',
+                                    data: dataDistrito,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        grid: { display: false },
+                                        title: {
+                                            display: true,
+                                            text: 'Cantidad de Respuestas',
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                                        title: {
+                                            display: true,
+                                            text: 'Distrito',
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: { display: false }
+                                }
+                            }
+                        });
+                    </script>
+
+                    <!-- Gráfico de líneas: Evolución de respuestas en el tiempo (últimos 7 días) -->
                     <div class="col-xl-6 col-lg-6">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Estado de tus respuestas</h6>
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Evolución de Respuestas (Últimos Días)</h6>
                             </div>
                             <div class="card-body">
-                                <canvas id="estadoRespuestasChart" style="width:100%; height:350px;"></canvas>
+                                <div class="chart-area d-flex justify-content-center align-items-center" style="height: 350px;">
+                                    <canvas id="graficoEvolucion"></canvas>
+                                </div>
+
                             </div>
                         </div>
                     </div>
+                    <script>
+                        const labelsEvolucion = [
+                            <c:forEach var="entry" items="${respuestasUltimos7Dias}">
+                            '<c:out value="${entry.key}" />',
+                            </c:forEach>
+                        ];
+                        const dataEvolucion = [
+                            <c:forEach var="entry" items="${respuestasUltimos7Dias}">
+                            <c:out value="${entry.value}" />,
+                            </c:forEach>
+                        ];
+
+                        new Chart(document.getElementById("graficoEvolucion"), {
+                            type: 'line',
+                            data: {
+                                labels: labelsEvolucion,
+                                datasets: [{
+                                    label: 'Respuestas completadas',
+                                    data: dataEvolucion,
+                                    fill: true,
+                                    backgroundColor: 'rgba(75,192,192,0.2)',
+                                    borderColor: 'rgba(75,192,192,1)',
+                                    tension: 0.3
+                                }]
+                            },
+                            options: {
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        grid: { display: false },
+                                        title: {
+                                            display: true,
+                                            text: 'Fecha',
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                                        title: {
+                                            display: true,
+                                            text: 'Cantidad de respuestas',
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: { display: false }
+                                }
+                            }
+                        });
+                    </script>
                 </div>
 
-                <!-- Chart.js -->
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-                <script>
-                    // Datos para los gráficos
-                    const formularioLabels = [
-                        <c:forEach items="${formulariosPorCategoria}" var="form" varStatus="loop">
-                        "${form.key}"<c:if test="${!loop.last}">,</c:if>
-                        </c:forEach>
-                    ];
 
-                    const formularioData = [
-                        <c:forEach items="${formulariosPorCategoria}" var="form" varStatus="loop">
-                        ${form.value}<c:if test="${!loop.last}">,</c:if>
-                        </c:forEach>
-                    ];
 
-                    const pieLabels = [
-                        <c:forEach items="${listaFormularios}" var="formulario" varStatus="loop">
-                        "${formulario.key}"<c:if test="${!loop.last}">,</c:if>
-                        </c:forEach>
-                    ];
+                <div class="row">
+                    <!-- Gráfico de pastel: Porcentaje de formularios por estado -->
+                    <!-- Gráfico de Porcentaje de Formularios -->
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 text-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Porcentaje de Formularios</h6>
+                            </div>
+                            <div class="card-body d-flex justify-content-center align-items-center flex-column">
+                                <div style="height: 350px; width: 250px;">
+                                    <canvas id="graficoEstados"></canvas>
+                                </div>
+                                <div class="mt-3 text-center small">
 
-                    const pieData = [
-                        <c:forEach items="${listaFormularios}" var="formulario" varStatus="loop">
-                        ${formulario.value}<c:if test="${!loop.last}">,</c:if>
-                        </c:forEach>
-                    ];
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        const labelsEstados = ['Completado', 'Borrador', 'No iniciado'];
+                        const dataEstados = [
+                            ${formulariosPorEstado['Completado'] != null ? formulariosPorEstado['Completado'] : 0},
+                            ${formulariosPorEstado['Borrador'] != null ? formulariosPorEstado['Borrador'] : 0},
+                            ${formulariosPorEstado['No iniciado'] != null ? formulariosPorEstado['No iniciado'] : 0}
+                        ];
 
-                    const zonaLabels = [
-                        <c:forEach items="${formulariosPorZona}" var="zona" varStatus="loop">
-                        "${zona.key}"<c:if test="${!loop.last}">,</c:if>
-                        </c:forEach>
-                    ];
+                        new Chart(document.getElementById("graficoEstados"), {
+                            type: 'doughnut',
+                            data: {
+                                labels: labelsEstados,
+                                datasets: [{
+                                    data: dataEstados,
+                                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
+                        });
+                    </script>
 
-                    const zonaData = [
-                        <c:forEach items="${formulariosPorZona}" var="zona" varStatus="loop">
-                        ${zona.value}<c:if test="${!loop.last}">,</c:if>
-                        </c:forEach>
-                    ];
+                    <!-- Gráfico de barras apiladas: Respuestas por formulario por tipo -->
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 text-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Respuestas por Formulario</h6>
+                            </div>
+                            <div class="card-body">
+                                <div style="height: 400px; overflow-x: auto;">
+                                    <canvas id="graficoFormularios" style="min-width: 700px;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                    // Configuración de gráficos con tooltips mejorados
-                    const barChartFormularios = new Chart(document.getElementById('barChartFormularios'), {
-                        type: 'bar',
-                        data: {
-                            labels: formularioLabels,
-                            datasets: [{
-                                label: 'Cantidad de respuestas',
-                                data: formularioData,
-                                backgroundColor: '#36A2EB'
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            return `Respuestas: ${context.parsed.y}`;
+
+                    <script>
+                        const labelsFormularios = [
+                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
+                            '<c:out value="${entry.key}" />',
+                            </c:forEach>
+                        ];
+
+                        const datosCompletados = [
+                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
+                            <c:out value="${entry.value['C'] != null ? entry.value['C'] : 0}" />,
+                            </c:forEach>
+                        ];
+
+                        const datosBorradores = [
+                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
+                            <c:out value="${entry.value['B'] != null ? entry.value['B'] : 0}" />,
+                            </c:forEach>
+                        ];
+                        const etiquetasVisibles = labelsFormularios.map(nombre => {
+                            return nombre.length > 20 ? nombre.substring(0, 20) + "..." : nombre;
+                        });
+
+                        new Chart(document.getElementById("graficoFormularios"), {
+                            type: 'bar',
+                            data: {
+                                labels: etiquetasVisibles,
+                                datasets: [
+                                    {
+                                        label: 'Completado',
+                                        data: datosCompletados,
+                                        backgroundColor: '#28a745'
+                                    },
+                                    {
+                                        label: 'Borrador',
+                                        data: datosBorradores,
+                                        backgroundColor: '#ffc107'
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'top' },
+                                    tooltip: {
+                                        callbacks: {
+                                            title: function(context) {
+                                                const index = context[0].dataIndex;
+                                                return labelsFormularios[index];
+                                            }
                                         }
                                     }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    ticks: {
-                                        color: '#36A2EB',
-                                        callback: function(value) {
-                                            let label = this.getLabelForValue(value);
-                                            return label.length > 20 ? label.substring(0, 20) + '…' : label;
+                                },
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                        ticks: {
+                                            maxRotation: 45,
+                                            minRotation: 45,
+                                            autoSkip: false
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Formularios',
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
                                         }
                                     },
-                                    title: {
-                                        display: true,
-                                        text: 'Formularios',
-                                        color: '#000'
-                                    }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: { stepSize: 1 },
-                                    title: {
-                                        display: true,
-                                        text: 'Cantidad de respuestas',
-                                        color: '#000'
-                                    }
-                                }
-                            }
-                        }
-                    });
-
-                    const pieChart = new Chart(document.getElementById('pieChartTipos'), {
-                        type: 'pie',
-                        data: {
-                            labels: pieLabels,
-                            datasets: [{
-                                data: pieData,
-                                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#F67019']
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom',
-                                    labels: { color: '#000' }
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            const value = context.raw;
-                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                            const percentage = Math.round((value / total) * 100);
-                                            return `${context.label}: ${value} respuestas (${percentage}%)`;
+                                    y: {
+                                        stacked: true,
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Cantidad de respuestas',
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
                                         }
                                     }
                                 }
                             }
-                        }
-                    });
 
-                    const barChartZonas = new Chart(document.getElementById('barChartZonas'), {
-                        type: 'bar',
-                        data: {
-                            labels: zonaLabels,
-                            datasets: [{
-                                label: 'Cantidad de formularios',
-                                data: zonaData,
-                                backgroundColor: '#4BC0C0'
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: { display: false },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            return `Formularios: ${context.parsed.y}`;
-                                        }
-                                    }
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    title: {
-                                        display: true,
-                                        text: 'Zona / Distrito',
-                                        color: '#000'
-                                    },
-                                    ticks: {
-                                        color: '#4BC0C0',
-                                        callback: function(value) {
-                                            let label = this.getLabelForValue(value);
-                                            return label.length > 15 ? label.substring(0, 15) + '…' : label;
-                                        }
-                                    }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    title: {
-                                        display: true,
-                                        text: 'Cantidad',
-                                        color: '#000'
-                                    }
-                                }
-                            }
-                        }
-                    });
+                        });
 
-                    const estadoData = {
-                        labels: ['Completadas', 'Borradores'],
-                        datasets: [{
-                            label: 'Cantidad de respuestas',
-                            data: [
-                                ${estadoCompletadas != null ? estadoCompletadas : 0},
-                                ${estadoBorradores != null ? estadoBorradores : 0}
-                            ],
-                            backgroundColor: ['#4CAF50', '#FFC107'],
-                            borderColor: ['#388E3C', '#FFA000'],
-                            borderWidth: 1
-                        }]
-                    };
+                    </script>
 
-                    const estadoChart = new Chart(document.getElementById('estadoRespuestasChart'), {
-                        type: 'doughnut',
-                        data: estadoData,
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom',
-                                    labels: { color: '#000' }
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            const value = context.raw;
-                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                            const percentage = Math.round((value / total) * 100);
-                                            return `${context.label}: ${value} respuestas (${percentage}%)`;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                </script>
+                </div>
+
+
 
             </div>
             <!-- /.container-fluid -->
@@ -460,7 +580,7 @@
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; ONU Mujeres - PUCP 2025</span>
+                    <span>Copyright © ONU Mujeres - PUCP 2025</span>
                 </div>
             </div>
         </footer>
@@ -470,33 +590,162 @@
 </div>
 <!-- End of Page Wrapper -->
 
-<!-- Scroll to Top Button-->
+<!-- Scroll to Top Button -->
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
 
-<!-- Logout Modal-->
-<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">¿Seguro que quieres salir?</h5>
-                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">Los cambios no guardados como borrador o completado no se guardarán. Haz click en "Cerrar sesión" para terminar.</div>
-            <div class="modal-footer">
-                <button class="btn btn-info" type="button" data-dismiss="modal">Seguir Aquí</button>
-                <a class="btn btn-danger" href="${pageContext.request.contextPath}/logout">Cerrar sesión</a>
-            </div>
-        </div>
-    </div>
-</div>
+<jsp:include page="/footer.jsp" />
 
-</div>
-<!-- End of Page Wrapper -->
-<jsp:include page="../footer.jsp" />
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<!-- Custom Chart Scripts -->
+<script>
+    console.log("[DEBUG] JSP - Iniciando script de gráficos");
+
+
+    function parseJspMap(jspMapString) {
+        if (!jspMapString || jspMapString === '{}') {
+            console.log("[DEBUG] JSP - Mapa vacío o nulo: ", jspMapString);
+            return {};
+        }
+        try {
+
+            let cleaned = jspMapString
+                .replace(/=/g, ':')
+                .replace(/(\w+):/g, '"$1":')
+                .replace(/:(\d+\.?\d*)/g, ':$1');
+            let parsed = JSON.parse(cleaned);
+            console.log("[DEBUG] JSP - Mapa parseado: ", parsed);
+            return parsed;
+        } catch (e) {
+            console.error("[ERROR] JSP - Error al parsear mapa: ", jspMapString, e);
+            return {};
+        }
+    }
+
+    // Parsear respuestasPorZona
+    console.log("[DEBUG] JSP - respuestasPorZona raw: ", "${respuestasPorZona}");
+    var respuestasPorZona = parseJspMap('${respuestasPorZona}');
+    var areaLabels = Object.keys(respuestasPorZona);
+    var areaData = Object.values(respuestasPorZona);
+    console.log("[DEBUG] JSP - areaLabels: ", areaLabels);
+    console.log("[DEBUG] JSP - areaData: ", areaData);
+
+    if (areaLabels.length === 0) {
+        console.warn("[WARN] JSP - No hay datos para el gráfico de área");
+        areaLabels = ['Sin datos'];
+        areaData = [0];
+    }
+
+    // Gráfico de Área: Formularios Completados por Zona
+    var ctxArea = document.getElementById('myAreaChart');
+    if (!ctxArea) {
+        console.error("[ERROR] JSP - Canvas myAreaChart no encontrado");
+    } else {
+        try {
+            var myAreaChart = new Chart(ctxArea.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: areaLabels,
+                    datasets: [{
+                        label: 'Formularios Completados',
+                        data: areaData,
+                        backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        pointRadius: 3,
+                        pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                        pointBorderColor: 'rgba(255, 255, 255, 0.8)',
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: 'rgba(78, 115, 223, 1)',
+                        pointHitRadius: 10,
+                        pointBorderWidth: 2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            title: {
+                                display: true,
+                                text: 'Zona',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#007bff'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            title: {
+                                display: true,
+                                text: 'Cantidad de respuestas',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#007bff'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+            console.log("[DEBUG] JSP - Gráfico de área creado");
+        } catch (e) {
+            console.error("[ERROR] JSP - Error al crear gráfico de área: ", e);
+        }
+    }
+
+
+    console.log("[DEBUG] JSP - porcentajeActivosVsBaneados raw: ", "${porcentajeActivosVsBaneados}");
+    var porcentajeData = parseJspMap('${porcentajeActivosVsBaneados}');
+    var pieData = [porcentajeData.activos || 0, porcentajeData.baneados || 0];
+    var pieLabels = pieData[0] === 0 && pieData[1] === 0 ? ['Sin datos'] : ['Activos', 'Baneados'];
+    console.log("[DEBUG] JSP - porcentajeData parsed: ", porcentajeData);
+    console.log("[DEBUG] JSP - pieData: ", pieData);
+    console.log("[DEBUG] JSP - pieLabels: ", pieLabels);
+
+    // Gráfico de Torta: Porcentaje Activos vs Baneados
+    var ctxPie = document.getElementById('myPieChart');
+    if (!ctxPie) {
+        console.error("[ERROR] JSP - Canvas myPieChart no encontrado");
+    } else {
+        try {
+            var myPieChart = new Chart(ctxPie.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: pieLabels,
+                    datasets: [{
+                        data: pieData,
+                        backgroundColor: ['#4e73df', '#f6c23e'],
+                        hoverBackgroundColor: ['#2e59d9', '#dda20a'],
+                        hoverBorderColor: 'rgba(255, 255, 255, 1)'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    cutout: '50%'
+
+                }
+            });
+            console.log("[DEBUG] JSP - Gráfico de torta creado");
+        } catch (e) {
+            console.error("[ERROR] JSP - Error al crear gráfico de torta: ", e);
+        }
+    }
+</script>
+
 </body>
 </html>
