@@ -191,19 +191,102 @@
 
                 <!-- Fila 1 de gráficos -->
                 <div class="row">
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                     <!-- Respuestas por Zona (Últimos 30 días) -->
                     <div class="col-xl-6 col-lg-6">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Respuestas por Zona (Últimos 30 días)</h6>
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Respuestas por Zona (Completadas vs Borrador)</h6>
                             </div>
                             <div class="card-body">
-                                <div class="chart-area">
-                                    <canvas id="respuestasPorZonaChart" width="700" height="350"></canvas>
+                                <div style="height: 300px;">
+                                    <canvas id="graficoAdminZona"></canvas>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <script>
+                        const respuestasPorZonaEstado = {
+                            <c:forEach var="entry" items="${respuestasPorZonaEstado}">
+                            "${entry.key}": {
+                                C: ${entry.value["C"] != null ? entry.value["C"] : 0},
+                                B: ${entry.value["B"] != null ? entry.value["B"] : 0}
+                            },
+                            </c:forEach>
+                        };
+
+                        const zonas = Object.keys(respuestasPorZonaEstado);
+                        const completados = zonas.map(z => respuestasPorZonaEstado[z].C);
+                        const borradores = zonas.map(z => respuestasPorZonaEstado[z].B);
+
+                        new Chart(document.getElementById('graficoAdminZona'), {
+                            type: 'bar',
+                            data: {
+                                labels: zonas,
+                                datasets: [
+                                    {
+                                        label: 'Completado',
+                                        data: completados,
+                                        backgroundColor: '#28a745'
+                                    },
+                                    {
+                                        label: 'Borrador',
+                                        data: borradores,
+                                        backgroundColor: '#ffc107'
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'top',
+                                        labels: {
+                                            font: {
+                                                weight: 'bold'
+                                            },
+                                            color: '#1D4ED8' // azul
+                                        }
+                                    },
+                                    title: {
+                                        display: false
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Zona',
+                                            color: '#1D4ED8', // azul
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            }
+                                        }
+                                    },
+                                    y: {
+                                        stacked: true,
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Cantidad de Formularios',
+                                            color: '#1D4ED8', // azul
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        });
+                    </script>
+
 
                     <!-- Distribución de Usuarios -->
                     <div class="col-xl-6 col-lg-6">
@@ -222,19 +305,83 @@
 
                 <!-- Fila 2 de gráficos -->
                 <div class="row">
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                     <!-- Respuestas por Día (Última Semana) -->
                     <div class="col-xl-6 col-lg-6">
                         <div class="card shadow mb-4">
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Respuestas por Día (Última Semana)</h6>
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Top 5 Encuestadores por Formularios Completados</h6>
                             </div>
                             <div class="card-body">
-                                <div class="chart-area">
-                                    <canvas id="respuestasUltimaSemanaChart" width="700" height="350"></canvas>
-                                </div>
+                                <canvas id="topEncuestadoresChart" style="height: 300px;"></canvas>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Script del gráfico -->
+                    <script>
+                        const topEncuestadoresLabels = [
+                            <c:forEach var="entry" items="${topEncuestadores}" varStatus="status">
+                            '<c:out value="${entry.key}" />'<c:if test="${!status.last}">,</c:if>
+                            </c:forEach>
+                        ];
+
+                        const topEncuestadoresData = [
+                            <c:forEach var="entry" items="${topEncuestadores}" varStatus="status">
+                            <c:out value="${entry.value}" /><c:if test="${!status.last}">,</c:if>
+                            </c:forEach>
+                        ];
+
+                        const ctxTop = document.getElementById('topEncuestadoresChart').getContext('2d');
+                        new Chart(ctxTop, {
+                            type: 'bar',
+                            data: {
+                                labels: topEncuestadoresLabels,
+                                datasets: [{
+                                    label: 'Formularios completados',
+                                    data: topEncuestadoresData,
+                                    backgroundColor: 'rgba(78, 115, 223, 0.8)',
+                                    borderColor: 'rgba(78, 115, 223, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                indexAxis: 'y', // barras horizontales
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { display: false },
+                                },
+                                scales: {
+                                    x: {
+                                        beginAtZero: true,
+                                        ticks: { precision: 0 },
+                                        title: {
+                                            display: true,
+                                            text: 'Cantidad de Formularios',
+                                            color: '#1D4ED8', // azul
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            }
+                                        }
+                                    },
+                                    y: {
+                                        title: {
+                                            display: true,
+                                            text: 'Encuestadores',
+                                            color: '#1D4ED8', // azul
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        });
+                    </script>
 
                     <!-- Progreso de Formularios por Zona (%) -->
                     <div class="col-xl-6 col-lg-6">
@@ -255,37 +402,7 @@
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
                 <script>
-                    // Gráfico de Barras: Respuestas por Zona (Últimos 30 días)
-                    const respuestasPorZonaChart = new Chart(document.getElementById('respuestasPorZonaChart'), {
-                        type: 'bar',
-                        data: {
-                            labels: [
-                                <c:forEach items="${respuestas30Dias}" var="entry" varStatus="loop">
-                                "${entry.key}"<c:if test="${!loop.last}">,</c:if>
-                                </c:forEach>
-                            ],
-                            datasets: [{
-                                label: 'Respuestas',
-                                data: [
-                                    <c:forEach items="${respuestas30Dias}" var="entry" varStatus="loop">
-                                    ${entry.value}<c:if test="${!loop.last}">,</c:if>
-                                    </c:forEach>
-                                ],
-                                backgroundColor: ['#36A2EB', '#FFCE56', '#FF6384', '#4BC0C0'],
-                                borderColor: ['#36A2EB', '#FFCE56', '#FF6384', '#4BC0C0'],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: { stepSize: 1 }
-                                }
-                            }
-                        }
-                    });
+
 
                     // Gráfico de Pastel: Distribución de Usuarios
                     const distribucionUsuariosChart = new Chart(document.getElementById('distribucionUsuariosChart'), {
@@ -306,36 +423,7 @@
                         }
                     });
 
-                    // Gráfico de Líneas: Respuestas por Día (Última Semana)
-                    const respuestasUltimaSemanaChart = new Chart(document.getElementById('respuestasUltimaSemanaChart'), {
-                        type: 'line',
-                        data: {
-                            labels: [
-                                <c:forEach items="${respuestasUltimaSemana}" var="entry" varStatus="loop">
-                                "${entry.key}"<c:if test="${!loop.last}">,</c:if>
-                                </c:forEach>
-                            ],
-                            datasets: [{
-                                label: 'Respuestas',
-                                data: [
-                                    <c:forEach items="${respuestasUltimaSemana}" var="entry" varStatus="loop">
-                                    ${entry.value}<c:if test="${!loop.last}">,</c:if>
-                                    </c:forEach>
-                                ],
-                                borderColor: '#36A2EB',
-                                fill: false
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: { stepSize: 1 }
-                                }
-                            }
-                        }
-                    });
+
 
                     // Gráfico de Barras: Progreso de Formularios por Zona (%)
                     const progresoFormulariosZonaChart = new Chart(document.getElementById('progresoFormulariosZonaChart'), {
@@ -360,13 +448,38 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false }
+                            },
                             scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Zonas',
+                                        color: '#1D4ED8', // azul
+                                        font: {
+                                            size: 14,
+                                            weight: 'bold'
+                                        }
+                                    }
+                                },
                                 y: {
                                     beginAtZero: true,
-                                    ticks: { stepSize: 10 }
+                                    ticks: { stepSize: 10 },
+                                    title: {
+                                        display: true,
+                                        text: 'Porcentaje',
+                                        color: '#1D4ED8', // azul
+                                        font: {
+                                            size: 14,
+                                            weight: 'bold'
+                                        }
+                                    }
                                 }
                             }
                         }
+
                     });
                 </script>
                 ```
