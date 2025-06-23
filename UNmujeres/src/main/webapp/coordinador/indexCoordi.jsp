@@ -53,7 +53,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            Total Encuestadores
+                                            Total de Encuestadores en mi Zona
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                                             <c:out value="${totalEncuestadores != null ? totalEncuestadores : '0'}"/>
@@ -74,7 +74,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            Activos
+                                            Encuestadores Activos
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                                             <c:out value="${encuestadoresActivos != null ? encuestadoresActivos : '0'}"/>
@@ -95,7 +95,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            Baneados
+                                            Encuestadores Baneados
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                                             <c:out value="${encuestadoresBaneados != null ? encuestadoresBaneados : '0'}"/>
@@ -116,7 +116,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                            Formularios Asignados
+                                            Formularios Asignados en mi Zona
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                                             <c:out value="${formulariosAsignados != null ? formulariosAsignados : '0'}"/>
@@ -130,7 +130,99 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
 
+                    <!-- Formularios Completados -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Respuestas Completadas por Zona
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <c:out value="${formulariosCompletados != null ? formulariosCompletados : '0'}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formularios en Borrador -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-secondary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                                            Formularios en Borrador
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <c:out value="${formulariosBorrador != null ? formulariosBorrador : '0'}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-edit fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tasa de Avance -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Nivel de Cumplimiento de Formularios
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <fmt:formatNumber value="${tasaAvance > 100 ? 100 : (tasaAvance != null ? tasaAvance : 0.0)}" type="number" maxFractionDigits="1" />%
+
+
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-tachometer-alt fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Distrito Más Activo -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Distrito Más Activo
+                                        </div>
+                                        <div class="h6 mb-0 font-weight-bold text-gray-800">
+                                            <c:out value="${distritoMasActivo != null ? distritoMasActivo : 'Sin datos'}" />
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-map-marker-alt fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
                 <!-- Content Row 2: Gráficos -->
                 <div class="row">
 
@@ -171,6 +263,314 @@
                     </div>
                 </div>
 
+
+                <div class="row">
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <!-- Gráfico de barras horizontales: Cantidad de respuestas por distrito -->
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Respuestas por Distrito</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-bar d-flex justify-content-center align-items-center" style="height: 350px;">
+                                    <canvas id="graficoDistrito"></canvas>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        const labelsDistrito = [
+                            <c:forEach var="entry" items="${respuestasPorDistrito}">
+                            '<c:out value="${entry.key}" />',
+                            </c:forEach>
+                        ];
+                        const dataDistrito = [
+                            <c:forEach var="entry" items="${respuestasPorDistrito}">
+                            <c:out value="${entry.value}" />,
+                            </c:forEach>
+                        ];
+
+                        new Chart(document.getElementById("graficoDistrito"), {
+                            type: 'bar',
+                            data: {
+                                labels: labelsDistrito,
+                                datasets: [{
+                                    label: 'Cantidad de respuestas',
+                                    data: dataDistrito,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        grid: { display: false },
+                                        title: {
+                                            display: true,
+                                            text: 'Cantidad de Respuestas', 
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                                        title: {
+                                            display: true,
+                                            text: 'Distrito', 
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: { display: false }
+                                }
+                            }
+                        });
+                    </script>
+
+                    <!-- Gráfico de líneas: Evolución de respuestas en el tiempo (últimos 7 días) -->
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Evolución de Respuestas (Últimos Días)</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-area d-flex justify-content-center align-items-center" style="height: 350px;">
+                                    <canvas id="graficoEvolucion"></canvas>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        const labelsEvolucion = [
+                            <c:forEach var="entry" items="${respuestasUltimos7Dias}">
+                            '<c:out value="${entry.key}" />',
+                            </c:forEach>
+                        ];
+                        const dataEvolucion = [
+                            <c:forEach var="entry" items="${respuestasUltimos7Dias}">
+                            <c:out value="${entry.value}" />,
+                            </c:forEach>
+                        ];
+
+                        new Chart(document.getElementById("graficoEvolucion"), {
+                            type: 'line',
+                            data: {
+                                labels: labelsEvolucion,
+                                datasets: [{
+                                    label: 'Respuestas completadas',
+                                    data: dataEvolucion,
+                                    fill: true,
+                                    backgroundColor: 'rgba(75,192,192,0.2)',
+                                    borderColor: 'rgba(75,192,192,1)',
+                                    tension: 0.3
+                                }]
+                            },
+                            options: {
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        grid: { display: false },
+                                        title: {
+                                            display: true,
+                                            text: 'Fecha', 
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff' 
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                                        title: {
+                                            display: true,
+                                            text: 'Cantidad de respuestas', 
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: { display: false }
+                                }
+                            }
+                        });
+                    </script>
+                </div>
+
+
+
+
+                <div class="row">
+                    <!-- Gráfico de pastel: Porcentaje de formularios por estado -->
+                    <!-- Gráfico de Porcentaje de Formularios -->
+                    <div class="col-xl-4 col-lg-5">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 text-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Porcentaje de Formularios</h6>
+                            </div>
+                            <div class="card-body d-flex justify-content-center align-items-center flex-column">
+                                <div style="height: 350px; width: 250px;">
+                                    <canvas id="graficoEstados"></canvas>
+                                </div>
+                                <div class="mt-3 text-center small">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        const labelsEstados = ['Completado', 'Borrador', 'No iniciado'];
+                        const dataEstados = [
+                            ${formulariosPorEstado['Completado'] != null ? formulariosPorEstado['Completado'] : 0},
+                            ${formulariosPorEstado['Borrador'] != null ? formulariosPorEstado['Borrador'] : 0},
+                            ${formulariosPorEstado['No iniciado'] != null ? formulariosPorEstado['No iniciado'] : 0}
+                        ];
+
+                        new Chart(document.getElementById("graficoEstados"), {
+                            type: 'doughnut',
+                            data: {
+                                labels: labelsEstados,
+                                datasets: [{
+                                    data: dataEstados,
+                                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
+                        });
+                    </script>
+
+                    <!-- Gráfico de barras apiladas: Respuestas por formulario por tipo -->
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 text-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Respuestas por Formulario</h6>
+                            </div>
+                            <div class="card-body">
+                                <div style="height: 400px; overflow-x: auto;">
+                                    <canvas id="graficoFormularios" style="min-width: 700px;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <script>
+                        const labelsFormularios = [
+                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
+                            '<c:out value="${entry.key}" />',
+                            </c:forEach>
+                        ];
+
+                        const datosCompletados = [
+                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
+                            <c:out value="${entry.value['C'] != null ? entry.value['C'] : 0}" />,
+                            </c:forEach>
+                        ];
+
+                        const datosBorradores = [
+                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
+                            <c:out value="${entry.value['B'] != null ? entry.value['B'] : 0}" />,
+                            </c:forEach>
+                        ];
+                        const etiquetasVisibles = labelsFormularios.map(nombre => {
+                            return nombre.length > 20 ? nombre.substring(0, 20) + "..." : nombre;
+                        });
+
+                        new Chart(document.getElementById("graficoFormularios"), {
+                            type: 'bar',
+                            data: {
+                                labels: etiquetasVisibles,
+                                datasets: [
+                                    {
+                                        label: 'Completado',
+                                        data: datosCompletados,
+                                        backgroundColor: '#28a745'
+                                    },
+                                    {
+                                        label: 'Borrador',
+                                        data: datosBorradores,
+                                        backgroundColor: '#ffc107'
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'top' },
+                                    tooltip: {
+                                        callbacks: {
+                                            title: function(context) {
+                                                const index = context[0].dataIndex;
+                                                return labelsFormularios[index]; 
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                        ticks: {
+                                            maxRotation: 45,
+                                            minRotation: 45,
+                                            autoSkip: false
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Formularios',
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
+                                        }
+                                    },
+                                    y: {
+                                        stacked: true,
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Cantidad de respuestas',
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
+                                        }
+                                    }
+                                }
+                            }
+
+                        });
+
+                    </script>
+
+                </div>
+
+
+
             </div>
             <!-- /.container-fluid -->
         </div>
@@ -199,19 +599,22 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 <!-- Custom Chart Scripts -->
 <script>
     console.log("[DEBUG] JSP - Iniciando script de gráficos");
 
-    // Función para limpiar y parsear datos de JSP a JSON
+    
     function parseJspMap(jspMapString) {
         if (!jspMapString || jspMapString === '{}') {
             console.log("[DEBUG] JSP - Mapa vacío o nulo: ", jspMapString);
             return {};
         }
         try {
-            // Reemplazar = por : y añadir comillas a las claves
+            
             let cleaned = jspMapString
                 .replace(/=/g, ':')
                 .replace(/(\w+):/g, '"$1":')
@@ -267,10 +670,35 @@
                 options: {
                     maintainAspectRatio: false,
                     scales: {
-                        x: { grid: { display: false } },
-                        y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.1)' } }
+                        x: {
+                            grid: { display: false },
+                            title: {
+                                display: true,
+                                text: 'Zona', 
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#007bff' 
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            title: {
+                                display: true,
+                                text: 'Cantidad de respuestas', 
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                color: '#007bff'
+                            }
+                        }
                     },
-                    plugins: { legend: { display: false } }
+                    plugins: {
+                        legend: { display: false }
+                    }
                 }
             });
             console.log("[DEBUG] JSP - Gráfico de área creado");
@@ -309,6 +737,7 @@
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     cutout: '50%'
+
                 }
             });
             console.log("[DEBUG] JSP - Gráfico de torta creado");
