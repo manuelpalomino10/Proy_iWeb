@@ -120,16 +120,24 @@ public class VerFormulariosServlet extends HttpServlet {
                     try {
                         idFormulario = Integer.parseUnsignedInt(idFormParam1);
 
+                        ArrayList<Integer> idsFormAsig = new ArrayList<>();
+                        for (EncHasFormulario asignacion : asignaciones) {
+                            idsFormAsig.add(asignacion.getFormulario().getIdFormulario());
+                        }
+                        if (!idsFormAsig.contains(idFormulario)) {
+                            throw new IllegalArgumentException("No puede crear registros de formularios no asignados");
+                        }
+
                     } catch (NumberFormatException e) {
                         System.out.println("Parámetro de form inválido");
                         session.setAttribute("error", "Parámetro de formulario inválido");
                         response.sendRedirect(getRedirectUrl(userRole));
                         return;
 
-//                    } catch (IllegalArgumentException e) {
-//                    session.setAttribute("error", "Validar que pertenezca al usuario");
-//                    response.sendRedirect(getRedirectUrl(userRole));
-//                    return;
+                    } catch (IllegalArgumentException e) {
+                    session.setAttribute("error", e.getMessage());
+                    response.sendRedirect(getRedirectUrl(userRole));
+                    return;
                     }
                 } else {
                     session.setAttribute("error", "El parámetro de formulario no puede ser nulo");
@@ -236,7 +244,6 @@ public class VerFormulariosServlet extends HttpServlet {
                                 idForm = asignacion.getFormulario().getIdFormulario();
                             }
                         }
-
                         if (!idsFormAsig.contains(idForm)) {
                             throw new IllegalArgumentException("No puede editar registros de formularios no asignados");
                         }
@@ -246,7 +253,6 @@ public class VerFormulariosServlet extends HttpServlet {
                         session.setAttribute("error", "Parámetros de form o registro inválidos");
                         response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
                         return;
-
                     } catch (IllegalArgumentException e) {
                     session.setAttribute("error", e.getMessage());
                     response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");

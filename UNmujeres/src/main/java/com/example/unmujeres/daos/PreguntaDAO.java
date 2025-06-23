@@ -1,13 +1,10 @@
 package com.example.unmujeres.daos;
 
+import java.sql.*;
+import java.sql.Date;
 import java.util.*;
 
 import com.example.unmujeres.beans.*;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class PreguntaDAO extends BaseDAO{
     public ArrayList<Pregunta> getPreguntasConOpcionesPorFormulario(int idFormulario) {
@@ -51,6 +48,33 @@ public class PreguntaDAO extends BaseDAO{
 
         return preguntas;
     }
+
+    public int crearPregunta(Pregunta pregunta) throws SQLException {
+
+        String sql = "INSERT INTO pregunta (enunciado, tipo_dato, idseccion, requerido) VALUES (?, ?, ?, ?)";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, pregunta.getEnunciado());
+            ps.setString(2, pregunta.getTipoDato());
+            ps.setInt(3, pregunta.getSeccion().getIdSeccion());
+
+            boolean requerido = pregunta.getRequerido();
+            int req = requerido ? 1 : 0;
+            ps.setInt(4, req);
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        throw new SQLException("No se pudo crear nueva pregunta");
+    }
+
+
 
 }
 

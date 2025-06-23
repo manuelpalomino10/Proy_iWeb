@@ -54,7 +54,7 @@
           <!-- ------------- FORMULARIO DE FILTROS ------------- -->
           <div class="container">
             <form id="filtros" method="GET" action="<%=request.getContextPath()%>/administrador/ReportesServlet?action=listaReportes" class="row g-3">
-              <input type="hidden" name="action" value="listaReportes" />
+<%--              <input type="hidden" name="action" value="listaReportes" />--%>
 
               <!-- Sección 8 (Zona, Rol y Fecha) -->
               <div class="col-md-8">

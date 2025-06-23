@@ -37,7 +37,7 @@
                   <th>Categoría</th>
                   <th>Fecha creación</th>
                   <th>Estado</th>
-                  <th>Eliminar</th>
+                  <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -47,21 +47,28 @@
                   <td><%= formularioDto.getNombreCat() %></td>
                   <td><%= formularioDto.getFechaCreacion() %></td>
                   <td>
-                    <form action="${pageContext.request.contextPath}/coordinador/GestionFormServlet" method="post">
-                      <input type="hidden" name="id" value="<%= formularioDto.getId() %>">
-                      <input type="hidden" name="estado" value="<%= formularioDto.isEstado() ? "true" : "false" %>">
-                      <button type="submit" class="btn <%= formularioDto.isEstado() ? "btn-danger" : "btn-success" %> btn-sm">
-                        <%= formularioDto.isEstado() ? "Desactivado" : "Activado" %>
-                      </button>
-                    </form>
+<%--                    <form action="<%=request.getContextPath()%>/coordinador/GestionFormServlet" method="post">--%>
+<%--                      <input type="hidden" name="id" value="<%= formularioDto.getId() %>">--%>
+<%--                      <input type="hidden" name="estado" value="<%= formularioDto.isEstado() ? "true" : "false" %>">--%>
+<%--                      <button type="submit" class="btn <%= formularioDto.isEstado() ? "btn-danger" : "btn-success" %> btn-sm">--%>
+<%--                        <%= formularioDto.isEstado() ? "Desactivado" : "Activado" %>--%>
+<%--                      </button>--%>
+<%--                    </form>--%>
+                    <% if (formularioDto.isEstado()) { %>
+                    <span class="badge badge-success">Activo</span>
+                    <% } else { %>
+                    <span class="badge badge-danger">Inactivo</span>
+                    <% } %>
+
                   </td>
                   <td>
-                    <form action="${pageContext.request.contextPath}/coordinador/EliminarFormServlet" method="post" onsubmit="return confirm('¿Estás seguro de eliminar este formulario?');">
-                      <input type="hidden" name="id" value="<%= formularioDto.getId() %>">
-                      <button type="submit" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash-alt"></i> Eliminar
-                      </button>
-                    </form>
+<%--                    <form action="<%=request.getContextPath()%>/coordinador/EliminarFormServlet" method="post" onsubmit="return confirm('¿Estás seguro de eliminar este formulario?');">--%>
+<%--                      <input type="hidden" name="id" value="<%= formularioDto.getId() %>">--%>
+<%--                      <button type="submit" class="btn btn-danger btn-sm">--%>
+<%--                        <i class="fas fa-trash-alt"></i> Eliminar--%>
+<%--                      </button>--%>
+<%--                    </form>--%>
+
                   </td>
                 </tr>
                 <% } %>

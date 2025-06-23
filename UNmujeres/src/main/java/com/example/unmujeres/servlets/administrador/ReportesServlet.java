@@ -64,7 +64,7 @@ public class ReportesServlet extends HttpServlet {
 
         // Variables para almacenar las fechas. Inicialmente nulas.
         String fi=null,ff = null;
-        if (dateRangeParam != null && dateRangeParam.equals(null) && !dateRangeParam.trim().isEmpty()) {
+        if (dateRangeParam != null && !dateRangeParam.equals(null) && !dateRangeParam.trim().isEmpty()) {
 
             try {
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -81,9 +81,9 @@ public class ReportesServlet extends HttpServlet {
                 if (endDate.isBefore(startDate)) {
                     throw new IllegalArgumentException("La fecha final debe ser posterior a la fecha inicial");
                 }
-//                if (startDate.isAfter(LocalDate.now())) {
-//                    throw new IllegalArgumentException("No se permiten fechas futuras");
-//                }
+                if (startDate.isAfter(LocalDate.now())) {
+                    throw new IllegalArgumentException("No se permiten fechas futuras");
+                }
                 if (startDate.isBefore(LocalDate.of(2000, 1, 1))) {
                     throw new IllegalArgumentException("No se permiten fechas anteriores al año 2000");
                 }

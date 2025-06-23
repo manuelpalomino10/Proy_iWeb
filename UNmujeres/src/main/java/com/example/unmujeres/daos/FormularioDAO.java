@@ -1,17 +1,15 @@
 package com.example.unmujeres.daos;
 
+import java.sql.*;
 import java.util.ArrayList;
 
 import com.example.unmujeres.beans.EncHasFormulario;
 import com.example.unmujeres.beans.Formulario;
 import com.example.unmujeres.beans.RegistroRespuestas;
+import com.example.unmujeres.beans.Seccion;
 import com.example.unmujeres.dtos.ContenidoReporteDTO;
 import com.example.unmujeres.dtos.ReporteDTO;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 public class FormularioDAO extends BaseDAO {
@@ -177,6 +175,31 @@ public class FormularioDAO extends BaseDAO {
             e.printStackTrace();
         }
         return contenido;
+    }
+
+    public int crearFormulario(Formulario form) throws SQLException {
+
+        String sql = "INSERT INTO formulario (nombre, fecha_creacion, fecha_limite, estado, registros_esperados, idcategoria) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, form.getNombre());
+            ps.setDate(2, new Date(form.getFechaCreacion().getTime()));
+            ps.setDate(2, new Date(form.getFechaLimite().getTime()));
+            ps.setInt(4, 1);
+            ps.setInt(5, form.getRegistrosEsperados());
+            ps.setInt(6, form.getCategoria().getIdCategoria());
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int idNuevoForm = rs.getInt(1);
+                    return rs.getInt(1);
+                }
+            }
+        }
+        throw new SQLException("No se pudo crear un nuevo formulario");
     }
 
 }
