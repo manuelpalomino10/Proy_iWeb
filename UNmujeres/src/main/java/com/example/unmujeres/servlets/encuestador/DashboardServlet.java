@@ -82,11 +82,22 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("respuestasUltimaSemana", estadisticasDAO.getRespuestasUltimaSemana());
         request.setAttribute("progresoFormularios", estadisticasDAO.getProgresoFormulariosPorZona());
         request.setAttribute("totalRespuestas", estadisticasDAO.getTotalRespuestas());
+
+
+        Map<String, Map<String, Integer>> respuestasPorZonaEstado = estadisticasDAO.getRespuestasPorZonaEstado();
+        request.setAttribute("respuestasPorZonaEstado", respuestasPorZonaEstado);
+
+
+// 2.
+        Map<String, Integer> topEncuestadores = estadisticasDAO.getTopEncuestadores();
+        request.setAttribute("topEncuestadores", topEncuestadores);
+
     }
 
     private void cargarDatosEncuestador(HttpServletRequest request, HttpServletResponse response, int idUsuario) throws SQLException, ServletException, IOException {
         // Estadísticas para dashboard de encuestador
-        Map<String, Object> avance = estadisticasDAO.calcularAvance(idUsuario);
+        Map<String, Integer> respuestasPorDia = estadisticasDAO.obtenerRespuestasCompletadasPorDia(idUsuario);
+        request.setAttribute("respuestasPorDia", respuestasPorDia);
         int borradores = estadisticasDAO.contarBorradores(idUsuario);
         int completados = estadisticasDAO.contarFormulariosCompletados(idUsuario);
         int completadosUltimos7Dias = estadisticasDAO.contarCompletadosUltimos7Dias();
@@ -98,13 +109,23 @@ public class DashboardServlet extends HttpServlet {
         String ultimoFormularioRegistrado = estadisticasDAO.obtenerUltimoFormularioRegistrado();
         int formulariosPorVencer = estadisticasDAO.contarFormulariosPorVencerPronto();
         int totalRespuestas = estadisticasDAO.contarTotalRespuestasRegistradas(idUsuario);
-        int formulariosAsignadosHoy = estadisticasDAO.contarFormulariosAsignadosHoy();
+        int formulariosAsignadosHoy = estadisticasDAO.contarRespuestasCompletadasHoy(idUsuario);
+
+        Map<String, Integer> formulariosPorZona = estadisticasDAO.obtenerFormulariosPorZona(idUsuario);
+        request.setAttribute("formulariosPorZona", formulariosPorZona);
+
+
+        //----------------------
+        Map<String, Integer> datos = estadisticasDAO.obtenerCantidadPorEstado(idUsuario);
+
+        request.setAttribute("estadoCompletadas", datos.getOrDefault("C", 0));
+        request.setAttribute("estadoBorradores", datos.getOrDefault("B", 0));
 
 
         //-------------------------------------------------
 
         request.setAttribute("listaFormularios", listaFormularios);
-        request.setAttribute("avanceResultados", avance);
+
         request.setAttribute("borradores", borradores);
         request.setAttribute("completados", completados);
         request.setAttribute("completadosUltimos7Dias", completadosUltimos7Dias);
@@ -133,13 +154,29 @@ public class DashboardServlet extends HttpServlet {
         Map<String, Integer> respuestasPorZona = estadisticasDAO.getRespuestasPorZonaCoordinador(idCoordinador);
         Map<String, Double> porcentajeActivosVsBaneados = estadisticasDAO.getPorcentajeEncuestadoresActivosVsBaneadosCoordinador(idCoordinador);
 
+        // de zona que le pertenece al coordinador
+        int idZona = estadisticasDAO.obtenerZonaPorCoordinador(idCoordinador);
+
+        // Nuevas tarjetas y gráficos
+        int formulariosCompletados = estadisticasDAO.contarFormulariosCompletadosPorZona(idZona);
+        int formulariosBorrador = estadisticasDAO.contarFormulariosBorradorPorZona(idZona);
+        double tasaAvance = estadisticasDAO.calcularTasaAvancePorZona(idZona);
+        String distritoMasActivo = estadisticasDAO.obtenerDistritoMasActivo(idZona);
+
+        Map<String, Integer> respuestasPorDistrito = estadisticasDAO.obtenerCantidadRespuestasPorDistrito(idZona);
+        Map<String, Integer> respuestasUltimos7Dias = estadisticasDAO.obtenerRespuestasUltimos7Dias(idZona);
+        Map<String, Integer> formulariosPorEstado = estadisticasDAO.obtenerConteoFormulariosPorEstado(idZona);
+        Map<String, Map<String, Integer>> respuestasPorFormularioEstado = estadisticasDAO.obtenerRespuestasPorFormularioYEstado(idZona);
 
         // En cargarDatosCoordinador
         System.out.println("[DEBUG] idCoordinador: " + idCoordinador);
         System.out.println("[DEBUG] totalEncuestadores: " + totalEncuestadores);
-
-
         // Logs
+        System.out.println("👉 respuestasPorDistrito: " + estadisticasDAO.getRespuestasPorDistrito(idCoordinador));
+        System.out.println("👉 respuestasUltimos7Dias: " + estadisticasDAO.getRespuestasUltimos7Dias(idCoordinador));
+        System.out.println("👉 formulariosPorEstado: " + estadisticasDAO.getFormulariosPorEstado(idCoordinador));
+        System.out.println("👉 respuestasPorFormularioEstado: " + estadisticasDAO.getRespuestasPorFormularioEstado(idCoordinador));
+
         System.out.println("[DEBUG] cargarDatosCoordinador - idCoordinador: " + idCoordinador);
         System.out.println("[DEBUG] totalEncuestadores: " + totalEncuestadores);
         System.out.println("[DEBUG] encuestadoresActivos: " + encuestadoresActivos);
@@ -157,6 +194,23 @@ public class DashboardServlet extends HttpServlet {
         // Atributos para los gráficos
         request.setAttribute("respuestasPorZona", respuestasPorZona);
         request.setAttribute("porcentajeActivosVsBaneados", porcentajeActivosVsBaneados);
+        // Nuevas tarjetas
+        request.setAttribute("formulariosCompletados", formulariosCompletados);
+        request.setAttribute("formulariosBorrador", formulariosBorrador);
+        request.setAttribute("tasaAvance", tasaAvance);
+        request.setAttribute("distritoMasActivo", distritoMasActivo);
+
+        // Nuevos gráficos
+        request.setAttribute("respuestasPorDistrito", respuestasPorDistrito);
+        request.setAttribute("respuestasUltimos7Dias", respuestasUltimos7Dias);
+        request.setAttribute("formulariosPorEstado", formulariosPorEstado);
+        request.setAttribute("respuestasPorFormularioEstado", respuestasPorFormularioEstado);
+        request.setAttribute("respuestasPorDistrito", estadisticasDAO.getRespuestasPorDistrito(idCoordinador));
+        request.setAttribute("respuestasUltimos7Dias", estadisticasDAO.getRespuestasUltimos7Dias(idCoordinador));
+        request.setAttribute("formulariosPorEstado", estadisticasDAO.getFormulariosPorEstado(idCoordinador));
+        request.setAttribute("respuestasPorFormularioEstado", estadisticasDAO.getRespuestasPorFormularioEstado(idCoordinador));
+
     }
 }
+
 
