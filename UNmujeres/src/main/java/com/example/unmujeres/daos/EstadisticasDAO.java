@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class EstadisticasDAO extends BaseDAO {
@@ -33,41 +34,29 @@ public class EstadisticasDAO extends BaseDAO {
     }
 
     //--------------------- SEGUNDO CRUD ---------------------------------------
-    public Map<String, Object> calcularAvance(int idUsuario) throws SQLException {
-        String sql = "SELECT f.nombre AS nombre_formulario, " +
-                "SUM(CASE WHEN rr.fecha_registro >= DATE_SUB(CURDATE(), INTERVAL 7 DAY) THEN 1 ELSE 0 END) AS completados_semana, " +
-                "SUM(CASE WHEN rr.fecha_registro >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) AS completados_mes " +
-                "FROM iweb_proy.formulario f " +
-                "JOIN iweb_proy.enc_has_formulario ehf ON ehf.idformulario = f.idformulario " +
-                "JOIN iweb_proy.registro_respuestas rr ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+    public Map<String, Integer> obtenerRespuestasCompletadasPorDia(int idUsuario) throws SQLException {
+        String sql = "SELECT DATE(rr.fecha_registro) AS fecha, COUNT(*) AS cantidad " +
+                "FROM iweb_proy.registro_respuestas rr " +
+                "JOIN iweb_proy.enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
                 "WHERE rr.estado = 'C' AND ehf.enc_idusuario = ? " +
-                "GROUP BY f.idformulario, f.nombre";
+                "GROUP BY DATE(rr.fecha_registro) " +
+                "ORDER BY fecha ASC";
 
-        Map<String, int[]> datosPorFormulario = new HashMap<>();
-        int totalCompletadosSemanaGeneral = 0;
-        int totalCompletadosMesGeneral = 0;
-
+        Map<String, Integer> resultados = new LinkedHashMap<>();
         try (Connection con = this.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setInt(1, idUsuario);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    String nombreFormulario = rs.getString("nombre_formulario");
-                    int completadosSemana = rs.getInt("completados_semana");
-                    int completadosMes = rs.getInt("completados_mes");
-
-                    datosPorFormulario.put(nombreFormulario, new int[]{completadosSemana, completadosMes});
-                    totalCompletadosSemanaGeneral += completadosSemana;
-                    totalCompletadosMesGeneral += completadosMes;
+                    String fecha = rs.getString("fecha");
+                    int cantidad = rs.getInt("cantidad");
+                    resultados.put(fecha, cantidad);
                 }
             }
         }
-
-        Map<String, Object> resultado = new HashMap<>();
-        resultado.put("detallePorFormulario", datosPorFormulario);
-        resultado.put("totalesGenerales", new int[]{totalCompletadosSemanaGeneral, totalCompletadosMesGeneral});
-        return resultado;
+        return resultados;
     }
+
 
     //--------------------- TERCER CRUD ---------------------------------------
     public int contarBorradores(int idUsuario) throws SQLException {
@@ -121,13 +110,13 @@ public class EstadisticasDAO extends BaseDAO {
 
     //--------------------- SEXTO CRUD ---------------------------------------
     public Map<String, Integer> obtenerRespuestasCompletadasPorFormulario(int idusuario) throws SQLException {
-        String sql = "SELECT f.nombre AS nombre_formulario, " +
-                "COUNT(rr.idregistro_respuestas) AS respuestas_completadas " +
-                "FROM iweb_proy.formulario f " +
-                "JOIN iweb_proy.enc_has_formulario ehf ON ehf.idformulario = f.idformulario " +
-                "JOIN iweb_proy.registro_respuestas rr ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
-                "WHERE rr.estado = 'C' AND ehf.enc_idusuario = ? " +
-                "GROUP BY f.idformulario, f.nombre";
+            String sql = "SELECT f.nombre AS nombre_formulario, " +
+                    "COUNT(rr.idregistro_respuestas) AS respuestas_completadas " +
+                    "FROM iweb_proy.formulario f " +
+                    "JOIN iweb_proy.enc_has_formulario ehf ON ehf.idformulario = f.idformulario " +
+                    "JOIN iweb_proy.registro_respuestas rr ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                    "WHERE rr.estado = 'C' AND ehf.enc_idusuario = ? " +
+                    "GROUP BY f.idformulario, f.nombre";
 
         Map<String, Integer> resultados = new HashMap<>();
 
@@ -196,21 +185,82 @@ public class EstadisticasDAO extends BaseDAO {
     }
 
     //--------------------- DÉCIMO CRUD ---------------------------------------
-    public int contarFormulariosAsignadosHoy() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM iweb_proy.enc_has_formulario WHERE fecha_asignacion = CURDATE()";
+    public int contarRespuestasCompletadasHoy(int idUsuario) throws SQLException {
+        String sql = "SELECT COUNT(*) " +
+                "FROM iweb_proy.registro_respuestas rr " +
+                "JOIN iweb_proy.enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "WHERE rr.estado = 'C' AND ehf.enc_idusuario = ? AND DATE(rr.fecha_registro) = CURDATE()";
+
         try (Connection con = this.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1);
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idUsuario);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
             }
-            return 0;
         }
     }
+    // GRAFICOS NUMERO 3
+    public Map<String, Integer> obtenerFormulariosPorZona(int idUsuario) throws SQLException {
+        Map<String, Integer> resultado = new LinkedHashMap<>();
+        String sql = """
+        SELECT\s
+            z.nombre AS nombre_zona,
+            COUNT(rr.idregistro_respuestas) AS total
+        FROM iweb_proy.registro_respuestas rr
+        JOIN iweb_proy.enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario
+        JOIN iweb_proy.usuario e ON ehf.enc_idusuario = e.idusuario
+        JOIN iweb_proy.zona z ON e.idzona = z.idzona
+        WHERE e.idusuario = ?
+        GROUP BY z.nombre
+        ORDER BY total DESC;
+        
+    """;
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            stmt.setInt(1, idUsuario);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    String zona = rs.getString("nombre_zona");
+                    int cantidad = rs.getInt("total");
+                    resultado.put(zona, cantidad);
+                }
+            }
+        }
+        return resultado;
+    }
+
+
+    public Map<String, Integer> obtenerCantidadPorEstado(int idEncuestador) {
+        Map<String, Integer> resultado = new HashMap<>();
+
+        String sql = "SELECT rr.estado, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "WHERE ehf.enc_idusuario = ? " +
+                "GROUP BY rr.estado";
+
+        try  (Connection con = this.getConnection();
+              PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idEncuestador);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String estado = rs.getString("estado");
+                int total = rs.getInt("total");
+                resultado.put(estado, total);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
+
     //------------------ESTADISTICAS PARA ADMIN ---------------------------------------------------
     // Método para obtener total de usuarios (roles 1 y 2)
     public int getTotalUsuarios() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM usuario WHERE idroles IN (1,2)";
+        String sql = "SELECT COUNT(*) FROM usuario WHERE idroles IN (3,2)";
         try (Connection conn = this.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -307,7 +357,7 @@ public class EstadisticasDAO extends BaseDAO {
 
     // 3. Usuarios desactivados
     public int getUsuariosDesactivados() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM usuario WHERE estado = 0 AND idroles IN (1,2)";
+        String sql = "SELECT COUNT(*) FROM usuario WHERE estado = 0 AND idroles IN (3,2)";
         try (Connection conn = this.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -317,16 +367,15 @@ public class EstadisticasDAO extends BaseDAO {
 
     // 4. Zona con más respuestas (últimos 30 días)
     public String getZonaConMasRespuestas() throws SQLException {
-        String sql = "SELECT z.nombre " +
-                "FROM zona z " +
-                "JOIN distritos d ON z.idzona = d.idzona " +
-                "JOIN usuario u ON d.iddistritos = u.iddistritos " +
-                "JOIN enc_has_formulario ehf ON u.idusuario = ehf.enc_idusuario " +
-                "JOIN registro_respuestas rr ON ehf.idenc_has_formulario = rr.idenc_has_formulario " +
-                "WHERE rr.fecha_registro >= CURDATE() - INTERVAL 30 DAY " +
-                "GROUP BY z.nombre " +
-                "ORDER BY COUNT(*) DESC " +
-                "LIMIT 1";
+        String sql = "SELECT z.nombre\n" +
+                "FROM zona z\n" +
+                "JOIN distritos d ON z.idzona = d.idzona \n" +
+                "JOIN usuario u ON d.iddistritos = u.iddistritos \n" +
+                "JOIN enc_has_formulario ehf ON u.idusuario = ehf.enc_idusuario \n" +
+                "JOIN registro_respuestas rr ON ehf.idenc_has_formulario = rr.idenc_has_formulario \n" +
+                "GROUP BY z.nombre \n" +
+                "ORDER BY COUNT(*) DESC \n" +
+                "LIMIT 1;\n";
         try (Connection conn = this.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -403,6 +452,63 @@ public class EstadisticasDAO extends BaseDAO {
             return rs.next() ? rs.getInt(1) : 0;
         }
     }
+
+
+    public Map<String, Map<String, Integer>> getRespuestasPorZonaEstado() {
+        Map<String, Map<String, Integer>> resultados = new HashMap<>();
+        String sql = "SELECT z.nombre AS zona, rr.estado, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "JOIN zona z ON u.idzona = z.idzona " +
+                "GROUP BY z.nombre, rr.estado";
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String zona = rs.getString("zona");
+                String estado = rs.getString("estado"); // 'C' o 'B'
+                int total = rs.getInt("total");
+
+                resultados.computeIfAbsent(zona, k -> new HashMap<>()).put(estado, total);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultados;
+    }
+
+
+
+    // 2. Gráfico: Distribución de formularios por categoría
+    public Map<String, Integer> getTopEncuestadores() throws SQLException {
+        String sql = "SELECT CONCAT(u.nombres, ' ', u.apellidos) AS encuestador, " +
+                "COUNT(rr.idregistro_respuestas) AS total_respuestas " +
+                "FROM usuario u " +
+                "JOIN enc_has_formulario ehf ON u.idusuario = ehf.enc_idusuario " +
+                "JOIN registro_respuestas rr ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "WHERE u.idroles = 3 AND rr.estado = 'C' " +
+                "GROUP BY u.idusuario " +
+                "ORDER BY total_respuestas DESC " +
+                "LIMIT 5";
+
+        Map<String, Integer> resultados = new LinkedHashMap<>();
+        try (Connection conn = this.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                resultados.put(rs.getString("encuestador"), rs.getInt("total_respuestas"));
+            }
+        }
+        return resultados;
+    }
+
+
+
+
+
+
+
 
     //-------------------------COORDINADOR --------------------------------------------------------
 
@@ -524,11 +630,371 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
+    public Map<String, Integer> obtenerCantidadRespuestasPorDistrito(int idZona) {
+        Map<String, Integer> resultado = new HashMap<>();
+
+        String sql = "SELECT d.nombre AS distrito, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "JOIN distritos d ON u.iddistritos = d.iddistritos " +
+                "WHERE u.idzona = ? " +
+                "GROUP BY d.nombre";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idZona);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                resultado.put(rs.getString("distrito"), rs.getInt("total"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
+
+    public Map<String, Integer> obtenerRespuestasUltimos7Dias(int idZona) {
+        Map<String, Integer> resultado = new LinkedHashMap<>();
+
+        String sql = "SELECT rr.fecha_registro, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "WHERE rr.estado = 'C' AND u.idzona = ? AND rr.fecha_registro >= CURDATE() - INTERVAL 7 DAY " +
+                "GROUP BY rr.fecha_registro " +
+                "ORDER BY rr.fecha_registro";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idZona);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                resultado.put(rs.getString("fecha_registro"), rs.getInt("total"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
+
+    public Map<String, Integer> obtenerConteoFormulariosPorEstado(int idZona) {
+        Map<String, Integer> resultado = new HashMap<>();
+
+        String sql = "SELECT rr.estado, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "WHERE u.idzona = ? " +
+                "GROUP BY rr.estado";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idZona);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                resultado.put(rs.getString("estado"), rs.getInt("total"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
+
+
+    public double obtenerPromedioRespuestasPorEncuestador(int idZona) {
+        double promedio = 0.0;
+
+        String sql = "SELECT COUNT(rr.idregistro_respuestas) / COUNT(DISTINCT u.idusuario) AS promedio " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "WHERE u.idzona = ?";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idZona);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                promedio = rs.getDouble("promedio");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return promedio;
+    }
+
+
+    public Map<String, Integer> obtenerCantidadRespuestasPorFormulario(int idZona) {
+        Map<String, Integer> resultado = new HashMap<>();
+
+        String sql = "SELECT f.nombre AS formulario, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN formulario f ON ehf.idformulario = f.idformulario " +
+                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "WHERE u.idzona = ? " +
+                "GROUP BY f.nombre";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idZona);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                resultado.put(rs.getString("formulario"), rs.getInt("total"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
+
+
+    public int contarFormulariosCompletadosPorZona(int idZona) {
+        int total = 0;
+        String sql = "SELECT COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "WHERE rr.estado = 'C' AND u.idzona = ?";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idZona);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
+
+    public int contarFormulariosBorradorPorZona(int idZona) {
+        int total = 0;
+        String sql = "SELECT COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "WHERE rr.estado = 'B' AND u.idzona = ?";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idZona);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                total = rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
+
+    public double calcularTasaAvancePorZona(int idZona) {
+        double tasa = 0.0;
+        String sql = "SELECT " +
+                "  (SELECT COUNT(*) FROM registro_respuestas rr " +
+                "   JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "   JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "   WHERE rr.estado = 'C' AND u.idzona = ?) AS completados, " +
+                "  (SELECT COUNT(*) FROM enc_has_formulario ehf " +
+                "   JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "   WHERE u.idzona = ?) AS asignados";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idZona);
+            stmt.setInt(2, idZona);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int completados = rs.getInt("completados");
+                int asignados = rs.getInt("asignados");
+                if (asignados > 0) {
+                    tasa = (double) completados / asignados * 100.0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tasa;
+    }
+
+    public String obtenerDistritoMasActivo(int idZona) {
+        String distrito = "Sin datos";
+        String sql = "SELECT d.nombre, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "JOIN distritos d ON u.iddistritos = d.iddistritos " +
+                "WHERE rr.estado = 'C' AND u.idzona = ? " +
+                "GROUP BY d.nombre " +
+                "ORDER BY total DESC LIMIT 1";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idZona);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                distrito = rs.getString("nombre");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return distrito;
+    }
+
+    public Map<String, Map<String, Integer>> obtenerRespuestasPorFormularioYEstado(int idZona) {
+        Map<String, Map<String, Integer>> resultado = new HashMap<>();
+
+        String sql = "SELECT f.nombre AS formulario, rr.estado, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN formulario f ON ehf.idformulario = f.idformulario " +
+                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
+                "WHERE u.idzona = ? " +
+                "GROUP BY f.nombre, rr.estado";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idZona);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String nombreFormulario = rs.getString("formulario");
+                String estado = rs.getString("estado");
+                int total = rs.getInt("total");
+
+                resultado.computeIfAbsent(nombreFormulario, k -> new HashMap<>()).put(estado, total);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
 
 
 
 
+    public int obtenerZonaPorCoordinador(int idCoordinador) {
+        String sql = "SELECT idzona FROM usuario WHERE idusuario = ? AND idroles = 2";
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idCoordinador);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("idzona");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
+    public Map<String, Integer> getRespuestasPorDistrito(int idCoordinador) {
+        String sql = "SELECT d.nombre AS distrito, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN usuario u ON u.idusuario = ehf.enc_idusuario " +
+                "JOIN distritos d ON u.iddistritos = d.iddistritos " +
+                "WHERE u.idzona = (SELECT idzona FROM usuario WHERE idusuario = ?) " +
+                "AND rr.estado = 'C' " +
+                "GROUP BY d.nombre";
+
+        Map<String, Integer> resultado = new LinkedHashMap<>();
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idCoordinador);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                resultado.put(rs.getString("distrito"), rs.getInt("total"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
+    public Map<String, Integer> getRespuestasUltimos7Dias(int idCoordinador) {
+        String sql = "SELECT rr.fecha_registro, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN usuario u ON u.idusuario = ehf.enc_idusuario " +
+                "WHERE u.idzona = (SELECT idzona FROM usuario WHERE idusuario = ?) " +
+                "AND rr.estado = 'C' AND rr.fecha_registro >= CURDATE() - INTERVAL 7 DAY " +
+                "GROUP BY rr.fecha_registro ORDER BY rr.fecha_registro";
+
+        Map<String, Integer> resultado = new LinkedHashMap<>();
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idCoordinador);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                resultado.put(rs.getDate("fecha_registro").toString(), rs.getInt("total"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
+
+    public Map<String, Integer> getFormulariosPorEstado(int idCoordinador) {
+        String sql = "SELECT rr.estado, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN usuario u ON u.idusuario = ehf.enc_idusuario " +
+                "WHERE u.idzona = (SELECT idzona FROM usuario WHERE idusuario = ?) " +
+                "GROUP BY rr.estado";
+
+        Map<String, Integer> resultado = new LinkedHashMap<>();
+        resultado.put("Completado", 0);
+        resultado.put("Borrador", 0);
+        resultado.put("No iniciado", 0);
+
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idCoordinador);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String estado = rs.getString("estado");
+                if ("C".equals(estado)) resultado.put("Completado", rs.getInt("total"));
+                else if ("B".equals(estado)) resultado.put("Borrador", rs.getInt("total"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
+
+    public Map<String, Map<String, Integer>> getRespuestasPorFormularioEstado(int idCoordinador) {
+        String sql = "SELECT f.nombre, rr.estado, COUNT(*) AS total " +
+                "FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "JOIN formulario f ON ehf.idformulario = f.idformulario " +
+                "JOIN usuario u ON u.idusuario = ehf.enc_idusuario " +
+                "WHERE u.idzona = (SELECT idzona FROM usuario WHERE idusuario = ?) " +
+                "GROUP BY f.nombre, rr.estado";
+
+        Map<String, Map<String, Integer>> resultado = new LinkedHashMap<>();
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idCoordinador);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String nombre = rs.getString("nombre");
+                String estado = rs.getString("estado");
+                int total = rs.getInt("total");
+
+                resultado.putIfAbsent(nombre, new HashMap<>());
+                resultado.get(nombre).put(estado, total);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
 
 
 }
+
+
 
