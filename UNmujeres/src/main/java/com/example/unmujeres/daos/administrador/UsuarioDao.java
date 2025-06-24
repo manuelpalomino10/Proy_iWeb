@@ -12,11 +12,13 @@ public class UsuarioDao extends BaseDAO {
     public ArrayList<UsuarioDto> listar() {
         ArrayList<UsuarioDto> lista = new ArrayList<>();
 
-        String sql = "SELECT u.idUsuario, u.nombres, u.apellidos, u.correo, u.DNI, r.nombre AS nombreRol, z.nombre AS nombreZona, u.estado AS estado\n" +
-                "FROM usuario u\n" +
-                "JOIN roles r ON u.idroles = r.idroles \n" +
-                "JOIN zona z ON u.idzona = z.idzona\n" +
-                "order by u.idUsuario desc;";
+        String sql = "SELECT u.idUsuario, u.nombres, u.apellidos, u.correo, u.DNI, r.nombre AS nombreRol, " +
+                "z.nombre AS nombreZona, u.estado AS estado " +
+                "FROM usuario u " +
+                "JOIN roles r ON u.idroles = r.idroles " +
+                "JOIN zona z ON u.idzona = z.idzona " +
+                "WHERE u.idroles IN (2, 3) " +
+                "ORDER BY u.idUsuario DESC";
 
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
