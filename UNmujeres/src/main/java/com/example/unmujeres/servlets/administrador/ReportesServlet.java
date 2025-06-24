@@ -64,13 +64,13 @@ public class ReportesServlet extends HttpServlet {
 
         // Variables para almacenar las fechas. Inicialmente nulas.
         String fi=null,ff = null;
-        if (dateRangeParam != null && !dateRangeParam.equals(null) && !dateRangeParam.trim().isEmpty()) {
+        if ((dateRangeParam != null && !dateRangeParam.equals(null)) && !dateRangeParam.isEmpty()) {
 
             try {
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-                String[] parts = dateRangeParam.split(" - ");
+                String[] parts = dateRangeParam.trim().split(" - ");
                 if (parts.length != 2) {
                     throw new IllegalArgumentException("Formato inválido. Use: DD-MM-YYYY - DD-MM-YYYY");
                 }

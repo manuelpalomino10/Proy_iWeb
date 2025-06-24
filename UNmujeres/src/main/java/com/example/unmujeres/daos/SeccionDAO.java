@@ -6,12 +6,12 @@ import java.sql.*;
 
 public class SeccionDAO extends BaseDAO {
 
-    public int crearSeccion(Seccion seccion) throws SQLException {
+    public int crearSeccion(Connection conn, Seccion seccion) throws SQLException {
 
         String sql = "INSERT INTO seccion (nombre_sec, idformulario) VALUES (?, ?)";
 
         try (Connection con = this.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, seccion.getNombreSec());
             ps.setInt(2, seccion.getFormulario().getIdFormulario());

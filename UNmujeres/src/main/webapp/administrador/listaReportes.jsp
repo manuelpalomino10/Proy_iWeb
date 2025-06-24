@@ -103,6 +103,14 @@
                 </span>
                   <span class="text">Filtrar</span>
                 </button>
+
+                <button class="btn btn-primary w-100" onclick="">
+                <span class="icon text-white-50">
+                          <i class="fas fa-brush"></i>
+                </span>
+                      <span class="text">Limpiar filtros</span>
+                </button>
+
               </div>
             </form>
           </div>
