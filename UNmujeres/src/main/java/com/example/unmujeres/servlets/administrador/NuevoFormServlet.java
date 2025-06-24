@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@MultipartConfig
 @WebServlet(name = "NuevoFormServlet", value = "/administrador/NuevoFormServlet")
 public class NuevoFormServlet extends HttpServlet {
 
@@ -106,12 +107,14 @@ public class NuevoFormServlet extends HttpServlet {
                 nuevoFormulario.setCategoria(cat);
                 nuevoFormulario.setRegistrosEsperados(esperados);
             } catch (NumberFormatException e) {
-                session.setAttribute("error", "Categoría o Registros esperados deben ser números");
-                response.sendRedirect("error.jsp");
+                session.setAttribute("error", "Categoría o cantidad de Registros esperados no válidos");
+                response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
+//                response.sendRedirect("error.jsp");
                 return;
             } catch (IllegalArgumentException e) {
                 session.setAttribute("error", e.getMessage());
-                response.sendRedirect("error.jsp");
+                response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
+//                response.sendRedirect("error.jsp");
                 return;
             }
         } else {
@@ -140,7 +143,8 @@ public class NuevoFormServlet extends HttpServlet {
 
         } catch (IllegalArgumentException | DateTimeParseException e) {
             session.setAttribute("error", e.getMessage());
-            response.sendRedirect("error.jsp");
+            response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
+//            response.sendRedirect("error.jsp");
             return;
         }
 

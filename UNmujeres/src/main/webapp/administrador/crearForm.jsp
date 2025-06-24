@@ -52,7 +52,7 @@
 
         <!-- ------------- FORMULARIO DE PARAMETROS DE FORMULARIO ------------- -->
         <div class="container">
-          <form id="fparametros" method="POST" action="<%=request.getContextPath()%>/administrador/NuevoFormServlet" class="row g-3">
+          <form id="fparametros" method="POST" action="<%=request.getContextPath()%>/administrador/NuevoFormServlet" class="row g-3" enctype="multipart/form-data">
 
             <!-- Sección 8 (Zona, Rol y Fecha) -->
             <div class="col-md-8">
@@ -60,8 +60,8 @@
                 <!-- Primera fila: Nombre -->
               <div class="row mt-3">
                 <div class="col-md-12">
-                  <label for="nombre_form" class="form-label">Nombre de formulario:</label>
-                  <input type="text" name="nombre_form" id="nombre_form" class="form-control" placeholder="Nombre de formulario" required/>
+                  <label for="nombreForm" class="form-label">Nombre de formulario:</label>
+                  <input type="text" name="nombreForm" id="nombreForm" class="form-control" placeholder="Nombre de formulario" required/>
                 </div>
               </div>
 
@@ -84,7 +84,7 @@
               <div class="row mt-3">
                 <div class="col-md-5">
                   <label for="fechaCreacion" class="form-label">Fecha de Creación:</label>
-                  <input type="date" name="fechaCreacion" id="fechaCreacion" class="form-control" placeholder="DD-MM-YYYY" value="<%= LocalDate.now() %>" disabled/>
+                  <input type="date" name="fechaCreacion" id="fechaCreacion" class="form-control" placeholder="DD-MM-YYYY" value="<%= LocalDate.now() %>" readonly/>
                 </div>
               </div>
 
@@ -100,7 +100,8 @@
               <div class="row mt-3">
                 <div class="col-md-4">
                   <label for="esperados" class="form-label">Registros Esperados:</label>
-                  <input type="number" name="esperados" id="esperados" class="form-control" min="50" placeholder="100" value="<%= null %>"/>
+                  <input type="number" name="esperados" id="esperados" class="form-control" min="50" placeholder="100" />
+<%--                  value="<%= null %>"--%>
                 </div>
               </div>
 

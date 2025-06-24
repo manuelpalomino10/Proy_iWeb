@@ -183,7 +183,7 @@ public class FormularioDAO extends BaseDAO {
 
             ps.setString(1, form.getNombre());
             ps.setDate(2, new Date(form.getFechaCreacion().getTime()));
-            ps.setDate(2, new Date(form.getFechaLimite().getTime()));
+            ps.setDate(3, new Date(form.getFechaLimite().getTime()));
             ps.setInt(4, 1);
             ps.setInt(5, form.getRegistrosEsperados());
             ps.setInt(6, form.getCategoria().getIdCategoria());
