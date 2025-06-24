@@ -64,6 +64,11 @@
                                 <i class="fas fa-camera mr-2"></i>Actualizar Foto
                             </button>
                             <input type="file" name="foto" id="fileInput" class="d-none" accept="image/*" onchange="uploadImage(this);">
+                            <ul style="list-style: none; padding-left: 0; margin: 8px 0 0 0;">
+                                <li style="color: #6c757d; font-size: 13px; font-weight: 600; margin-bottom: 2px;">
+                                    Solo se permiten formatos JPG, JPEG y PNG
+                                </li>
+                            </ul>
                         </form>
 
                         <script>
