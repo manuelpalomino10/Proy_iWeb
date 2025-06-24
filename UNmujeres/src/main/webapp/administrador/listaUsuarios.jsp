@@ -58,7 +58,7 @@
                                         <input type="hidden" name="id" value="<%= usuarioDto.getId() %>">
                                             <input type="hidden" name="estado" value="<%= usuarioDto.isEstado() ? "true" : "false" %>">
                                             <button type="submit" class="btn <%= usuarioDto.isEstado() ? "btn-danger" : "btn-success" %>">
-                                                <%= usuarioDto.isEstado() ? "Desactivado" : "Activado" %>
+                                                <%= usuarioDto.isEstado() ? "Desactivar" : "Activar" %>
                                             </button>
                                         </form>
                                     </td>
