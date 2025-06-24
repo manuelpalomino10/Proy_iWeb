@@ -24,7 +24,7 @@
     <div id="content-wrapper" class="d-flex flex-column">
         <div id="content">
 
-            <jsp:include page="../topbarEnc.jsp" />
+            <jsp:include page="../topbarAdmin.jsp" />
 
             <div class="container-fluid">
                 <h1 class="h3 mb-4 text-gray-800">Lista de Usuarios</h1>
