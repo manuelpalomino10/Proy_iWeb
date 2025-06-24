@@ -106,7 +106,7 @@
                       <button type="button" class="btn btn-primary importBtn" data-id="<%= asignacion.getIdEncHasFormulario() %>">
                         <i class="fas fa-upload mr-2"></i>Importar CSV
                       </button>
-                      <input type="file" name="csvFile" id="csvFile_<%= asignacion.getIdEncHasFormulario() %>" class="d-none" accept="text/csv">
+                      <input type="file" name="csvFile" id="csvFile_<%= asignacion.getIdEncHasFormulario() %>" class="d-none" accept=".csv">
                     </form>
                   </td>
                 </tr>

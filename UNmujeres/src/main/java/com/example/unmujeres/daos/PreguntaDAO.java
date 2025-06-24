@@ -1,7 +1,6 @@
 package com.example.unmujeres.daos;
 
 import java.sql.*;
-import java.sql.Date;
 import java.util.*;
 
 import com.example.unmujeres.beans.*;
@@ -49,12 +48,12 @@ public class PreguntaDAO extends BaseDAO{
         return preguntas;
     }
 
-    public int crearPregunta(Pregunta pregunta) throws SQLException {
+    public int crearPregunta(Connection conn, Pregunta pregunta) throws SQLException {
 
         String sql = "INSERT INTO pregunta (enunciado, tipo_dato, idseccion, requerido) VALUES (?, ?, ?, ?)";
 
         try (Connection con = this.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, pregunta.getEnunciado());
             ps.setString(2, pregunta.getTipoDato());

@@ -3,10 +3,7 @@ package com.example.unmujeres.daos;
 import com.example.unmujeres.beans.OpcionPregunta;
 import com.example.unmujeres.beans.Pregunta;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class OpcionPreguntaDAO extends BaseDAO{
@@ -118,6 +115,28 @@ public class OpcionPreguntaDAO extends BaseDAO{
         }
 
         return opcionesStr;
+    }
+
+
+    public int crearOpcion(Connection conn, OpcionPregunta opcion) throws SQLException {
+
+        String sql = "INSERT INTO opcion (opcion, idpregunta) VALUES (?, ?)";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, opcion.getOpcion());
+            ps.setInt(2, opcion.getPregunta().getIdPregunta());
+
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        throw new SQLException("No se pudo crear nueva opcion");
     }
 
 }

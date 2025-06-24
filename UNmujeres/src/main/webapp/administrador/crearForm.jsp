@@ -1,5 +1,6 @@
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="com.example.unmujeres.beans.Categoria" %><%--
+<%@ page import="com.example.unmujeres.beans.Categoria" %>
+<%@ page import="java.time.LocalDate" %><%--
   Created by IntelliJ IDEA.
   User: Luis
   Date: 23/06/2025
@@ -51,15 +52,25 @@
 
         <!-- ------------- FORMULARIO DE PARAMETROS DE FORMULARIO ------------- -->
         <div class="container">
-          <form id="fparametros" method="GET" action="<%=request.getContextPath()%>/administrador/NuevoFormServlet" class="row g-3">
+          <form id="fparametros" method="POST" action="<%=request.getContextPath()%>/administrador/NuevoFormServlet" class="row g-3">
 
             <!-- Sección 8 (Zona, Rol y Fecha) -->
             <div class="col-md-8">
-              <div class="row">
-                <!-- Primera fila: Categoría -->
-                <div class="col-md-6">
+
+                <!-- Primera fila: Nombre -->
+              <div class="row mt-3">
+                <div class="col-md-12">
+                  <label for="nombre_form" class="form-label">Nombre de formulario:</label>
+                  <input type="text" name="nombre_form" id="nombre_form" class="form-control" placeholder="Nombre de formulario" required/>
+                </div>
+              </div>
+
+              <!-- Segunda fila: Categoría -->
+              <div class="row mt-3">
+                <div class="col-md-5">
                   <label for="idCategoria" class="form-label">Categoría:</label>
                   <select name="idCategoria" id="idCategoria" class="form-select">
+                    <option <%= (catSel==0) ? "selected" : "" %> >Seleccionar Categoría</option>
                     <% for (Categoria categoria : categorias) { %>
                     <option value="<%= categoria.getIdCategoria() %>" <%= (categoria.getIdCategoria() == catSel) ? "selected" : "" %>>
                       <%= categoria.getNombre() %>
@@ -69,27 +80,35 @@
                 </div>
               </div>
 
-              <!-- Segunda fila: Fecha límite -->
+              <!-- Tercera fila: Fecha de Creacion -->
               <div class="row mt-3">
-                <div class="col-md-12">
+                <div class="col-md-5">
+                  <label for="fechaCreacion" class="form-label">Fecha de Creación:</label>
+                  <input type="date" name="fechaCreacion" id="fechaCreacion" class="form-control" placeholder="DD-MM-YYYY" value="<%= LocalDate.now() %>" disabled/>
+                </div>
+              </div>
+
+              <!-- Cuarta fila: Fecha límite -->
+              <div class="row mt-3">
+                <div class="col-md-5">
                   <label for="fechaLimite" class="form-label">Fecha límite:</label>
-                  <input type="date" name="fechaLimite" id="fechaLimite" class="form-control" placeholder="DD-MM-YYYY" value="<%=hoy%>" disabled/>
+                  <input type="date" name="fechaLimite" id="fechaLimite" class="form-control" placeholder="DD-MM-YYYY" min="<%= LocalDate.now().plusDays(1) %>"/>
                 </div>
               </div>
 
-              <!-- Tercera fila: Registros esperados -->
+              <!-- Quinta fila: Registros esperados -->
               <div class="row mt-3">
-                <div class="col-md-12">
+                <div class="col-md-4">
                   <label for="esperados" class="form-label">Registros Esperados:</label>
-                  <input type="number" name="esperados" id="esperados" class="form-control" min="50" placeholder="100" value="<%=catSel%>"/>
+                  <input type="number" name="esperados" id="esperados" class="form-control" min="50" placeholder="100" value="<%= null %>"/>
                 </div>
               </div>
 
-              <!-- Tercera fila: Registros esperados -->
+              <!-- Sexta fila: Archivo -->
               <div class="row mt-3">
-                <div class="col-md-12">
+                <div class="col-md-8">
                   <label for="csvFile" class="form-label">Archivo CSV:</label>
-                  <input type="file" name="csvFile" id="csvFile" class="form-control"/>
+                  <input type="file" name="csvFile" id="csvFile" class="form-control" accept=".csv" required/>
                 </div>
               </div>
 
