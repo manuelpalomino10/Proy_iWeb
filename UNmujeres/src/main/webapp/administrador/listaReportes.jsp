@@ -18,7 +18,10 @@
 
   int zonaSel = (int) request.getAttribute("zona");
   int rolSel  = (int) request.getAttribute("rol");
-  String dateRange   = (String) request.getAttribute("daterange");
+  String dateRange = "";
+  if (request.getAttribute("daterange")!=null) {
+    dateRange   = (String) request.getAttribute("daterange");
+  }
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -46,6 +49,26 @@
 
         <!-- Begin Page Content -->
         <div class="container-fluid">
+
+          <hr/>
+
+          <% if (session.getAttribute("error") != null) { %>
+          <div>
+            <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
+            </div>
+          </div>
+          <% session.removeAttribute("error"); %>
+          <% } %>
+
+          <% if (session.getAttribute("success") != null) { %>
+          <div>
+            <div class="alert alert-success" role="alert"><%=session.getAttribute("success")%>
+            </div>
+          </div>
+          <% session.removeAttribute("success"); %>
+          <% } %>
+
+          </hr>
 
           <!-- Page Heading -->
           <h1 class="h3 mb-2 text-gray-800">Generar Reporte</h1>
@@ -93,7 +116,16 @@
                   <input type="text" name="daterange" id="daterange"
                          class="form-control form-control-sm"
                          placeholder="DD-MM-YYYY - DD-MM-YYYY"
-                         value="<%=dateRange%>" />
+                         <%
+                           String dateRangeVal;
+                           if (dateRange==null) {
+                            dateRangeVal="";
+                           } else {
+                            dateRangeVal=dateRange;
+                           }
+                           System.out.println("EN JSP, VAL DE daterange es: "+dateRangeVal);
+                         %>
+                         value="<%=dateRangeVal%>" />
                 </div>
 
                 <!-- Botón -->

@@ -78,16 +78,6 @@ public class SubirRegistrosServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
             return;
         }
-        Usuario user = (Usuario) session.getAttribute("usuario");
-        if (user == null || user.getIdUsuario()==0 || user.getIdroles()==0) {
-            System.out.println("No hay usuario en session");
-            session.setAttribute("error", "Sesión inválida o usuario no autenticado.");
-            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
-            return;
-        }
-
-//        String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
-//        System.out.println("accion de dopost es: " + action);
 
         System.out.println("Iniciando proceso de subir registros");
         //Validación del parámetro idEhf.
@@ -96,7 +86,7 @@ public class SubirRegistrosServlet extends HttpServlet {
         if (idEhfParam == null || idEhfParam.trim().isEmpty()) {
             //request.setAttribute("error", "Imposible encontrar un formulario nulo, es requerido elegir uno.");
             session.setAttribute("error", "Imposible encontrar un formulario nulo, es requerido elegir uno.");
-            request.getRequestDispatcher("/coordinador/SubirRegistrosServlet").forward(request, response);
+            request.getRequestDispatcher("/coordinador/GestionFormServlet").forward(request, response);
             return;
         }
 
@@ -107,7 +97,7 @@ public class SubirRegistrosServlet extends HttpServlet {
             System.out.println("Error en el parametro idEhf");
             //.getSession().setAttribute("error", e.getMessage());
             session.setAttribute("error", "Imposible encontrar ese formulario.");
-            response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
+            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
             return;
         }
 
@@ -115,18 +105,19 @@ public class SubirRegistrosServlet extends HttpServlet {
         Part filePart = request.getPart("csvFile");
         if (filePart == null || filePart.getSize() == 0) {  //Validar que exista y no esté vacío
             //request.setAttribute("error", "Debe seleccionar un archivo.");
-            session.setAttribute("error", "Debe seleccionar un archivo.");
-            response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
+            session.setAttribute("error", "Debe seleccionar un archivo para Subir Registros masivamente.");
+            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
             return;
         }
         String fileName = filePart.getSubmittedFileName();
         if (fileName == null || !fileName.toLowerCase().endsWith(".csv")) {    //Validar extensión .csv
             //request.setAttribute("error", "El archivo debe ser de tipo CSV (.csv)");
             session.setAttribute("error", "El archivo debe ser de tipo CSV (.csv).");
-            response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
+            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
             return;
         }
 
+        int nRegInsertados = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePart.getInputStream(), "UTF-8"))) {
 
             // 3. Saltar las primeras 6 líneas de cabecera
@@ -146,6 +137,7 @@ public class SubirRegistrosServlet extends HttpServlet {
                 nuevoRegistro.setEncHasFormulario(ehfDAO.getById(idEhf));
                 int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);
                 System.out.println("Nuevo Registro id es: "+idRegistro);
+                nRegInsertados++;
 
                 // Se separa la línea en celdas según el delimitador.
                 String[] cells = line.split(delimiter);
@@ -167,10 +159,11 @@ public class SubirRegistrosServlet extends HttpServlet {
         } catch (SQLException | IOException e) {
             e.printStackTrace();
             session.setAttribute("error", e.getMessage());
-            response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
+            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
             return;
         } finally {
-            response.sendRedirect(request.getContextPath() + "/coordinador/SubirRegistrosServlet");
+            session.setAttribute("success", ""+nRegInsertados+" registros importados correctamente");
+            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
         }
 
     }

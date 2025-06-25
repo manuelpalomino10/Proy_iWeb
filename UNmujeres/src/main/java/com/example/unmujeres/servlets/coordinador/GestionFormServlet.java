@@ -1,5 +1,6 @@
 package com.example.unmujeres.servlets.coordinador;
 
+import com.example.unmujeres.beans.Usuario;
 import com.example.unmujeres.daos.GestionFormDao;
 import com.example.unmujeres.dtos.FormularioDto;
 import jakarta.servlet.*;
@@ -18,13 +19,28 @@ public class GestionFormServlet extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
 
-        GestionFormDao formularioDao = new GestionFormDao();
-        ArrayList<FormularioDto> list = formularioDao.listar();
+        HttpSession session = request.getSession(false);
 
-        //mandar lista a la vista -> listaUsuarios
-        request.setAttribute("lista", list);
-        RequestDispatcher rd = request.getRequestDispatcher("/coordinador/gestionFormularios.jsp");
-        rd.forward(request, response);
+        Usuario user = (Usuario) session.getAttribute("usuario");
+        int idUser = user.getIdUsuario();
+
+        RequestDispatcher view;
+
+        GestionFormDao formularioDao = new GestionFormDao();
+//        ArrayList<FormularioDto> list = formularioDao.listar();
+//
+//        //mandar lista a la vista -> listaUsuarios
+//        request.setAttribute("lista", list);
+//        RequestDispatcher rd = request.getRequestDispatcher("/coordinador/gestionFormularios.jsp");
+//        rd.forward(request, response);
+
+
+        ArrayList<FormularioDto> formularios = formularioDao.listar(idUser);
+        request.setAttribute("lista", formularios);
+        view = request.getRequestDispatcher("/coordinador/gestionFormularios.jsp");
+        view.forward(request, response);
+
+
     }
 
     @Override
