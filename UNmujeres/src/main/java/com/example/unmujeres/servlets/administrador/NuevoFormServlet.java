@@ -74,8 +74,6 @@ public class NuevoFormServlet extends HttpServlet {
         request.getParameter("nombre_form");
         String nombreFormParam = request.getParameter("nombreForm");
         String fechaLimiteParam = request.getParameter("fechaLimite");
-        System.out.println(nombreFormParam);
-        System.out.println(fechaLimiteParam);
 
         String esperadosParam = request.getParameter("esperados");
         String idCategoriaParam = request.getParameter("idCategoria");
@@ -163,7 +161,7 @@ public class NuevoFormServlet extends HttpServlet {
             return;
         }
 
-
+        int numPreguntas = 0;
         Connection conn = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePart.getInputStream(), "UTF-8"))) {
             conn = baseDAO.getConnection();
@@ -180,11 +178,12 @@ public class NuevoFormServlet extends HttpServlet {
             String[] ejemplos = reader.readLine().split(delimiter);
 
 // Validar consistencia
-            int numPreguntas = headers.length;
+            numPreguntas = headers.length;
             if (obligatoriedad.length != numPreguntas
                     || tipos.length != numPreguntas
                     || secciones.length != numPreguntas
                     || ejemplos.length != numPreguntas) {
+
                 throw new Exception("Número de columnas inconsistente en el archivo CSV");
             }
 
@@ -201,13 +200,13 @@ public class NuevoFormServlet extends HttpServlet {
 
                 // Validar tipo de dato
                 String tipo = tipos[i].trim().toLowerCase();
-                if (!"texto".equals(tipo) && !"numero".equals(tipo) && !"fecha".equals(tipo) && !"combobox".equals(tipo)) {
-                    throw new Exception("Tipo de dato inválido: '"+tipo+"' en columna " +obligatoriedad[i]);
+                if (!"texto".equals(tipo) && !"número".equals(tipo) && !"fecha".equals(tipo) && !"combobox".equals(tipo)) {
+                    throw new Exception("Tipo de dato inválido: '"+tipo+"' en columna " +tipos[i]);
                 }
 
                 // Mapear tipo a formato BD
                 String tipoBD = switch (tipo) {
-                    case "numero" -> "int";
+                    case "número" -> "int";
                     case "fecha" -> "date";
                     case "combobox" -> "combobox";
                     default -> "Default"; // Para texto
@@ -257,6 +256,8 @@ public class NuevoFormServlet extends HttpServlet {
 
 
         } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
             session.setAttribute("error", e.getMessage());
             if (conn != null) {
                 try {
@@ -278,7 +279,9 @@ public class NuevoFormServlet extends HttpServlet {
                 }
             }
         }
-
+        session.setAttribute("success", "Nuevo Formulario creado con éxito con "+numPreguntas+" preguntas");
+        response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
+        return;
 
     }
 

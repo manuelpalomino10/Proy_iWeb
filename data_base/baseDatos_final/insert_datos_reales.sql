@@ -88,7 +88,7 @@ INSERT INTO enc_has_formulario (idenc_has_formulario,enc_idusuario,idformulario,
 
 INSERT INTO registro_respuestas (idregistro_respuestas, fecha_registro, estado, idenc_has_formulario) VALUES
 -- encuestador 7
-(1, '2025-02-11', 'B', 1), (2, '2025-02-12', 'C', 1),(3, '2025-02-13', 'B', 1), (4, '2025-02-13', 'B', 1),
+(1, '2025-02-11', 'C', 1), (2, '2025-02-12', 'C', 1),(3, '2025-02-13', 'B', 1), (4, '2025-02-13', 'B', 1),
 (7, '2025-04-01', 'B', 3), (8, '2025-04-04', 'B', 3),
 (9, '2025-01-03', 'C', 4), (10, '2025-01-04', 'C', 4),
 (11, '2025-02-01', 'C', 5), (12, '2025-02-02', 'C', 5),
@@ -473,48 +473,8 @@ INSERT INTO opcion_pregunta (idopcion_pregunta, opcion, idpregunta) VALUES
 	(118, 'Baja', 154);
 
 
-INSERT INTO respuesta(`idrespuesta`,`respuesta`,`idpregunta`,`idregistro_respuestas`) VALUES 
-(1,'2025-02-11',1,1), 
-(2,'Juan Pérez López',2,1),
-(3,'A.H. Santo Tomás',3,1), 
-(4,'Lima',4,1),
-(5,'Ana Zuñiga Ocazo',5,1),
-(6,'48',6,1),
-(7,'Calle San Carlos 743',7,1),
-(8,'968123486',8,1),
-(9,'Sí',9,1), 
-(10,'1',10,1), 
-(11,'No',11,1), 
-(12,'Prefiere cuidador familiar',12,1), 
-(13,'Sí',13,1), 
-(14,'2',14,1), 
-(15,'Sí',15,1), 
-(16,'Dolores crónicos',16,1), 
-(17,'Sí',17,1),
-(18,'Sí',18,1),
-(19,'Dolores crónicos',19,1),
-(20,'Dolores crónicos',20,1),
-(21,'Sí',21,1),
-(22,'Dolores crónicos',22,1),
-(23,'Sí',23,1),
-(24,'Sí',24,1),
-(25,'Dolores crónicos',25,1),
-(26,'Sí',26,1),
-(27,'Sí',27,1),
-(28,NULL,28,1),
-(29,NULL,29,1),
-
-
-(36,NULL,36,3),
-(37,NULL,37,3), 
-(38,NULL,38,3), 
-(39,NULL,39,3), 
-(40,NULL,40,3), 
-(41,NULL,41,3), 
-(42,NULL,42,3), 
-(43,NULL,43,3), 
-(44,NULL,44,3), 
-(45,NULL,45,3);
+-- INSERT INTO respuesta (idrespuesta,respuesta,idpregunta,idregistro_respuestas) VALUES
+-- se hace con el archivo respuestas_insert.sql
 
 
 

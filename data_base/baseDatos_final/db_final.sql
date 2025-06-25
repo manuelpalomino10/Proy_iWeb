@@ -200,7 +200,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- Table `iweb_proy`.`opcion_pregunta`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `iweb_proy`.`opcion_pregunta` (
-  `idopcion_pregunta` INT NOT NULL,
+  `idopcion_pregunta` INT NOT NULL AUTO_INCREMENT,
   `opcion` VARCHAR(30) NULL DEFAULT NULL,
   `idpregunta` INT NOT NULL,
   PRIMARY KEY (`idopcion_pregunta`),

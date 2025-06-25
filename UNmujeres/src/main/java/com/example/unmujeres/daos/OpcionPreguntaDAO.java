@@ -120,7 +120,7 @@ public class OpcionPreguntaDAO extends BaseDAO{
 
     public int crearOpcion(Connection conn, OpcionPregunta opcion) throws SQLException {
 
-        String sql = "INSERT INTO opcion (opcion, idpregunta) VALUES (?, ?)";
+        String sql = "INSERT INTO opcion_pregunta (opcion, idpregunta) VALUES (?, ?)";
 
         try (Connection con = this.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {

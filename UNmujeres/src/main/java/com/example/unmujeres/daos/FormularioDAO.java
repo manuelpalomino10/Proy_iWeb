@@ -140,7 +140,7 @@ public class FormularioDAO extends BaseDAO {
         // Filtro para el rango de fechas, si ambos se proporcionan
         if(fechaInicio != null && !fechaInicio.trim().isEmpty() &&
                 fechaFin != null && !fechaFin.trim().isEmpty()) {
-            sql.append(" AND (r.fecha_registro BETWEEN ? AND ?) ");
+            sql.append(" AND (reg.fecha_registro BETWEEN ? AND ?) ");
             parametros.add(java.sql.Date.valueOf(fechaInicio));
             parametros.add(java.sql.Date.valueOf(fechaFin));
         }

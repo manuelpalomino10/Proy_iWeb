@@ -47,6 +47,7 @@ public class ReportesServlet extends HttpServlet {
         String rolParam = request.getParameter("rol");
         String dateRangeParam = request.getParameter("daterange");
         System.out.println("rango de fechas: " + dateRangeParam);
+        System.out.println(dateRangeParam);
 
         // Convertir zona y rol a enteros
         int idZona;
@@ -64,7 +65,7 @@ public class ReportesServlet extends HttpServlet {
 
         // Variables para almacenar las fechas. Inicialmente nulas.
         String fi=null,ff = null;
-        if ((dateRangeParam != null && !dateRangeParam.equals(null)) && !dateRangeParam.isEmpty()) {
+        if ((dateRangeParam != null) && !dateRangeParam.isEmpty()) {
 
             try {
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -160,6 +161,7 @@ public class ReportesServlet extends HttpServlet {
                     System.out.println("Se inicio descarga de reporte");
 
                     List<ContenidoReporteDTO> contenido = formularioDAO.getContenidoReporte(idForm, idZona, idRol, fi, ff);
+                    System.out.println("Numero de respuestas en contenido: " + contenido.size());
 
                     String csvFilePath = getServletContext().getRealPath("/WEB-INF/reportes/PLANTILLA_UN_Formulario"+idForm+".csv");
                     File originalFile = new File(csvFilePath);
@@ -172,6 +174,8 @@ public class ReportesServlet extends HttpServlet {
                         return;
                     }
 
+                    int numeroFilas = 0;
+
                     // Crear un archivo temporal para la descarga
                     String fileName = "Reporte Formulario"+idForm+".csv";
                     File tempFile = File.createTempFile("Reporte_Formulario"+idForm, ".csv");
@@ -181,8 +185,9 @@ public class ReportesServlet extends HttpServlet {
                         int lineNumber = 0;
 
                         // Copiar las primeras 6 líneas sin cambios
-                        while ((line = br.readLine()) != null && lineNumber < 6) {
+                        while ((line = br.readLine()) != null && lineNumber <= 6) {
                             pw.println(line);
+                            System.out.println(line);
                             lineNumber++;
                         }
 
@@ -194,7 +199,7 @@ public class ReportesServlet extends HttpServlet {
 
                         for (ContenidoReporteDTO resp : contenido) {
                             String respuestaValue = (resp.getRespuesta() == null) ? "" : resp.getRespuesta();
-                            System.out.println(respuestaValue);
+                            System.out.println("respuesta"+respuestaValue);
                             if (resp.getIdRegistro() != currentRegistro) {
                                 // Si no es el primer registro, escribir la fila anterior
                                 if (currentRegistro != -1) {
@@ -205,6 +210,7 @@ public class ReportesServlet extends HttpServlet {
                                 rowContent = new StringBuilder();
                                 // Escribir el primer valor de la nueva línea (sin separador al inicio)
                                 rowContent.append(respuestaValue);
+                                numeroFilas++;
                             } else {
                                 // Mismo idRegistro: agregar el valor en la siguiente columna
                                 rowContent.append(delimiter).append(respuestaValue);
@@ -214,6 +220,8 @@ public class ReportesServlet extends HttpServlet {
                         if (rowContent.length() > 0) {
                             pw.println(rowContent.toString());
                         }
+                        System.out.println("Numero de respuestas en contenido: " + contenido.size());
+
                     }
 
                     // Enviamos el archivo modificado como descarga
@@ -228,6 +236,7 @@ public class ReportesServlet extends HttpServlet {
                             os.write(buffer, 0, bytesRead);
                         }
                         os.flush();
+                        session.setAttribute("success", "Reporte generado exitosamente con "+numeroFilas+" registros");
                     } catch (IOException ioe) {
                         //request.setAttribute("error", "Error al enviar el archivo: " + ioe.getMessage());
                         session.setAttribute("error", "Error al enviar el archivo: " + ioe.getMessage());
