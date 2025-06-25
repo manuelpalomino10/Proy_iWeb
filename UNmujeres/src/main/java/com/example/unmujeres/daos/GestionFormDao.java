@@ -48,7 +48,8 @@ public class GestionFormDao extends BaseDAO {
     }
 
 
-    public ArrayList<FormularioDto> listar(int idCoordi) {
+    public ArrayList<FormularioDto> listar(int idCoordi,int idCategoria) {
+        StringBuilder sql1 = new StringBuilder();
         String sql = "SELECT " +
                 "    f.idformulario, f.nombre, ehf_principal.idenc_has_formulario, COUNT(rr.idregistro_respuestas) AS total_registros_completados, " +
                 "    f.fecha_creacion, f.fecha_limite, f.estado " +
@@ -63,16 +64,22 @@ public class GestionFormDao extends BaseDAO {
                 "    AND ehf_zona.enc_idusuario = u_zona.idusuario " +
                 "LEFT JOIN registro_respuestas rr " +
                 "    ON rr.idenc_has_formulario = ehf_zona.idenc_has_formulario " +
-                "    AND rr.estado = 'C' " + // Param 2: Estado (C)
-//                "WHERE f.idcategoria=101 " +
-                "GROUP BY f.idformulario, f.nombre, ehf_principal.idenc_has_formulario";
+                "    AND rr.estado = 'C' ";
+        sql1.append(sql);
+        if (idCategoria != 0) {
+            sql1.append(" WHERE f.idcategoria = ? ");    // Param 2: ID categoria
+        }
+        sql1.append(" GROUP BY f.idformulario, f.nombre, ehf_principal.idenc_has_formulario");
 
         ArrayList<FormularioDto> formularios = new ArrayList<>();
 
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql1.toString())) {
 
             ps.setInt(1, idCoordi);
+            if (idCategoria != 0) {
+                ps.setInt(2, idCategoria);
+            }
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
