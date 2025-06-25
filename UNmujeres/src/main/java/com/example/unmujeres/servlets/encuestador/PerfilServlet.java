@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Base64;
 
-@WebServlet("/perfil")
+@WebServlet("/encuestador/perfil")
 public class PerfilServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO = new UsuarioDAO();
@@ -27,7 +27,7 @@ public class PerfilServlet extends HttpServlet {
 
         //
         if (usuarioSesion == null) {
-            response.sendRedirect(request.getContextPath() + "/Sistema/login");
+            response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
@@ -45,8 +45,10 @@ public class PerfilServlet extends HttpServlet {
             if (fotoBytes != null && fotoBytes.length > 0) {
                 String base64Image = Base64.getEncoder().encodeToString(fotoBytes);
                 request.setAttribute("fotoBase64", base64Image);
+                session.setAttribute("fotoBase64", base64Image);
             } else {
                 request.setAttribute("fotoVacia", true);
+                session.removeAttribute("fotoBase64");
             }
 
             request.setAttribute("usuario", usuario);

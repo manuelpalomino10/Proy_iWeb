@@ -40,7 +40,7 @@
 
                     <div class="card-body">
 
-                        <form action="editarDatos" method="post">
+                        <form action="${pageContext.request.contextPath}/encuestador/editarDatos" method="post">
                             <div class="row">
                                 <div class="col-md-6 form-group">
                                     <div class="text">Dirección</div>
@@ -65,7 +65,7 @@
                             <div class="row">
                                 <div class="col-md-6 form-group" style="margin-bottom: 0;">
                                     <label for="contraseña" style="margin-bottom: 2px; font-weight: 600;">Nueva Contraseña</label>
-                                    <input type="password" class="form-control" id="contraseña" name="contraseña" required
+                                    <input type="password" class="form-control" id="contraseña" name="contraseña"
                                            style="margin-bottom: 8px; margin-top: 0;"/>
                                     <ul style="list-style: none; padding-left: 0; margin: 4px 0 0 0;">
                                         <li style="color: #6c757d; font-size: 13px; font-weight: 600; margin-bottom: 2px;">
@@ -94,13 +94,22 @@
                                 <div class="col-md-6 form-group">
                                     <label for="confirmarContraseña">Confirmar Contraseña</label>
                                     <input type="password" class="form-control" id="confirmarContraseña"
-                                           name="confirmarContraseña"  required>
+                                           name="confirmarContraseña"  >
+                                </div>
+                            </div>
+                            <!-- Barra de progreso, ver script lineas mas abajo -->
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div class="progress" style="height: 5px;">
+                                        <div id="passwordStrengthBar" class="progress-bar" role="progressbar"></div>
+                                    </div>
+                                    <small id="passwordStrengthText" class="form-text text-muted"></small>
                                 </div>
                             </div>
                             <br>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary">Guardar</button>
-                                <a href="${pageContext.request.contextPath}/perfil" class="btn btn-secondary">Cancelar</a>
+                                <a href="${pageContext.request.contextPath}/encuestador/perfil" class="btn btn-secondary">Cancelar</a>
                             </div>
                         </form>
                         <br>
@@ -134,7 +143,7 @@
     <i class="fas fa-angle-up"></i>
 </a>
 
-<!-- Logout Modal-->
+<%-- Logout Modal
 <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -153,9 +162,46 @@
         </div>
     </div>
 </div>
-
+--%>
 </div>
 <!-- End of Page Wrapper -->
 <jsp:include page="../footer.jsp" />
+<!-- Script para mostrar fortaleza de contraseña -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const passwordInput = document.getElementById('contraseña');
+        const strengthBar = document.getElementById('passwordStrengthBar');
+        const strengthText = document.getElementById('passwordStrengthText');
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+
+            // Validar longitud
+            if (password.length >= 8) strength += 1;
+            if (password.length >= 12) strength += 1;
+
+            // Validar caracteres especiales
+            if (/[A-Z]/.test(password)) strength += 1;
+            if (/[0-9]/.test(password)) strength += 1;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+
+            // Actualizar barra y texto
+            const width = strength * 20;
+            strengthBar.style.width = width + '%';
+
+            if (strength <= 1) {
+                strengthBar.className = 'progress-bar bg-danger';
+                strengthText.textContent = 'Débil';
+            } else if (strength <= 3) {
+                strengthBar.className = 'progress-bar bg-warning';
+                strengthText.textContent = 'Moderada';
+            } else {
+                strengthBar.className = 'progress-bar bg-success';
+                strengthText.textContent = 'Fuerte';
+            }
+        });
+    });
+</script>
 </body>
 </html>

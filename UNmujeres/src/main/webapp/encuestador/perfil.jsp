@@ -33,7 +33,7 @@
                         <div id="messageContainer"></div>
 
                         <!-- FORMULARIO DE ACTUALIZACIÓN DE FOTO -->
-                        <form action="editarFoto" method="post" enctype="multipart/form-data" id="fotoForm" class="text-center">
+                        <form action="${pageContext.request.contextPath}/subirFoto" method="post" enctype="multipart/form-data" id="fotoForm" class="text-center">
                             <div id="imageContainer">
                                 <c:choose>
                                     <c:when test="${not empty usuario.fotoBytes}">
@@ -46,11 +46,18 @@
                                     </c:otherwise>
                                 </c:choose>
                             </div>
-                            <br><br>
+                            <br>
                             <button type="button" class="btn btn-primary" onclick="document.getElementById('fileInput').click();">
                                 <i class="fas fa-camera mr-2"></i>Actualizar Foto
                             </button>
-                            <input type="file" name="foto" id="fileInput" class="d-none" accept="image/*" onchange="uploadImage(this);">
+                            <input type="file" name="foto" id="fileInput" class="d-none"
+                                   accept="image/jpeg,image/jpg,image/png"
+                                   onchange="uploadImage(this);">
+                            <ul style="list-style: none; padding-left: 0; margin: 8px 0 0 0;">
+                                <li style="color: #6c757d; font-size: 13px; font-weight: 600; margin-bottom: 2px;">
+                                    Solo se permiten formatos JPG, JPEG y PNG
+                                </li>
+                            </ul><br>
                         </form>
 
                         <script>
@@ -68,7 +75,7 @@
                                 const formData = new FormData(document.getElementById('fotoForm'));
                                 showMessage('Subiendo foto…', 'info');
 
-                                fetch('subirFoto', {
+                                fetch('${pageContext.request.contextPath}/subirFoto', {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -142,17 +149,13 @@
                                        value="${usuario.distrito != null ? usuario.distrito.nombre : 'No especificado'}" readonly>
                             </div>
                         </div>
-
-                        <br>
                         <div class="text-center">
                             <div class="card-body">
-                                <a href="${pageContext.request.contextPath}/editarDatos" class="btn btn-primary">
+                                <a href="${pageContext.request.contextPath}/encuestador/editarDatos" class="btn btn-primary">
                                     <i class="fas fa-edit mr-2"></i>Editar Datos
                                 </a>
                             </div>
-                            <br>
                         </div>
-
                     </div>
                 </div>
             </div>
