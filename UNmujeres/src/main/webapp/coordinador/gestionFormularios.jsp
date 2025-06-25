@@ -1,9 +1,12 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.example.unmujeres.dtos.FormularioDto" %>
+<%@ page import="com.example.unmujeres.beans.Categoria" %>
 
 <%
     ArrayList<FormularioDto> lista = (ArrayList<FormularioDto>) request.getAttribute("lista");
+    ArrayList<Categoria> categorias = (ArrayList<Categoria>) request.getAttribute("categorias");
+    int selectedCategoria = request.getAttribute("selectedCategoria") != null ? (Integer) request.getAttribute("selectedCategoria") : 0;
 %>
 
 <!DOCTYPE html>
@@ -79,7 +82,19 @@
 
                 <h1 class="h3 mb-4 text-gray-800">Gestión de Formularios</h1>
 
-                <%-- Mensajes de éxito/advertencia/error --%>
+                <form id="filtroCategoriaForm" method="get" action="<%=request.getContextPath()%>/coordinador/GestionFormServlet" class="mb-3">
+                    <div class="form-group">
+                        <label for="idCategoria">Filtrar por categoría:</label>
+                        <select name="idCategoria" id="idCategoria" class="form-control" onchange="document.getElementById('filtroCategoriaForm').submit()">
+                            <option value="0" <%= selectedCategoria == 0 ? "selected" : "" %>>Todas las categorías</option>
+                            <% if (categorias != null) { for (Categoria c : categorias) { %>
+                            <option value="<%= c.getIdCategoria() %>" <%= selectedCategoria == c.getIdCategoria() ? "selected" : "" %>><%= c.getNombre() %></option>
+                            <% } } %>
+                        </select>
+                    </div>
+                </form>
+
+            <%-- Mensajes de éxito/advertencia/error --%>
                 <%
                     String msg = request.getParameter("msg");
                     String type = request.getParameter("type"); // 'success', 'warning', 'danger'

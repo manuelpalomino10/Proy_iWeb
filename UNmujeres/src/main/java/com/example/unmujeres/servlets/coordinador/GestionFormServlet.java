@@ -1,6 +1,8 @@
 package com.example.unmujeres.servlets.coordinador;
 
+import com.example.unmujeres.beans.Categoria;
 import com.example.unmujeres.beans.Usuario;
+import com.example.unmujeres.daos.CategoriaDAO;
 import com.example.unmujeres.daos.GestionFormDao;
 import com.example.unmujeres.dtos.FormularioDto;
 import jakarta.servlet.*;
@@ -24,23 +26,27 @@ public class GestionFormServlet extends HttpServlet {
         Usuario user = (Usuario) session.getAttribute("usuario");
         int idUser = user.getIdUsuario();
 
-        RequestDispatcher view;
-
         GestionFormDao formularioDao = new GestionFormDao();
-//        ArrayList<FormularioDto> list = formularioDao.listar();
-//
-//        //mandar lista a la vista -> listaUsuarios
-//        request.setAttribute("lista", list);
-//        RequestDispatcher rd = request.getRequestDispatcher("/coordinador/gestionFormularios.jsp");
-//        rd.forward(request, response);
+        CategoriaDAO categoriaDAO = new CategoriaDAO();
 
+        ArrayList<Categoria> categorias = categoriaDAO.getCategorias();
+        request.setAttribute("categorias", categorias);
 
-        ArrayList<FormularioDto> formularios = formularioDao.listar(idUser);
-        request.setAttribute("lista", formularios);
-        view = request.getRequestDispatcher("/coordinador/gestionFormularios.jsp");
-        view.forward(request, response);
+        String catParam = request.getParameter("idCategoria");
+        int idCategoria = 0;
+        if (catParam != null && !catParam.isEmpty()) {
+            try {
+                idCategoria = Integer.parseInt(catParam);
+            } catch (NumberFormatException ignored) {
+            }
+        }
 
+        ArrayList<FormularioDto> list = formularioDao.listar(idUser,idCategoria);
 
+        request.setAttribute("selectedCategoria", idCategoria);
+        request.setAttribute("lista", list);
+        RequestDispatcher rd = request.getRequestDispatcher("/coordinador/gestionFormularios.jsp");
+        rd.forward(request, response);
     }
 
     @Override

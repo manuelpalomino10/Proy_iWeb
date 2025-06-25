@@ -9,25 +9,36 @@ import java.util.ArrayList;
 
 public class GestionFormDao extends BaseDAO {
     public ArrayList<FormularioDto> listar() {
+        return listar(0);
+    }
+
+    public ArrayList<FormularioDto> listar(int idCategoria) {
         ArrayList<FormularioDto> lista = new ArrayList<>();
 
-        String sql = "select idFormulario, f.nombre as NombreForm, fecha_creacion as creacion, estado\n" +
+        StringBuilder sql = new StringBuilder("select idFormulario, f.nombre as NombreForm, fecha_creacion as creacion, estado, c.nombre as NombreCat\n" +
                 "from formulario f\n" +
-                "join categoria c on f.idcategoria = c.idcategoria;";
+                "join categoria c on f.idcategoria = c.idcategoria");
+        if (idCategoria != 0) {
+            sql.append(" WHERE f.idcategoria = ?");
+        }
 
         try (Connection con = this.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
 
-            while (rs.next()) {
-                FormularioDto formularioDto = new FormularioDto();
+            if (idCategoria != 0) {
+                ps.setInt(1, idCategoria);
+            }
 
-                formularioDto.setId(rs.getInt("idFormulario"));
-                formularioDto.setNombreForm(rs.getString("NombreForm"));
-                formularioDto.setFechaCreacion(rs.getDate("creacion"));
-                formularioDto.setEstado(rs.getBoolean("estado"));
-
-                lista.add(formularioDto);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    FormularioDto formularioDto = new FormularioDto();
+                    formularioDto.setId(rs.getInt("idFormulario"));
+                    formularioDto.setNombreForm(rs.getString("NombreForm"));
+                    formularioDto.setFechaCreacion(rs.getDate("creacion"));
+                    formularioDto.setEstado(rs.getBoolean("estado"));
+                    formularioDto.setNombreCat(rs.getString("NombreCat"));
+                    lista.add(formularioDto);
+                }
             }
 
         } catch (SQLException e) {
