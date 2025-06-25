@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Base64;
 
-@WebServlet("/perfilCOORD")
+@WebServlet("/coordinador/perfilCOORD")
 public class PerfilServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO = new UsuarioDAO();
@@ -52,7 +52,7 @@ public class PerfilServlet extends HttpServlet {
             }
 
             request.setAttribute("usuario", usuario);
-            request.getRequestDispatcher("coordinador/perfil.jsp").forward(request, response);
+            request.getRequestDispatcher("/coordinador/perfil.jsp").forward(request, response);
 
         } catch (SQLException e) {
             e.printStackTrace();

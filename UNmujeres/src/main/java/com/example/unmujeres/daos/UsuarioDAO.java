@@ -3,6 +3,7 @@ package com.example.unmujeres.daos;
 import com.example.unmujeres.beans.Distritos;
 import com.example.unmujeres.beans.Usuario;
 import java.sql.*;
+import java.util.Arrays;
 
 public class UsuarioDAO extends BaseDAO {
 
@@ -69,9 +70,9 @@ public class UsuarioDAO extends BaseDAO {
                 usuario.setCorreo(rs.getString("correo"));
                 usuario.setDireccion(rs.getString("direccion"));
                 usuario.setEstado(rs.getBoolean("estado"));
-                usuario.setIdroles(rs.getInt("roles_idroles"));
-                usuario.setIdzona((Integer) rs.getObject("zona_idzona"));
-                usuario.setIddistritos((Integer) rs.getObject("distritos_iddistritos"));
+                usuario.setIdroles(rs.getInt("idroles"));
+                usuario.setIdzona((Integer) rs.getObject("idzona"));
+                usuario.setIddistritos((Integer) rs.getObject("iddistritos"));
                 usuario.setFechaIncorporacion(rs.getDate("fecha_incorporacion"));
                 usuario.setCodEnc(rs.getString("cod_enc"));
                 usuario.setIddistritos(rs.getInt("iddistritos")); // Añade esta línea
@@ -134,6 +135,7 @@ public class UsuarioDAO extends BaseDAO {
             throw e;
         }
     }
+
     public Usuario getById(int id) {
         Usuario usuario = null;
         String sql = "SELECT * FROM usuario WHERE idusuario = ?";

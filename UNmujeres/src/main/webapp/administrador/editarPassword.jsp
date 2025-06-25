@@ -51,7 +51,7 @@
           </div>
 
           <div class="card-body">
-            <form action="${pageContext.request.contextPath}/editarPasswordAdmin" method="post">
+            <form action="${pageContext.request.contextPath}/administrador/editarPasswordAdmin" method="post">
               <div class="row">
                 <div class="col-md-6 form-group">
                   <label for="contraseña">Nueva Contraseña</label>
@@ -103,7 +103,7 @@
                 <button type="submit" class="btn btn-primary">
                   <i class="fas fa-save mr-2"></i>Actualizar Contraseña
                 </button>
-                <a href="${pageContext.request.contextPath}/perfilAD" class="btn btn-secondary">
+                <a href="${pageContext.request.contextPath}/administrador/perfilAD" class="btn btn-secondary">
                   <i class="fas fa-times mr-2"></i>Cancelar
                 </a>
               </div>

@@ -12,10 +12,7 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 
 @WebServlet("/subirFoto")
-@MultipartConfig(
-        maxFileSize = 1024 * 1024 * 5, // 5MB
-        fileSizeThreshold = 1024 * 1024 // 1MB en memoria
-)
+@MultipartConfig
 public class SubirFotoServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(SubirFotoServlet.class.getName());
@@ -46,11 +43,16 @@ public class SubirFotoServlet extends HttpServlet {
 
             // Validar
             String contentType = filePart.getContentType();
-            if (!contentType.startsWith("image/")) {
+            if (!contentType.equals("image/jpeg") && !contentType.equals("image/png")) {
                 throw new IllegalArgumentException("Solo se permiten imágenes (JPEG, PNG, etc.).");
             }
-
+            String fileName = filePart.getSubmittedFileName();
+            String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+            if (!fileExtension.equals("jpg") && !fileExtension.equals("jpeg") && !fileExtension.equals("png")) {
+                throw new IllegalArgumentException("Extensión no válida. Use .jpg, .jpeg o .png.");
+            }
             //
+
             byte[] fotoBytes = filePart.getInputStream().readAllBytes();
 
             // Actualizar

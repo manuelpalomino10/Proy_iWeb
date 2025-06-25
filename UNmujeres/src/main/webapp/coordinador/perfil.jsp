@@ -46,7 +46,7 @@
                         <div id="messageContainer"></div>
 
                         <!-- FORMULARIO DE ACTUALIZACIÓN DE FOTO -->
-                        <form action="subirFoto" method="post" enctype="multipart/form-data" id="fotoForm" class="text-center">
+                        <form action="${pageContext.request.contextPath}/subirFoto" method="post" enctype="multipart/form-data" id="fotoForm" class="text-center">
                             <div id="imageContainer">
                                 <c:choose>
                                     <c:when test="${not empty usuario.fotoBytes}">
@@ -88,7 +88,7 @@
                                 const formData = new FormData(document.getElementById('fotoForm'));
                                 showMessage('Subiendo foto…', 'info');
 
-                                fetch('subirFoto', {
+                                fetch('${pageContext.request.contextPath}/subirFoto', {
                                     method: 'POST',
                                     body: formData
                                 })
@@ -166,7 +166,7 @@
                         <br>
                         <div class="text-center">
                             <div class="card-body">
-                                <a href="${pageContext.request.contextPath}/editarPasswordCoordi" class="btn btn-primary">
+                                <a href="${pageContext.request.contextPath}/coordinador/editarPasswordCoordi" class="btn btn-primary">
                                     <i class="fas fa-key mr-2"></i>Editar Contraseña
                                 </a>
                             </div>

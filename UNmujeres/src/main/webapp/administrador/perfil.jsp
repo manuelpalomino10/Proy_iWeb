@@ -83,6 +83,8 @@
                             </div>
                         </div>
 
+
+                        <%-- Añadir en caso el admin tenga direccion y distrito asociado
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <div class="text">Dirección</div>
@@ -94,10 +96,11 @@
                                        value="${usuario.distrito != null ? usuario.distrito.nombre : 'No especificado'}" readonly>
                             </div>
                         </div>
+                        --%>
 
                         <div class="text-center">
                             <div class="card-body">
-                                <a href="${pageContext.request.contextPath}/editarPasswordAdmin" class="btn btn-primary" >
+                                <a href="${pageContext.request.contextPath}/administrador/editarPasswordAdmin" class="btn btn-primary" >
                                     <i class="fas fa-key mr-2"></i>Editar Contraseña
                                 </a>
                             </div>

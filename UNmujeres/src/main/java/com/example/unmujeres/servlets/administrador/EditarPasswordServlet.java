@@ -13,7 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet("/editarPasswordAdmin")
+@WebServlet("/administrador/editarPasswordAdmin")
 public class EditarPasswordServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO;
@@ -33,7 +33,7 @@ public class EditarPasswordServlet extends HttpServlet {
             return;
         }
 
-        request.getRequestDispatcher("administrador/editarPassword.jsp")
+        request.getRequestDispatcher("/administrador/editarPassword.jsp")
                 .forward(request, response);
     }
 
@@ -102,7 +102,7 @@ public class EditarPasswordServlet extends HttpServlet {
                 Usuario usuarioActualizado = usuarioDAO.obtenerUsuarioPorId(usuario.getIdUsuario());
                 session.setAttribute("usuario", usuarioActualizado);
                 response.sendRedirect(request.getContextPath() +
-                        "/perfilAD?success=Contrase%C3%B1a+actualizada+correctamente");
+                        "/administrador/perfilAD?success=Contrase%C3%B1a+actualizada+correctamente");
             } else {
                 manejarError(request, response, "No se pudo actualizar la contraseña");
             }

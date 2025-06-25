@@ -51,7 +51,7 @@
           </div>
 
           <div class="card-body">
-            <form action="${pageContext.request.contextPath}/editarPasswordCoordi" method="post">
+            <form action="${pageContext.request.contextPath}/coordinador/editarPasswordCoordi" method="post">
               <div class="row">
                 <div class="col-md-6 form-group">
                   <label for="contraseña">Nueva Contraseña</label>
@@ -103,7 +103,7 @@
                 <button type="submit" class="btn btn-primary">
                   <i class="fas fa-save mr-2"></i>Actualizar Contraseña
                 </button>
-                <a href="${pageContext.request.contextPath}/perfilCOORD" class="btn btn-secondary">
+                <a href="${pageContext.request.contextPath}/coordinador/perfilCOORD" class="btn btn-secondary">
                   <i class="fas fa-times mr-2"></i>Cancelar
                 </a>
               </div>
