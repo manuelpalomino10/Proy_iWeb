@@ -53,7 +53,6 @@
                 <% } %>
 
 
-
                 <%
                     Map<Integer, String> errores = (Map<Integer, String>) session.getAttribute("validationErrors");
                     if (errores != null) {
@@ -121,12 +120,19 @@
                         <div class="form-group">
                             <label for="pregunta_<%= pregunta.getIdPregunta() %>">Respuesta:</label>
                             <%
+                                String inputError1="";
+                                if (errores!=null) {
+                                    if (errores.containsKey(pregunta.getIdPregunta())) {
+                                        inputError1 = "falta-respuesta";
+                                    }
+                                }
                                 // Si el tipo de dato de la pregunta es "combobox", mostramos un select con las opciones correspondientes
                                 if ("combobox".equalsIgnoreCase(pregunta.getTipoDato())) {
                             %>
                             <select name="pregunta_<%= pregunta.getIdPregunta() %>"
                                     id="pregunta_<%= pregunta.getIdPregunta() %>"
-                                    class="form-control">
+                                    class="form-control <%= inputError1 %>"
+                                    <%= pregunta.getRequerido() ? "required" : "" %>>
                                 <option value="">-- Seleccione --</option>
                                 <%
                                     if (opciones != null) {
@@ -166,7 +172,7 @@
                                 String inputError= "";
                                 if (errores!=null) {
                                     if (errores.containsKey(pregunta.getIdPregunta())) {
-                                        inputError = "falta_respuesta";
+                                        inputError = "falta-respuesta";
                                     }
                                 }
                             %>
@@ -174,7 +180,7 @@
                                    class="form-control <%= inputError %>"
                                    id="pregunta_<%= pregunta.getIdPregunta() %>"
                                    name="pregunta_<%= pregunta.getIdPregunta() %>"
-
+                                   <%= pregunta.getRequerido() ? "required" : "" %>
                                    value="<%= inputValue %>" />
 <%--                                   value=""/>--%>
                             <%
@@ -209,7 +215,7 @@
         </button>
         <% 
             if (usuarioSesion != null && usuarioSesion.getIdroles() == 3) { %>
-        <button type="submit" form="respuestaForm" name="acto" value="borrador" class="btn btn-secondary btn-icon-split mr-2">
+        <button type="submit" formnovalidate form="respuestaForm" name="acto" value="borrador" class="btn btn-secondary btn-icon-split mr-2">
             <span class="icon text-white-50"><i class="fas fa-save"></i></span>
             <span class="text">Guardar como Borrador</span>
         </button>
@@ -234,7 +240,7 @@
     <script>
         document.getElementById("completadoBtn").addEventListener("click", function(event) {
             // Recoger todos los inputs cuya id empieza por "pregunta_"
-            var inputs = document.querySelectorAll("input[id^='pregunta_'], select[id^='pregunta_']");
+            var inputs = document.querySelectorAll("input[id^='pregunta_'][required], select[id^='pregunta_'][required]");
             var faltantes = [];
 
             inputs.forEach(function(input) {

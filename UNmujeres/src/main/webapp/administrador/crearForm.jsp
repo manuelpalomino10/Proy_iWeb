@@ -11,10 +11,10 @@
 <%
   ArrayList<Categoria> categorias = (ArrayList<Categoria>) request.getAttribute("categorias");
 
-  String hoy=null;
+  String nombreForm="";
   int catSel=0;
-  if (request.getAttribute("hoy")!=null) {
-    hoy   = (String) request.getAttribute("hoy");
+  if (request.getAttribute("nombreForm")!=null) {
+      nombreForm = (String) request.getAttribute("nombreForm");
   }
   if (request.getAttribute("cat")!=null) {
     catSel = (int) request.getAttribute("cat");
