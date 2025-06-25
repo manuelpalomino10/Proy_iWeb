@@ -52,64 +52,57 @@
           <%--        <p class="mb-4">Filtra y selecciona un formulario</p>--%>
 
           <!-- ------------- FORMULARIO DE FILTROS ------------- -->
-          <div class="container">
-            <form id="filtros" method="GET" action="<%=request.getContextPath()%>/administrador/ReportesServlet?action=listaReportes" class="row g-3">
-<%--              <input type="hidden" name="action" value="listaReportes" />--%>
+          <div class="container-fluid">
+            <form id="filtros" method="GET"
+                  action="<%=request.getContextPath()%>/administrador/ReportesServlet?action=listaReportes"
+                  class="row">
 
-              <!-- Sección 8 (Zona, Rol y Fecha) -->
-              <div class="col-md-8">
-                <div class="row">
-                  <!-- Primera fila: Zona y Rol -->
-                  <div class="col-md-6">
-                    <label for="zona" class="form-label">Zona:</label>
-                    <select name="zona" id="zona" class="form-select">
-                      <option value="0" <%= (zonaSel == 0) ? "selected" : "" %>>Todos</option>
-                      <% for (Zona zona : zonas) { %>
-                      <option value="<%= zona.getIdzona() %>" <%= (zona.getIdzona() == zonaSel) ? "selected" : "" %>>
-                        <%= zona.getNombre() %>
-                      </option>
-                      <% } %>
-                    </select>
-                  </div>
+              <input type="hidden" name="action" value="listaReportes" />
 
-                  <div class="col-md-6">
-                    <label for="rol" class="form-label">Rol:</label>
-                    <select name="rol" id="rol" class="form-select">
-                      <option value="0" <%= (rolSel == 0) ? "selected" : "" %>>Todos</option>
-                      <% for (Roles rol : roles) { %>
-                      <option value="<%= rol.getIdRoles() %>" <%= (rol.getIdRoles() == rolSel) ? "selected" : "" %>>
-                        <%= rol.getNombre() %>
-                      </option>
-                      <% } %>
-                    </select>
-                  </div>
+              <div class="col-12 d-flex align-items-end justify-content-start flex-wrap" style="gap: 1.5rem;">
+
+                <!-- Zona -->
+                <div>
+                  <label for="zona" class="form-label">Zona:</label>
+                  <select name="zona" id="zona" class="form-select form-select-sm">
+                    <option value="0" <%= (zonaSel == 0) ? "selected" : "" %>>Todos</option>
+                    <% for (Zona zona : zonas) { %>
+                    <option value="<%= zona.getIdzona() %>" <%= (zona.getIdzona() == zonaSel) ? "selected" : "" %>>
+                      <%= zona.getNombre() %>
+                    </option>
+                    <% } %>
+                  </select>
                 </div>
 
-                <!-- Segunda fila: Rango de fechas -->
-                <div class="row mt-3">
-                  <div class="col-md-12">
-                    <label for="daterange" class="form-label">Rango de fechas:</label>
-                    <input type="text" name="daterange" id="daterange" class="form-control" placeholder="DD-MM-YYYY - DD-MM-YYYY" value="<%=dateRange%>"/>
-                  </div>
+                <!-- Rol -->
+                <div>
+                  <label for="rol" class="form-label">Rol:</label>
+                  <select name="rol" id="rol" class="form-select form-select-sm">
+                    <option value="0" <%= (rolSel == 0) ? "selected" : "" %>>Todos</option>
+                    <% for (Roles rol : roles) { %>
+                    <option value="<%= rol.getIdRoles() %>" <%= (rol.getIdRoles() == rolSel) ? "selected" : "" %>>
+                      <%= rol.getNombre() %>
+                    </option>
+                    <% } %>
+                  </select>
                 </div>
-              </div>
 
-              <!-- Sección 4 (Botón centrado) -->
-              <div class="col-md-4 d-flex align-items-center justify-content-center">
-                <!-- Botón de filtrado -->
-                <button class="btn btn-primary w-100" type="submit">
-                <span class="icon text-white-50">
-                          <i class="fas fa-filter"></i>
-                </span>
-                  <span class="text">Filtrar</span>
-                </button>
+                <!-- Rango de fechas -->
+                <div>
+                  <label for="daterange" class="form-label">Rango de fechas:</label>
+                  <input type="text" name="daterange" id="daterange"
+                         class="form-control form-control-sm"
+                         placeholder="DD-MM-YYYY - DD-MM-YYYY"
+                         value="<%=dateRange%>" />
+                </div>
 
-                <button class="btn btn-primary w-100" onclick="">
-                <span class="icon text-white-50">
-                          <i class="fas fa-brush"></i>
-                </span>
-                      <span class="text">Limpiar filtros</span>
-                </button>
+                <!-- Botón -->
+                <div>
+                  <label class="form-label d-block invisible">Filtrar</label> <!-- Invisible label to align -->
+                  <button class="btn btn-primary btn-sm" type="submit">
+                    <i class="fas fa-filter me-1"></i> Filtrar
+                  </button>
+                </div>
 
               </div>
             </form>
