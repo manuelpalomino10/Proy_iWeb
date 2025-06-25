@@ -1,6 +1,8 @@
 package com.example.unmujeres.servlets.coordinador;
 
 import com.example.unmujeres.daos.GestionFormDao;
+import com.example.unmujeres.daos.CategoriaDAO;
+import com.example.unmujeres.beans.Categoria;
 import com.example.unmujeres.dtos.FormularioDto;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -19,9 +21,23 @@ public class GestionFormServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         GestionFormDao formularioDao = new GestionFormDao();
-        ArrayList<FormularioDto> list = formularioDao.listar();
+        CategoriaDAO categoriaDAO = new CategoriaDAO();
 
-        //mandar lista a la vista -> listaUsuarios
+        ArrayList<Categoria> categorias = categoriaDAO.getCategorias();
+        request.setAttribute("categorias", categorias);
+
+        String catParam = request.getParameter("idCategoria");
+        int idCategoria = 0;
+        if (catParam != null && !catParam.isEmpty()) {
+            try {
+                idCategoria = Integer.parseInt(catParam);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
+        ArrayList<FormularioDto> list = formularioDao.listar(idCategoria);
+
+        request.setAttribute("selectedCategoria", idCategoria);
         request.setAttribute("lista", list);
         RequestDispatcher rd = request.getRequestDispatcher("/coordinador/gestionFormularios.jsp");
         rd.forward(request, response);
