@@ -11,7 +11,7 @@ public class GestionFormDao extends BaseDAO {
     public ArrayList<FormularioDto> listar() {
         ArrayList<FormularioDto> lista = new ArrayList<>();
 
-        String sql = "select idFormulario, f.nombre as NombreForm, c.nombre as NombreCat, fecha_creacion as creacion, estado\n" +
+        String sql = "select idFormulario, f.nombre as NombreForm, fecha_creacion as creacion, estado\n" +
                 "from formulario f\n" +
                 "join categoria c on f.idcategoria = c.idcategoria;";
 
@@ -24,7 +24,6 @@ public class GestionFormDao extends BaseDAO {
 
                 formularioDto.setId(rs.getInt("idFormulario"));
                 formularioDto.setNombreForm(rs.getString("NombreForm"));
-                formularioDto.setNombreCat(rs.getString("NombreCat"));
                 formularioDto.setFechaCreacion(rs.getDate("creacion"));
                 formularioDto.setEstado(rs.getBoolean("estado"));
 
