@@ -69,7 +69,7 @@
               <div class="row mt-3">
                 <div class="col-md-5">
                   <label for="idCategoria" class="form-label">Categoría:</label>
-                  <select name="idCategoria" id="idCategoria" class="form-select">
+                  <select name="idCategoria" id="idCategoria" class="form-control">
                     <option <%= (catSel==0) ? "selected" : "" %> >Seleccionar Categoría</option>
                     <% for (Categoria categoria : categorias) { %>
                     <option value="<%= categoria.getIdCategoria() %>" <%= (categoria.getIdCategoria() == catSel) ? "selected" : "" %>>

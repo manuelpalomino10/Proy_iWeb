@@ -87,7 +87,7 @@
                 <!-- Zona -->
                 <div>
                   <label for="zona" class="form-label">Zona:</label>
-                  <select name="zona" id="zona" class="form-select form-select-sm">
+                  <select name="zona" id="zona" class="form-control form-select-sm">
                     <option value="0" <%= (zonaSel == 0) ? "selected" : "" %>>Todos</option>
                     <% for (Zona zona : zonas) { %>
                     <option value="<%= zona.getIdzona() %>" <%= (zona.getIdzona() == zonaSel) ? "selected" : "" %>>
@@ -100,7 +100,7 @@
                 <!-- Rol -->
                 <div>
                   <label for="rol" class="form-label">Rol:</label>
-                  <select name="rol" id="rol" class="form-select form-select-sm">
+                  <select name="rol" id="rol" class="form-control form-select-sm">
                     <option value="0" <%= (rolSel == 0) ? "selected" : "" %>>Todos</option>
                     <% for (Roles rol : roles) { %>
                     <option value="<%= rol.getIdRoles() %>" <%= (rol.getIdRoles() == rolSel) ? "selected" : "" %>>
@@ -114,7 +114,7 @@
                 <div>
                   <label for="daterange" class="form-label">Rango de fechas:</label>
                   <input type="text" name="daterange" id="daterange"
-                         class="form-control form-control-sm"
+                         class="form-control form-select-sm"
                          placeholder="DD-MM-YYYY - DD-MM-YYYY"
                          <%
                            String dateRangeVal;
@@ -123,7 +123,6 @@
                            } else {
                             dateRangeVal=dateRange;
                            }
-                           System.out.println("EN JSP, VAL DE daterange es: "+dateRangeVal);
                          %>
                          value="<%=dateRangeVal%>" />
                 </div>
