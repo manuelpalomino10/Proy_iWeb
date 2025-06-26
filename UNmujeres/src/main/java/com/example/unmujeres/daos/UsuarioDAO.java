@@ -217,5 +217,22 @@ public class UsuarioDAO extends BaseDAO {
         }
     }
 
+    public boolean usuarioActivo(int idUsuario) throws SQLException {
+
+        String sql = "SELECT estado FROM usuario WHERE idusuario = ?";
+        try (Connection con = this.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idUsuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBoolean("estado");
+                }
+            }
+        }
+
+        return false;
+    }
+
 }
 

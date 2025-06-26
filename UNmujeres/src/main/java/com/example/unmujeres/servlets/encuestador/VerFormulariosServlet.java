@@ -20,7 +20,7 @@ import java.util.*;
 
 @WebServlet(
         name = "VerFormulariosServlet",
-        value = {"/shared/VerFormulariosServlet", "/encuestador/ServletA", "/coordinador/VerFormulariosServlet", "/encuestador/VerFormulariosServlet"}, // Múltiples rutas de acceso
+        value = {"/shared/VerFormulariosServlet", "/encuestador/ServletA", "/coordinador/ServletA","/coordinador/VerFormulariosServlet", "/encuestador/VerFormulariosServlet"}, // Múltiples rutas de acceso
         initParams = {
                 @WebInitParam(name = "config", value = "default") // Parámetro de configuración
         }
@@ -693,7 +693,7 @@ public class VerFormulariosServlet extends HttpServlet {
         if (userRole == 3) {
             return (getServletContext().getContextPath() + "/encuestador/VerFormulariosServlet");
         } else if (userRole == 2) {
-            return (getServletContext().getContextPath() + "/coordinador/SubirRegistrosServlet");
+            return (getServletContext().getContextPath() + "/coordinador/GestionFormServlet");
         } else {
             // Valor por defecto en caso de otro rol
             return (getServletContext().getContextPath() + "/access-denied.jsp");

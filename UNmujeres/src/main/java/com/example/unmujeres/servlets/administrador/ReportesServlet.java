@@ -65,8 +65,10 @@ public class ReportesServlet extends HttpServlet {
 
         // Variables para almacenar las fechas. Inicialmente nulas.
         String fi=null,ff = null;
-        if ((dateRangeParam != null) && !dateRangeParam.isEmpty()) {
 
+        if ( dateRangeParam != null && !dateRangeParam.trim().isEmpty()) {
+            System.out.println("dateRangeParam: " + dateRangeParam);
+            System.out.println("entro ENTRO");
             try {
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -199,7 +201,6 @@ public class ReportesServlet extends HttpServlet {
 
                         for (ContenidoReporteDTO resp : contenido) {
                             String respuestaValue = (resp.getRespuesta() == null) ? "" : resp.getRespuesta();
-                            System.out.println("respuesta"+respuestaValue);
                             if (resp.getIdRegistro() != currentRegistro) {
                                 // Si no es el primer registro, escribir la fila anterior
                                 if (currentRegistro != -1) {
@@ -224,6 +225,7 @@ public class ReportesServlet extends HttpServlet {
 
                     }
 
+                    //session.setAttribute("success", "Reporte generado exitosamente con " + numeroFilas + " registros");
                     // Enviamos el archivo modificado como descarga
                     response.setContentType("text/csv");
                     response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
@@ -236,7 +238,6 @@ public class ReportesServlet extends HttpServlet {
                             os.write(buffer, 0, bytesRead);
                         }
                         os.flush();
-                        session.setAttribute("success", "Reporte generado exitosamente con "+numeroFilas+" registros");
                     } catch (IOException ioe) {
                         //request.setAttribute("error", "Error al enviar el archivo: " + ioe.getMessage());
                         session.setAttribute("error", "Error al enviar el archivo: " + ioe.getMessage());

@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
-@WebServlet("/encuestador/register")
+@WebServlet("/register")
 public class RegistroEncuestadorServlet extends HttpServlet {
     private final EncuestadorDAO dao        = new EncuestadorDAO();
     private final DistritoDAO  distritoDao = new DistritoDAO();

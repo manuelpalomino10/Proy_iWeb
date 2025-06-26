@@ -11,10 +11,10 @@
 <%
   ArrayList<Categoria> categorias = (ArrayList<Categoria>) request.getAttribute("categorias");
 
-  String hoy=null;
+  String nombreForm="";
   int catSel=0;
-  if (request.getAttribute("hoy")!=null) {
-    hoy   = (String) request.getAttribute("hoy");
+  if (request.getAttribute("nombreForm")!=null) {
+      nombreForm = (String) request.getAttribute("nombreForm");
   }
   if (request.getAttribute("cat")!=null) {
     catSel = (int) request.getAttribute("cat");
@@ -69,7 +69,7 @@
               <div class="row mt-3">
                 <div class="col-md-5">
                   <label for="idCategoria" class="form-label">Categoría:</label>
-                  <select name="idCategoria" id="idCategoria" class="form-select">
+                  <select name="idCategoria" id="idCategoria" class="form-control">
                     <option <%= (catSel==0) ? "selected" : "" %> >Seleccionar Categoría</option>
                     <% for (Categoria categoria : categorias) { %>
                     <option value="<%= categoria.getIdCategoria() %>" <%= (categoria.getIdCategoria() == catSel) ? "selected" : "" %>>
