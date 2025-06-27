@@ -4,6 +4,8 @@ import java.sql.*;
 import java.util.ArrayList;
 
 import com.example.unmujeres.beans.EncHasFormulario;
+import com.example.unmujeres.beans.Formulario;
+import com.example.unmujeres.beans.Usuario;
 import com.example.unmujeres.beans.RegistroRespuestas;
 
 public class RegistroRespuestasDAO extends BaseDAO {
@@ -51,10 +53,10 @@ public class RegistroRespuestasDAO extends BaseDAO {
         return registros;
     }
 
-    public RegistroRespuestas getById(int id) {
+    public RegistroRespuestas getDraftById(int id) {
 
         RegistroRespuestas reg = null;
-        String sql = "SELECT * FROM registro_respuestas WHERE idregistro_respuestas = ?";
+        String sql = "SELECT * FROM registro_respuestas WHERE idregistro_respuestas = ? AND estado='B' ";
 
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);){
@@ -77,6 +79,56 @@ public class RegistroRespuestasDAO extends BaseDAO {
         }
         return reg;
     }
+
+
+
+
+    public RegistroRespuestas findEncDraftById(int idReg, int idEnc) {      //Devuelve registro borrador(B) solo si existe y pertenece al encuestador
+
+        RegistroRespuestas reg = null;
+        String sql = "SELECT reg.*, ehf.* FROM registro_respuestas reg " +
+                "INNER JOIN enc_has_formulario ehf ON ehf.idenc_has_formulario=reg.idenc_has_formulario AND ehf.enc_idusuario=? " +
+                "INNER JOIN formulario f ON f.idformulario=ehf.idformulario " +
+                "WHERE reg.idregistro_respuestas=? AND reg.estado='B'; ";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);) {
+            ps.setInt(1, idEnc);
+            ps.setInt(2, idReg);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    reg = new RegistroRespuestas();
+
+                    reg.setIdRegistroRespuestas(rs.getInt("idregistro_respuestas"));
+                    reg.setFechaRegistro(rs.getDate("fecha_registro"));
+                    reg.setEstado(rs.getString("estado"));
+
+                    Formulario form = new Formulario();
+                    form.setIdFormulario(rs.getInt("idformulario"));
+
+//                    Usuario usuario = new Usuario();
+//                    usuario.setIdUsuario(rs.getInt("enc_idusuario"));
+
+                    EncHasFormulario ehf = new EncHasFormulario();
+                    ehf.setIdEncHasFormulario(rs.getInt("idenc_has_formulario"));
+                    ehf.setFormulario(form);
+//                    ehf.setUsuario(usuario);
+
+                    reg.setEncHasFormulario(ehf);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return reg;
+    }
+
+
+
+
+
+
 
     public void save(RegistroRespuestas reg) {}
 

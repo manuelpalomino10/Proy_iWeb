@@ -30,7 +30,8 @@ public class RespuestaDAO extends BaseDAO{
                 "INNER JOIN " +
                 "    seccion s ON p.idseccion = s.idseccion " +
                 "WHERE " +
-                "    r.idregistro_respuestas = ?";
+                "    r.idregistro_respuestas = ? " +
+                "ORDER BY s.idseccion ASC; ";
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);) {
             ps.setInt(1, idRegistro);
