@@ -19,6 +19,7 @@ public class RespuestaDAO extends BaseDAO{
                 "    p.idpregunta, " +
                 "    p.enunciado, " +
                 "    p.tipo_dato, " +
+                "    p.requerido, " +
                 "    r.idrespuesta, " +
                 "    r.respuesta, " +
                 "    s.idseccion, " +
@@ -46,6 +47,9 @@ public class RespuestaDAO extends BaseDAO{
                         pregunta.setIdPregunta(rs.getInt("idpregunta"));
                         pregunta.setEnunciado(rs.getString("enunciado"));
                         pregunta.setTipoDato(rs.getString("tipo_dato"));
+                        int req = rs.getInt("requerido");
+                        boolean requerido = req==1 ? true : false;
+                        pregunta.setRequerido(requerido);
                             Seccion seccion = new Seccion();
                             seccion.setIdSeccion(rs.getInt("idseccion"));
                             seccion.setNombreSec(rs.getString("nombre_sec"));

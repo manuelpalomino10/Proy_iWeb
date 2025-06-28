@@ -14,7 +14,6 @@ import jakarta.servlet.annotation.*;
 import javassist.NotFoundException;
 
 import java.io.IOException;
-import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -354,64 +353,116 @@ public class VerFormulariosServlet extends HttpServlet {
 
                 String idRegParam = request.getParameter("id");
                 ArrayList<Integer> IDsRegistros = registroDAO.getIDsByUsuario(idUser);
-                //validar parametro
-                int idReg;
-                if (idRegParam != null) {
-                    try {
-                        idReg = Integer.parseUnsignedInt(idRegParam);
+                // 1. Validar parámetro
+                //int idReg=0;
+                RegistroRespuestas reg;
 
-                        if (!IDsRegistros.contains(idReg)) {
-                            throw new IllegalArgumentException("No puede editar registros de otros usuarios");
+                try {
+                    if (idRegParam == null || idRegParam.isEmpty()) {throw new IllegalArgumentException("ID de Registro requerido");}
+
+                    int idReg = Integer.parseInt(idRegParam);
+
+                    reg = registroDAO.findEncDraftById(idReg,idUser);
+
+                    if (reg == null) {
+                        throw new NotFoundException("No se encontró el borrador");
+                    } else {
+                        int idForm = reg.getEncHasFormulario().getFormulario().getIdFormulario();
+                        ArrayList<Pregunta> preguntas = preguntaDAO.getPreguntasConOpcionesPorFormulario(idForm);
+                        ArrayList<OpcionPregunta> opciones = opcionDAO.getByForm(idForm);
+
+                        // 2. Validar respuestas
+                        // 2.1 Validar existencia y relacion
+                        Map<Integer, String> errores = new HashMap<>();
+                        Map<Integer, String> inputs = new HashMap<>();
+
+                        ArrayList<Respuesta> respuestas = respuestaDAO.listaRespuestas(idReg);
+                        Map<Integer, Pregunta> idR_preguntaMap = new HashMap<>();
+                        for (Respuesta respuesta : respuestas) {
+                            idR_preguntaMap.put(respuesta.getIdRespuesta(), respuesta.getPregunta());
                         }
 
-                    } catch (NumberFormatException e) {
-                        System.out.println("Parámetro de registro inválidos");
-                        session.setAttribute("error", "Parámetros de form o registro inválidos");
-                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
-                        return;
+                        Map<String, String[]> parametroMap = request.getParameterMap();
+                        // Itera sobre los parámetros para identificar elementos que comiencen con "respuesta_"
+                        for (String paramName : parametroMap.keySet()) {
+                            if (paramName.startsWith("respuesta_")) {
+                                // Extrae el id de la pregunta del nombre del input (por ejemplo, "respuesta_45")
+                                String idStr = paramName.substring("respuesta_".length());
+                                int idRespuesta = -1;
+                                try {
+                                    int idR = Integer.parseInt(idStr);
+                                    idRespuesta = idR;
 
-                    } catch (IllegalArgumentException e) {
-                        session.setAttribute("error", e.getMessage());
-                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
-                        return;
+                                    if (!idR_preguntaMap.containsKey(idRespuesta)) {
+                                        System.out.println("Mapa de respuestas-preguntas no contiene key ID de respuesta: " + idRespuesta);
+                                        throw new IllegalArgumentException("Solicitud malformada");
+                                    } else {
+                                        System.out.println("Mapa de respuestas-preguntas contiene key ID de respuesta: " + idRespuesta);
+                                        Pregunta pregunta = idR_preguntaMap.get(idRespuesta);
+                                    }
+
+                                    // 2.2 Validar contenido textual
+                                    String[] valores = parametroMap.get(paramName);
+                                    String valor = (valores != null && valores.length > 0) ? valores[0] : null;
+                                    // Aplica .trim() sólo si el valor no es null
+                                    String valorNormalizado = (valor != null) ? valor.trim() : "";
+
+                                    inputs.put(idRespuesta, valorNormalizado);
+
+                                    Pregunta pregunta = idR_preguntaMap.get(idRespuesta);
+
+                                    if ("B".equals(nuevoEstado1)) {
+                                        if (valor != null && !valor.trim().isEmpty()) {
+                                            // Solo validamos si se ingresó algún valor
+                                            String errorMsg = validarPregunta(pregunta, valor);
+                                            if (errorMsg != null) {
+                                                errores.put(pregunta.getIdPregunta(), errorMsg);
+                                            }
+                                        }
+                                    } else {
+                                        String errorMsg = validarPregunta(pregunta, valor);
+                                        if (errorMsg != null) {
+                                            errores.put(pregunta.getIdPregunta(), errorMsg);}
+                                    }
+                                } catch (NumberFormatException e) {
+                                    System.err.println("ID de pregunta inválido en el parámetro: " + paramName);
+
+                                    return;
+                                }
+                            }
+                        }
+
+                        // 3. Si hay errores de validación, reenvía al formulario para que el usuario corrija los datos.
+                        if (!errores.isEmpty()) {
+                            //request.setAttribute("error", errores);
+                            session.setAttribute("validationErrors", errores);
+                            session.setAttribute("valoresFormulario", inputs);
+                            response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=editar&id="+idReg);
+                            return;
+                        }
+
+                        // 4. Si la validación fue exitosa, modificar las respuestas y el registro.
+                        inputs.forEach((k, v) -> {respuestaDAO.updateResponse(idReg,k,v);});
+
+                        registroDAO.updateState(idReg,nuevoEstado1);
+
+
                     }
-                } else {
-                    session.setAttribute("error", "El parámetro de registro no puede ser nulo");
+
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                } catch (IllegalArgumentException | NotFoundException e) {
+                    session.setAttribute("error", e.getMessage());
+                    //response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
+                    return;
+                }  catch (Exception e) {
+                    e.printStackTrace();
+                    session.setAttribute("error", "Error inesperado al editar registro");
                     response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
                     return;
                 }
 
-                try {
-                    registroDAO.updateState(idReg,nuevoEstado1);
-                    System.out.println("Se ha actualizado el registro con id: " + idReg + "al estado: " + nuevoEstado1 + " en" + nuevoEstado1.getClass().getSimpleName());
-
-                    Map<String, String[]> parametroMap = request.getParameterMap();
-                    // Itera sobre los parámetros para identificar elementos que comiencen con "respuesta_"
-                    for (String paramName : parametroMap.keySet()) {
-                        if (paramName.startsWith("respuesta_")) {
-                            // Extrae el id de la pregunta del nombre del input (por ejemplo, "respuesta_45")
-                            String idStr = paramName.substring("respuesta_".length());
-                            try {
-                                int idPregunta = Integer.parseInt(idStr);
-                                // Obtiene el valor del input
-                                String nuevaRespuesta = request.getParameter(paramName);
-                                if (nuevaRespuesta != null) {
-                                    nuevaRespuesta = nuevaRespuesta.trim();
-                                }
-                                // Actualiza la respuesta para esa pregunta en el registro de respuestas
-                                respuestaDAO.updateResponse(idReg, idPregunta, nuevaRespuesta);
-
-                                System.out.println("Se actualizo una respuesta con id: " + idPregunta + "con el texto: " + nuevaRespuesta);
-
-                            } catch (NumberFormatException e) {
-                                System.err.println("ID de pregunta inválido en el parámetro: " + paramName);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    session.setAttribute("error", "Error inesperado al editar registro");
-                    response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
-                }
                 session.setAttribute("success", "Registro actualizado con éxito");
                 response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
 
@@ -504,7 +555,8 @@ public class VerFormulariosServlet extends HttpServlet {
 
                         if (paramName.startsWith("pregunta_")) {
                             String[] parts = paramName.split("_");
-                            int idPregunta = Integer.parseInt(parts[1]);
+                            String idPregStr = paramName.substring("pregunta_".length());
+                            int idPregunta = Integer.parseInt(idPregStr);
 
 
                             try {
