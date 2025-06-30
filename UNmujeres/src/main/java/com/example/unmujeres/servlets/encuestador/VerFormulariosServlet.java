@@ -12,6 +12,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import javassist.NotFoundException;
+import javassist.tools.web.BadHttpRequest;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -70,10 +71,10 @@ public class VerFormulariosServlet extends HttpServlet {
                     // 2. Inicializa arreglo de datos para vista
                     ArrayList<Map<String, Object>> datos = new ArrayList<>();
 
-                    List<Integer> IDsAsignaciones = new ArrayList<>();
+                    //List<Integer> IDsAsignaciones = new ArrayList<>();
                     //  para cada asignacion
                     for (EncHasFormulario asignacion : asignaciones) {
-                        IDsAsignaciones.add(asignacion.getIdEncHasFormulario());
+                        //IDsAsignaciones.add(asignacion.getIdEncHasFormulario());
                         //System.out.println("\n1. Asignacion extraída: " + asignacion.getIdEncHasFormulario());
                         // 4. Obtener formulario relacionado por el id, obtenido de la asignacion
                         Formulario formulario = formularioDAO.getById(asignacion.getFormulario().getIdFormulario());
@@ -221,7 +222,7 @@ public class VerFormulariosServlet extends HttpServlet {
                 break;
 
             case "editar":
-                String idRegParam = request.getParameter("id");
+                String idRegParam = request.getParameter("id"); //ID de registro a editar
 
                 //Validar parametro
                 int idReg;
@@ -322,7 +323,7 @@ public class VerFormulariosServlet extends HttpServlet {
         int idUser = user.getIdUsuario();
         int userRole = user.getIdroles();
 
-        ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idUser);
+        //ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idUser);
 
         String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
         System.out.println("accion de dopost es: " + action);
@@ -352,24 +353,19 @@ public class VerFormulariosServlet extends HttpServlet {
                 }
 
                 String idRegParam = request.getParameter("id");
-                ArrayList<Integer> IDsRegistros = registroDAO.getIDsByUsuario(idUser);
                 // 1. Validar parámetro
-                //int idReg=0;
                 RegistroRespuestas reg;
 
                 try {
                     if (idRegParam == null || idRegParam.isEmpty()) {throw new IllegalArgumentException("ID de Registro requerido");}
 
-                    int idReg = Integer.parseInt(idRegParam);
+                    int idReg = Integer.parseUnsignedInt(idRegParam);
 
                     reg = registroDAO.findEncDraftById(idReg,idUser);
 
                     if (reg == null) {
                         throw new NotFoundException("No se encontró el borrador");
                     } else {
-                        int idForm = reg.getEncHasFormulario().getFormulario().getIdFormulario();
-                        ArrayList<Pregunta> preguntas = preguntaDAO.getPreguntasConOpcionesPorFormulario(idForm);
-                        ArrayList<OpcionPregunta> opciones = opcionDAO.getByForm(idForm);
 
                         // 2. Validar respuestas
                         // 2.1 Validar existencia y relacion
@@ -390,15 +386,15 @@ public class VerFormulariosServlet extends HttpServlet {
                                 String idStr = paramName.substring("respuesta_".length());
                                 int idRespuesta = -1;
                                 try {
-                                    int idR = Integer.parseInt(idStr);
-                                    idRespuesta = idR;
+                                    //int idR = Integer.parseInt(idStr);
+                                    idRespuesta = Integer.parseUnsignedInt(idStr);
 
                                     if (!idR_preguntaMap.containsKey(idRespuesta)) {
                                         System.out.println("Mapa de respuestas-preguntas no contiene key ID de respuesta: " + idRespuesta);
                                         throw new IllegalArgumentException("Solicitud malformada");
-                                    } else {
-                                        System.out.println("Mapa de respuestas-preguntas contiene key ID de respuesta: " + idRespuesta);
-                                        Pregunta pregunta = idR_preguntaMap.get(idRespuesta);
+//                                    } else {
+//                                        System.out.println("Mapa de respuestas-preguntas contiene key ID de respuesta: " + idRespuesta);
+//                                        Pregunta pregunta = idR_preguntaMap.get(idRespuesta);
                                     }
 
                                     // 2.2 Validar contenido textual
@@ -485,189 +481,305 @@ public class VerFormulariosServlet extends HttpServlet {
                 System.out.println("se hace para: " + nuevoEstado);
 
                 String idEncHasFormularioParam = request.getParameter("idasignacion");
-                int idEncHasFormulario;
-                int idForm=0;
-
-                if (idEncHasFormularioParam != null) {
-                    try {
-                        // Se usa parseUnsignedInt para validar el parámetro
-                        idEncHasFormulario = Integer.parseUnsignedInt(idEncHasFormularioParam);
-
-
-
-                        ArrayList<Integer> idsAsignaciones = new ArrayList<>();
-                        for (EncHasFormulario asignacion : asignaciones) {
-                            idsAsignaciones.add(asignacion.getIdEncHasFormulario());
-                            if (asignacion.getIdEncHasFormulario() == idEncHasFormulario) {
-                                idForm = asignacion.getFormulario().getIdFormulario();
-                            }
-                        }
-
-                        if (idsAsignaciones.contains(idEncHasFormulario)) {
-
-                            System.out.println("id form es " + idForm);
-
-                            // Se recuperan las preguntas y opciones según el formulario
-                            ArrayList<Pregunta> preguntas = preguntaDAO.getPreguntasConOpcionesPorFormulario(idForm);
-                            ArrayList<OpcionPregunta> opciones = opcionDAO.getByForm(idForm);
-
-                            session.setAttribute("preguntas", preguntas);
-                            session.setAttribute("opciones", opciones);
-                        } else {
-                            throw new IllegalArgumentException("No puede generar respuestas para formularios no asignados");
-                        }
-
-                    } catch (NumberFormatException e) {
-                        System.out.println("Parámetros de form o asignacion inválidos");
-                        session.setAttribute("error", "Parámetro de asignación inválido");
-                        response.sendRedirect(getRedirectUrl(userRole));
-                        return;
-                    } catch (IllegalArgumentException e) {
-                        session.setAttribute("error", e.getMessage());
-                        response.sendRedirect(getRedirectUrl(userRole));
-                        return;
-                    }
-                } else {
-                    session.setAttribute("error", "El parámetro de asignación no puede ser nulo");
-                    response.sendRedirect(getRedirectUrl(userRole));
-                    return;
-                }
-
+                // 1. Validar parametro
                 try {
-                    System.out.println("El id de asignación es: " + idEncHasFormulario);
-                    EncHasFormulario ehf = ehfDAO.getById(idEncHasFormulario);
+                    if (idEncHasFormularioParam == null || idEncHasFormularioParam.isEmpty()) {throw new IllegalArgumentException("ID de Asignación requerido");}
 
-                    // 1. Preparar un mapa de preguntas según el id
-                    List<Pregunta> preguntas = (List<Pregunta>) session.getAttribute("preguntas");
-                    Map<Integer, Pregunta> preguntasMap = new HashMap<>();
-                    for (Pregunta pregunta : preguntas) {
-                        preguntasMap.put(pregunta.getIdPregunta(), pregunta);
-                    }
+                    int idAsignacion = Integer.parseUnsignedInt(idEncHasFormularioParam);
 
-                    // 2. Validar parámetros antes de crear el registro
-                    Map<Integer, String> errores = new HashMap<>();
-                    Map<Integer, String> inputs = new HashMap<>();
-                    Map<String, String[]> parametros = request.getParameterMap();
+                    EncHasFormulario asig = ehfDAO.getById(idAsignacion);
 
-                    for (String paramName : parametros.keySet()) {
-//                        System.out.println("PARAM MAP:");
-//                        System.out.println("key  "+paramName+ ". Valor "+ Arrays.toString(parametros.get(paramName)));
+                    if (asig == null || asig.getUsuario() == null || !Objects.equals(asig.getUsuario().getIdUsuario(), idUser)) {
+                        throw new NotFoundException("No encontrado");
+                    } else {
 
-                        if (paramName.startsWith("pregunta_")) {
-                            String[] parts = paramName.split("_");
-                            String idPregStr = paramName.substring("pregunta_".length());
-                            int idPregunta = Integer.parseInt(idPregStr);
+                        // 2. Validar respuestas
+                        // 2.1 Validar existencia y relacion
+                        int idForm1 = asig.getFormulario().getIdFormulario();
 
+                        Map<Integer, String> errores = new HashMap<>();
+                        Map<Integer, String> inputs = new HashMap<>();
 
-                            try {
-                                inputs.put(idPregunta, parametros.get(paramName)[0]);
-                            } catch (Exception e) {
-                                System.out.println("ERROR DE MAPEO para Inputs: " + e.getMessage());
-                                throw new RuntimeException(e);
-                            }
+                        // Se recuperan las preguntas y opciones según el formulario
+                        ArrayList<Pregunta> preguntas = preguntaDAO.getPreguntasConOpcionesPorFormulario(idForm1);
+                        System.out.println("preguntas: " + Arrays.toString(preguntas.toArray()));
 
+                        Map<Integer, Pregunta> idP_preguntaMap = new HashMap<>();
+                        for (Pregunta pregunta : preguntas) {
+                            idP_preguntaMap.put(pregunta.getIdPregunta(), pregunta);
+                        }
+                        //ArrayList<OpcionPregunta> opciones = opcionDAO.getByForm(idForm1);
 
-                            Pregunta pregunta = preguntasMap.get(idPregunta);
+                        Map<String, String[]> parametroMap = request.getParameterMap();
+                        for (String paramName : parametroMap.keySet()) {
+                            if (paramName.startsWith("pregunta_")) {
+                                String idPregStr = paramName.substring("pregunta_".length());
+                                try {
+                                    int idPregunta = Integer.parseUnsignedInt(idPregStr);
 
-                            if (pregunta != null) {
-                                // Para checkbox (múltiples valores) se espera que venga un sufijo adicional en el nombre
-                                if (parts.length > 2) {
-                                    String[] valores = request.getParameterValues(paramName);
-                                    // Validar que, si la pregunta es requerida, haya al menos una opción seleccionada.
-                                    if (valores == null || valores.length == 0) {
-                                        errores.put(idPregunta, "Debe seleccionar al menos una opción");
+                                    if (!idP_preguntaMap.containsKey(idPregunta)) {
+                                        System.out.println("Mapa de preguntas-preguntas no contiene key ID de pregunta: " + idPregunta);
+                                        throw new IllegalArgumentException("Solicitud malformada");
+//                                    } else {
+//                                        Pregunta pregunta = idP_preguntaMap.get(idPregunta);
                                     }
-                                } else {
-                                    String valor = request.getParameter(paramName);
-                                    //Validamos diferente para marcar registro en borrador o completado
+
+                                    // 2.2 Validar contenido textual
+                                    String[] valores = parametroMap.get(paramName);
+                                    String valor = (valores != null && valores.length > 0) ? valores[0] : null;
+                                    // Aplica .trim() sólo si el valor no es null
+                                    String valorNormalizado = (valor != null) ? valor.trim() : "";
+
+                                    inputs.put(idPregunta, valorNormalizado);
+
+                                    Pregunta pregunta = idP_preguntaMap.get(idPregunta);
+
                                     if ("B".equals(nuevoEstado)) {
                                         if (valor != null && !valor.trim().isEmpty()) {
                                             // Solo validamos si se ingresó algún valor
                                             String errorMsg = validarPregunta(pregunta, valor);
                                             if (errorMsg != null) {
-                                                errores.put(idPregunta, errorMsg);
+                                                errores.put(pregunta.getIdPregunta(), errorMsg);
                                             }
                                         }
                                     } else {
                                         String errorMsg = validarPregunta(pregunta, valor);
                                         if (errorMsg != null) {
-                                            errores.put(idPregunta, errorMsg);}
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // 3. Si hay errores de validación, reenvía al formulario para que el usuario corrija los datos.
-                    if (!errores.isEmpty()) {
-                        //request.setAttribute("error", errores);
-                        session.setAttribute("validationErrors", errores);
-                        session.setAttribute("valoresFormulario", inputs);
-                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=guardar&id_form="+idForm+"&id_asig="+idEncHasFormulario);
-                        return;
-                    }
-
-                    // 4. Si la validación fue exitosa, crear el registro principal.
-                    RegistroRespuestas nuevoRegistro = new RegistroRespuestas();
-                    nuevoRegistro.setFechaRegistro(new Date(System.currentTimeMillis()));
-                    nuevoRegistro.setEstado(nuevoEstado);
-                    nuevoRegistro.setEncHasFormulario(ehf);
-                    int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);
-                    System.out.println("Nuevo Registro id es: " + idRegistro);
-
-                    // 5. Procesar las respuestas ya validadas
-                    Map<Integer, String> respuestasTexto = new HashMap<>();
-                    Map<Integer, List<Integer>> respuestasOpciones = new HashMap<>();
-
-                    for (String paramName : parametros.keySet()) {
-                        if (paramName.startsWith("pregunta_")) {
-                            String[] parts = paramName.split("_");
-                            int idPregunta = Integer.parseInt(parts[1]);
-                            Pregunta pregunta = preguntasMap.get(idPregunta);
-
-                            if (pregunta != null) {
-                                // Si es checkbox (múltiples valores)
-                                if (parts.length > 2) {
-                                    String[] valores = request.getParameterValues(paramName);
-                                    if (valores != null) {
-                                        List<Integer> opciones = new ArrayList<>();
-                                        for (String valor : valores) {
-                                            // Asumimos que el valor es numérico (id de opción)
-                                            opciones.add(Integer.parseInt(valor));
+                                            errores.put(pregunta.getIdPregunta(), errorMsg);
                                         }
-                                        respuestasOpciones.put(idPregunta, opciones);
                                     }
-                                } else {
-                                    String valor = request.getParameter(paramName);
-                                    if (valor != null && !valor.trim().isEmpty()) {
-                                        respuestasTexto.put(idPregunta, valor.trim());
-                                    } else {
-                                        respuestasTexto.put(idPregunta, null);
-                                    }
+
+                                } catch (NumberFormatException e) {
+                                    System.err.println("ID de pregunta inválido en el parámetro: " + paramName);
+
+                                    return;
                                 }
                             }
                         }
-                    }
 
-                    // 6. Guardar las respuestas según se hayan recibido
-                    if (!respuestasTexto.isEmpty()) {
-                        respuestaDAO.guardarRespuestas(idRegistro, respuestasTexto);
-                    }
-                    if (!respuestasOpciones.isEmpty()) {
-                        respuestaDAO.guardarRespuestasOpciones(idRegistro, respuestasOpciones);
-                    }
+                        // 3. Si hay errores de validación, reenvía al formulario para que el usuario corrija los datos.
+                        if (!errores.isEmpty()) {
+                            //request.setAttribute("error", errores);
+                            session.setAttribute("validationErrors", errores);
+                            session.setAttribute("valoresFormulario", inputs);
+                            response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=guardar&id_form="+idForm1+"&id_asig="+idAsignacion);
+                            return;
+                        }
 
-                    session.setAttribute("success", "Registro creado con exito y guardado como "+acto);
+                        // 4. Si la validación fue exitosa, crear el registro principal.
+                        RegistroRespuestas nuevoRegistro = new RegistroRespuestas();
+                        nuevoRegistro.setFechaRegistro(new Date(System.currentTimeMillis()));
+                        nuevoRegistro.setEstado(nuevoEstado);
+                        nuevoRegistro.setEncHasFormulario(asig);
+                        int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);
+                        System.out.println("Nuevo Registro id es: " + idRegistro);
+
+                        respuestaDAO.guardarRespuestas(idRegistro, inputs);
+
+                    }
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    session.setAttribute("error", "ID de asignacion no es numero valido");
                     response.sendRedirect(getRedirectUrl(userRole));
+                    return;
 
+                } catch (IllegalArgumentException | NotFoundException e) {
+                    e.printStackTrace();
+                    response.sendRedirect(getRedirectUrl(userRole));
+                    session.setAttribute("error", e.getMessage());
+//                    response.sendError(400, e.getMessage());
+//                    response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+                    return;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    session.setAttribute("error", "Error al guardar las respuestas");
                     response.sendRedirect(getRedirectUrl(userRole));
-
+                    return;
                 }
 
+
+
+//                if (idEncHasFormularioParam != null) {
+//                    try {
+//                        // Se usa parseUnsignedInt para validar el parámetro
+//                        idEncHasFormulario = Integer.parseUnsignedInt(idEncHasFormularioParam);
+//
+//                        ArrayList<Integer> idsAsignaciones = new ArrayList<>();
+//                        for (EncHasFormulario asignacion : asignaciones) {
+//                            idsAsignaciones.add(asignacion.getIdEncHasFormulario());
+//                            if (asignacion.getIdEncHasFormulario() == idEncHasFormulario) {
+//                                idForm = asignacion.getFormulario().getIdFormulario();
+//                            }
+//                        }
+//
+//                        if (idsAsignaciones.contains(idEncHasFormulario)) {
+//
+//                            System.out.println("id form es " + idForm);
+//
+//                            // Se recuperan las preguntas y opciones según el formulario
+//                            ArrayList<Pregunta> preguntas = preguntaDAO.getPreguntasConOpcionesPorFormulario(idForm);
+//                            ArrayList<OpcionPregunta> opciones = opcionDAO.getByForm(idForm);
+//
+//                            session.setAttribute("preguntas", preguntas);
+//                            session.setAttribute("opciones", opciones);
+//                        } else {
+//                            throw new IllegalArgumentException("No puede generar respuestas para formularios no asignados");
+//                        }
+//
+//                    } catch (NumberFormatException e) {
+//                        System.out.println("Parámetros de form o asignacion inválidos");
+//                        session.setAttribute("error", "Parámetro de asignación inválido");
+//                        response.sendRedirect(getRedirectUrl(userRole));
+//                        return;
+//                    } catch (IllegalArgumentException e) {
+//                        session.setAttribute("error", e.getMessage());
+//                        response.sendRedirect(getRedirectUrl(userRole));
+//                        return;
+//                    }
+//                } else {
+//                    session.setAttribute("error", "El parámetro de asignación no puede ser nulo");
+//                    response.sendRedirect(getRedirectUrl(userRole));
+//                    return;
+//                }
+//
+//                try {
+//                    System.out.println("El id de asignación es: " + idEncHasFormulario);
+//                    EncHasFormulario ehf = ehfDAO.getById(idEncHasFormulario);
+//
+//                    // 1. Preparar un mapa de preguntas según el id
+//                    List<Pregunta> preguntas = (List<Pregunta>) session.getAttribute("preguntas");
+//                    Map<Integer, Pregunta> preguntasMap = new HashMap<>();
+//                    for (Pregunta pregunta : preguntas) {
+//                        preguntasMap.put(pregunta.getIdPregunta(), pregunta);
+//                    }
+//
+//                    // 2. Validar parámetros antes de crear el registro
+//                    Map<Integer, String> errores = new HashMap<>();
+//                    Map<Integer, String> inputs = new HashMap<>();
+//                    Map<String, String[]> parametros = request.getParameterMap();
+//
+//                    for (String paramName : parametros.keySet()) {
+////                        System.out.println("PARAM MAP:");
+////                        System.out.println("key  "+paramName+ ". Valor "+ Arrays.toString(parametros.get(paramName)));
+//
+//                        if (paramName.startsWith("pregunta_")) {
+//                            String[] parts = paramName.split("_");
+//                            String idPregStr = paramName.substring("pregunta_".length());
+//                            int idPregunta = Integer.parseInt(idPregStr);
+//
+//
+//                            try {
+//                                inputs.put(idPregunta, parametros.get(paramName)[0]);
+//                            } catch (Exception e) {
+//                                System.out.println("ERROR DE MAPEO para Inputs: " + e.getMessage());
+//                                throw new RuntimeException(e);
+//                            }
+//
+//
+//                            Pregunta pregunta = preguntasMap.get(idPregunta);
+//
+//                            if (pregunta != null) {
+//                                // Para checkbox (múltiples valores) se espera que venga un sufijo adicional en el nombre
+//                                if (parts.length > 2) {
+//                                    String[] valores = request.getParameterValues(paramName);
+//                                    // Validar que, si la pregunta es requerida, haya al menos una opción seleccionada.
+//                                    if (valores == null || valores.length == 0) {
+//                                        errores.put(idPregunta, "Debe seleccionar al menos una opción");
+//                                    }
+//                                } else {
+//                                    String valor = request.getParameter(paramName);
+//                                    //Validamos diferente para marcar registro en borrador o completado
+//                                    if ("B".equals(nuevoEstado)) {
+//                                        if (valor != null && !valor.trim().isEmpty()) {
+//                                            // Solo validamos si se ingresó algún valor
+//                                            String errorMsg = validarPregunta(pregunta, valor);
+//                                            if (errorMsg != null) {
+//                                                errores.put(idPregunta, errorMsg);
+//                                            }
+//                                        }
+//                                    } else {
+//                                        String errorMsg = validarPregunta(pregunta, valor);
+//                                        if (errorMsg != null) {
+//                                            errores.put(idPregunta, errorMsg);}
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+
+                    // 3. Si hay errores de validación, reenvía al formulario para que el usuario corrija los datos.
+//                    if (!errores.isEmpty()) {
+//                        //request.setAttribute("error", errores);
+//                        session.setAttribute("validationErrors", errores);
+//                        session.setAttribute("valoresFormulario", inputs);
+//                        response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=guardar&id_form="+idForm+"&id_asig="+idEncHasFormulario);
+//                        return;
+//                    }
+//
+//                    // 4. Si la validación fue exitosa, crear el registro principal.
+//                    RegistroRespuestas nuevoRegistro = new RegistroRespuestas();
+//                    nuevoRegistro.setFechaRegistro(new Date(System.currentTimeMillis()));
+//                    nuevoRegistro.setEstado(nuevoEstado);
+//                    nuevoRegistro.setEncHasFormulario(ehf);
+//                    int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);
+//                    System.out.println("Nuevo Registro id es: " + idRegistro);
+//
+//                    // 5. Procesar las respuestas ya validadas
+//                    Map<Integer, String> respuestasTexto = new HashMap<>();
+//                    Map<Integer, List<Integer>> respuestasOpciones = new HashMap<>();
+//
+//                    for (String paramName : parametros.keySet()) {
+//                        if (paramName.startsWith("pregunta_")) {
+//                            String[] parts = paramName.split("_");
+//                            int idPregunta = Integer.parseInt(parts[1]);
+//                            Pregunta pregunta = preguntasMap.get(idPregunta);
+//
+//                            if (pregunta != null) {
+//                                // Si es checkbox (múltiples valores)
+//                                if (parts.length > 2) {
+//                                    String[] valores = request.getParameterValues(paramName);
+//                                    if (valores != null) {
+//                                        List<Integer> opciones = new ArrayList<>();
+//                                        for (String valor : valores) {
+//                                            // Asumimos que el valor es numérico (id de opción)
+//                                            opciones.add(Integer.parseInt(valor));
+//                                        }
+//                                        respuestasOpciones.put(idPregunta, opciones);
+//                                    }
+//                                } else {
+//                                    String valor = request.getParameter(paramName);
+//                                    if (valor != null && !valor.trim().isEmpty()) {
+//                                        respuestasTexto.put(idPregunta, valor.trim());
+//                                    } else {
+//                                        respuestasTexto.put(idPregunta, null);
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    // 6. Guardar las respuestas según se hayan recibido
+//                    if (!respuestasTexto.isEmpty()) {
+//                        respuestaDAO.guardarRespuestas(idRegistro, respuestasTexto);
+//                    }
+//                    if (!respuestasOpciones.isEmpty()) {
+//                        respuestaDAO.guardarRespuestasOpciones(idRegistro, respuestasOpciones);
+//                    }
+//
+//                    session.setAttribute("success", "Registro creado con exito y guardado como "+acto);
+//                    response.sendRedirect(getRedirectUrl(userRole));
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    session.setAttribute("error", "Error al guardar las respuestas");
+//                    response.sendRedirect(getRedirectUrl(userRole));
+//
+//                }
+
             break;
+
+            default:
+                response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+
 
         }
     }
@@ -699,7 +811,7 @@ public class VerFormulariosServlet extends HttpServlet {
         } else if ("date".equalsIgnoreCase(tipo)) {
             try {
                 System.out.println("Date: " + valor);
-                DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                //DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate.parse(valor.trim(), sqlFormatter);
 
