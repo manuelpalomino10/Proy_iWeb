@@ -12,7 +12,7 @@ public class UsuarioDao extends BaseDAO {
     public ArrayList<UsuarioDto> listar() {
         ArrayList<UsuarioDto> lista = new ArrayList<>();
 
-        String sql = "SELECT u.idUsuario, u.nombres, u.apellidos, u.correo, u.DNI, r.nombre AS nombreRol, " +
+        String sql = "SELECT u.idUsuario, concat(u.nombres, ' ',u.apellidos) as Nombre_Usuario, u.correo, u.DNI, r.nombre AS nombreRol," +
                 "z.nombre AS nombreZona, u.estado AS estado " +
                 "FROM usuario u " +
                 "JOIN roles r ON u.idroles = r.idroles " +
