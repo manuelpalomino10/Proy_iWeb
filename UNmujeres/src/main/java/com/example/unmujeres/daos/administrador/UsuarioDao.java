@@ -12,7 +12,7 @@ public class UsuarioDao extends BaseDAO {
     public ArrayList<UsuarioDto> listar() {
         ArrayList<UsuarioDto> lista = new ArrayList<>();
 
-        String sql = "SELECT u.idUsuario, concat(u.nombres, ' ',u.apellidos) as Nombre_Usuario, u.correo, u.DNI, r.nombre AS nombreRol," +
+        String sql = "SELECT u.idUsuario, u.nombres, u.apellidos, u.correo, u.DNI, r.nombre AS nombreRol, " +
                 "z.nombre AS nombreZona, u.estado AS estado " +
                 "FROM usuario u " +
                 "JOIN roles r ON u.idroles = r.idroles " +
@@ -29,7 +29,8 @@ public class UsuarioDao extends BaseDAO {
 
                 usuariodto.setId(rs.getInt("idUsuario"));
                 usuariodto.setDni(rs.getString("DNI"));
-                usuariodto.setNombreCompleto(rs.getString("Nombre_Usuario"));
+                usuariodto.setNombres(rs.getString("nombres"));
+                usuariodto.setApellidos(rs.getString("apellidos"));
                 usuariodto.setCorreo(rs.getString("correo"));
                 usuariodto.setNombreRol(rs.getString("nombreRol"));
                 usuariodto.setNombreZona(rs.getString("nombreZona"));
