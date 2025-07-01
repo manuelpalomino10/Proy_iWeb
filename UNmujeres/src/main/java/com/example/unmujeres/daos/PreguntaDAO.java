@@ -14,7 +14,7 @@ public class PreguntaDAO extends BaseDAO{
                 "FROM pregunta p " +
                 "INNER JOIN seccion s ON p.idseccion = s.idseccion " +
                 "LEFT JOIN formulario f ON s.idformulario = f.idformulario " +
-                "WHERE f.idformulario = ?"; // Sin ";"
+                "WHERE f.idformulario = ? AND f.estado=1 "; // Sin ";"
 
 
         try (Connection con = this.getConnection();

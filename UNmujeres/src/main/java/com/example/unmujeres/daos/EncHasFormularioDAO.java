@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.example.unmujeres.beans.EncHasFormulario;
 import com.example.unmujeres.beans.Formulario;
+import com.example.unmujeres.beans.Usuario;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,7 +17,9 @@ public class EncHasFormularioDAO extends BaseDAO {
     public ArrayList<EncHasFormulario> getByUser(int idUsuario) {
         ArrayList<EncHasFormulario> asignaciones = new ArrayList<>();
 
-        String sql = "SELECT * FROM enc_has_formulario WHERE enc_idusuario = ?";
+        String sql = "SELECT ehf.* FROM enc_has_formulario ehf " +
+                "INNER JOIN formulario f ON ehf.idformulario=f.idformulario " +
+                "WHERE enc_idusuario = ? AND f.estado=1; ";
 
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);) {
@@ -48,7 +51,9 @@ public class EncHasFormularioDAO extends BaseDAO {
 
     public EncHasFormulario getById(int id) {
         EncHasFormulario asig = null;
-        String sql = "SELECT * FROM enc_has_formulario WHERE idenc_has_formulario = ?";
+        String sql = "SELECT * FROM enc_has_formulario ehf " +
+                "INNER JOIN formulario f ON ehf.idformulario=f.idformulario " +
+                "WHERE idenc_has_formulario = ? AND f.estado=1 ";
 
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);) {
@@ -61,12 +66,20 @@ public class EncHasFormularioDAO extends BaseDAO {
                     asig.setIdEncHasFormulario(rs.getInt("idenc_has_formulario"));
                     asig.setFechaAsignacion(rs.getDate("fecha_asignacion"));
                     asig.setCodigo(rs.getString("codigo"));
-                    // Obtener formulario por id
-                    FormularioDAO formularioDAO = new FormularioDAO();
-                    asig.setFormulario(formularioDAO.getById(rs.getInt("idformulario")));
-                    // Obtener encuestador por id
-                    UsuarioDAO usuarioDAO = new UsuarioDAO();
-                    asig.setUsuario(usuarioDAO.getById(rs.getInt("enc_idusuario")));
+
+                    Formulario formulario = new Formulario();
+                    formulario.setIdFormulario(rs.getInt("idformulario"));
+                    asig.setFormulario(formulario);
+//                    Obtener formulario por id
+//                    FormularioDAO formularioDAO = new FormularioDAO();
+//                    asig.setFormulario(formularioDAO.getById(rs.getInt("idformulario")));
+
+                    Usuario usuario = new Usuario();
+                    usuario.setIdUsuario(rs.getInt("enc_idusuario"));
+                    asig.setUsuario(usuario);
+//                     Obtener encuestador por id
+//                    UsuarioDAO usuarioDAO = new UsuarioDAO();
+//                    asig.setUsuario(usuarioDAO.getById(rs.getInt("enc_idusuario")));
                 }
             }
         } catch (SQLException e) {

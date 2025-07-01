@@ -12,6 +12,7 @@ import com.example.unmujeres.daos.RespuestaDAO;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import javassist.NotFoundException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,28 +44,29 @@ public class SubirRegistrosServlet extends HttpServlet {
         int idUser = user.getIdUsuario();
         int userRole = user.getIdroles();
 
-        String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
-        RequestDispatcher view;
-
-        switch (action) {
-            case "lista":
-                try {
-                    System.out.println("Se consulto lista de asignados de coordi");
-
-                    ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idUser);
-                    ArrayList<Integer> totales = registroDAO.countRegByForm(idUser);
-                    // 9. Enviar a vista
-                    request.setAttribute("asignaciones", asignaciones);
-                    request.setAttribute("totalesRegistros", totales);
-                    view = request.getRequestDispatcher("/coordinador/listaFormularios.jsp");
-                    view.forward(request, response);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    //request.getRequestDispatcher("/WEB-INF/vistas/error.jsp").forward(request, response);
-                }
-                break;
-        }
+//        String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
+//        RequestDispatcher view;
+//
+//        switch (action) {
+//            case "lista":
+//                try {
+//                    System.out.println("Se consulto lista de asignados de coordi");
+//
+//                    ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idUser);
+//                    ArrayList<Integer> totales = registroDAO.countRegByForm(idUser);
+//                    // 9. Enviar a vista
+//                    request.setAttribute("asignaciones", asignaciones);
+//                    request.setAttribute("totalesRegistros", totales);
+//                    view = request.getRequestDispatcher("/coordinador/listaFormularios.jsp");
+//                    view.forward(request, response);
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    //request.getRequestDispatcher("/WEB-INF/vistas/error.jsp").forward(request, response);
+//                }
+//                break;
+//        }
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED,"Método no permitido");
     }
 
     @Override
@@ -73,11 +75,9 @@ public class SubirRegistrosServlet extends HttpServlet {
 
         HttpSession session = request.getSession(false);    // Obtener la sesión sin crear una nueva
 
-        if (session == null) {
-            System.out.println("No hay session");
-            response.sendRedirect(request.getContextPath() + "/Sistema/login.jsp");
-            return;
-        }
+        Usuario user = (Usuario) session.getAttribute("usuario");
+        int idUser = user.getIdUsuario();
+
 
         System.out.println("Iniciando proceso de subir registros");
         //Validación del parámetro idEhf.
@@ -90,15 +90,23 @@ public class SubirRegistrosServlet extends HttpServlet {
             return;
         }
 
-        int idEhf;
+        int idEhf=-1;
         try {
-            idEhf = Integer.parseInt(idEhfParam);
+            idEhf = Integer.parseUnsignedInt(idEhfParam);
+
+            EncHasFormulario ehf = ehfDAO.getById(idEhf);
+            if (ehf == null) {
+                throw new NotFoundException("No se encontró formulario");
+            } else if (ehf.getUsuario().getIdUsuario() != idUser) {
+                throw new NotFoundException("No se encontró formulario");
+            }
         } catch (NumberFormatException e) {
             System.out.println("Error en el parametro idEhf");
-            //.getSession().setAttribute("error", e.getMessage());
             session.setAttribute("error", "Imposible encontrar ese formulario.");
             response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
             return;
+        } catch (NotFoundException e) {
+            session.setAttribute("error", e.getMessage());
         }
 
         //Obtención del archivo CSV subido (parámetro"csvFile").
@@ -134,7 +142,10 @@ public class SubirRegistrosServlet extends HttpServlet {
                 RegistroRespuestas nuevoRegistro = new RegistroRespuestas();
                 nuevoRegistro.setFechaRegistro(new Date(System.currentTimeMillis()));
                 nuevoRegistro.setEstado("C"); // Siempre en estado C
-                nuevoRegistro.setEncHasFormulario(ehfDAO.getById(idEhf));
+
+                EncHasFormulario ehf = new EncHasFormulario();
+                ehf.setIdEncHasFormulario(idEhf);
+                nuevoRegistro.setEncHasFormulario(ehf);
                 int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);
                 System.out.println("Nuevo Registro id es: "+idRegistro);
                 nRegInsertados++;

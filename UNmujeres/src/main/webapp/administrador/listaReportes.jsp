@@ -129,9 +129,15 @@
 
                 <!-- Botón -->
                 <div>
-                  <label class="form-label d-block invisible">Filtrar</label> <!-- Invisible label to align -->
+<%--                  <label class="form-label d-block invisible">Filtrar</label> <!-- Invisible label to align -->--%>
                   <button class="btn btn-primary btn-sm" type="submit">
                     <i class="fas fa-filter me-1"></i> Filtrar
+                  </button>
+                </div>
+
+                <div>
+                  <button class="btn-outline-primary btn-circle" onclick="limpiarFormulario()">
+                    <i class="fas fa-trash"></i>
                   </button>
                 </div>
 
@@ -290,6 +296,32 @@
       dateRangeInput.val('');
     }
   });
+
+  function limpiarFormulario() {
+    const form = document.getElementById("filtros");
+
+    // Borra todos los campos manualmente
+    // form.querySelectorAll("input, select").forEach(el => {
+    // if (el.tagName === "SELECT") {
+    //   el.selectedIndex = 0;
+    // } else if (el.type !== "submit" && el.type !== "button") {
+    //   el.value = "";
+    // }
+    // });
+
+    // Limpiar inputs
+    form.querySelectorAll('input[type="text"]').forEach(input => {
+      input.value = '';
+    });
+
+    // Restablecer selects
+    form.querySelectorAll('select').forEach(select => {
+      select.selectedIndex = 0;
+    });
+
+    // Opcional: envia el formulario limpio directamente
+    //form.submit();
+  }
 </script>
 
 

@@ -83,7 +83,7 @@
                 <% if (preguntas != null && !preguntas.isEmpty()) {
                     int currentSeccionId = -1;
                 %>
-                <form id="respuestaForm" method="POST" action="<%=request.getContextPath()%>/encuestador/VerFormulariosServlet?action=guardar">
+                <form id="respuestaForm" method="POST" action="<%=request.getContextPath()%>/shared/VerFormulariosServlet?action=guardar">
                     <input type="hidden" name="idasignacion" value="<%= request.getParameter("id_asig") %>" />
 
 

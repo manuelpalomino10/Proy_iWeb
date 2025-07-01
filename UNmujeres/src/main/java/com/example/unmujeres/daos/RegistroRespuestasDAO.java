@@ -53,35 +53,6 @@ public class RegistroRespuestasDAO extends BaseDAO {
         return registros;
     }
 
-    public RegistroRespuestas getDraftById(int id) {
-
-        RegistroRespuestas reg = null;
-        String sql = "SELECT * FROM registro_respuestas WHERE idregistro_respuestas = ? AND estado='B' ";
-
-        try (Connection con = this.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);){
-            ps.setInt(1, id);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    reg = new RegistroRespuestas();
-
-                    reg.setIdRegistroRespuestas(rs.getInt("idregistro_respuestas"));
-                    reg.setFechaRegistro(rs.getDate("fecha_registro"));
-                    reg.setEstado(rs.getString("estado"));
-
-                    EncHasFormularioDAO ehfDAO = new EncHasFormularioDAO();
-                    reg.setEncHasFormulario(ehfDAO.getById(rs.getInt("idenc_has_formulario")));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return reg;
-    }
-
-
-
 
     public RegistroRespuestas findEncDraftById(int idReg, int idEnc) {      //Devuelve registro borrador(B) solo si existe y pertenece al encuestador
 
@@ -89,7 +60,7 @@ public class RegistroRespuestasDAO extends BaseDAO {
         String sql = "SELECT reg.*, ehf.* FROM registro_respuestas reg " +
                 "INNER JOIN enc_has_formulario ehf ON ehf.idenc_has_formulario=reg.idenc_has_formulario AND ehf.enc_idusuario=? " +
                 "INNER JOIN formulario f ON f.idformulario=ehf.idformulario " +
-                "WHERE reg.idregistro_respuestas=? AND reg.estado='B'; ";
+                "WHERE reg.idregistro_respuestas=? AND reg.estado='B' AND f.estado=1 ; ";
 
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);) {

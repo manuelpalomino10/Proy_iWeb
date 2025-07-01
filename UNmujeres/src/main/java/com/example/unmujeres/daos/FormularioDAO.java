@@ -13,7 +13,7 @@ public class FormularioDAO extends BaseDAO {
 
     public Formulario getById(int id) {
         Formulario formulario = null;
-        String sql = "SELECT * FROM formulario WHERE idformulario = ?";
+        String sql = "SELECT * FROM formulario WHERE idformulario = ? AND estado = 1";
 
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);){
