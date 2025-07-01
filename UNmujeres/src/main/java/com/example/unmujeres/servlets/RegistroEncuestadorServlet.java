@@ -13,6 +13,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import com.example.unmujeres.utils.EmailUtil;
 
 @WebServlet("/register")
 public class RegistroEncuestadorServlet extends HttpServlet {
@@ -32,7 +33,10 @@ public class RegistroEncuestadorServlet extends HttpServlet {
         } catch (SQLException ex) {
             throw new ServletException("Error cargando zonas/distritos", ex);
         }
-        req.getRequestDispatcher("/encuestador/form.jsp").forward(req, resp);
+        // La página de registro está ubicada en la carpeta "Sistema" y no debe
+        // pasar por los filtros de rol que protegen la carpeta "/encuestador".
+        // Por ello se actualiza la ruta del JSP.
+        req.getRequestDispatcher("/Sistema/form.jsp").forward(req, resp);
     }
 
     @Override
@@ -47,8 +51,6 @@ public class RegistroEncuestadorServlet extends HttpServlet {
         String direccion     = req.getParameter("direccion");
         String distritoParam = req.getParameter("distrito"); // "iddistritos-idzona"
         String correo        = req.getParameter("correo");
-        String password      = req.getParameter("password");
-        System.out.println( password);
 
         // 2) Recargar listas para re-pintar el form si hay errores
         try {
@@ -63,40 +65,6 @@ public class RegistroEncuestadorServlet extends HttpServlet {
         if (apellido == null || apellido.trim().isEmpty()) errores.put("apellido", "El apellido es obligatorio");
         if (direccion == null || direccion.trim().isEmpty()) errores.put("direccion","La dirección es obligatoria");
         if (correo == null || correo.trim().isEmpty())     errores.put("correo",   "El correo es obligatorio");
-
-        // Contraseña
-        List<String> erroresPwd = new ArrayList<>();
-        Map<String, Boolean> requisitosPwd = new LinkedHashMap<>();
-        if (password == null || password.trim().isEmpty()) {
-            errores.put("password", "La contraseña es obligatoria");
-            // Todos en falso si está vacío
-            requisitosPwd.put("len", false);
-            requisitosPwd.put("may", false);
-            requisitosPwd.put("min", false);
-            requisitosPwd.put("num", false);
-            requisitosPwd.put("spec", false);
-        } else {
-            boolean len = password.length() >= 8;
-            boolean may = password.matches(".*[A-Z].*");
-            boolean min = password.matches(".*[a-z].*");
-            boolean num = password.matches(".*\\d.*");
-            boolean spec = password.matches(".*[\\W_].*");
-            if (!len) erroresPwd.add("Mínimo 8 caracteres");
-            if (!may) erroresPwd.add("Al menos una mayúscula");
-            if (!min) erroresPwd.add("Al menos una minúscula");
-            if (!num) erroresPwd.add("Al menos un número");
-            if (!spec) erroresPwd.add("Al menos un carácter especial");
-            if (!erroresPwd.isEmpty()) errores.put("password", String.join(", ", erroresPwd));
-            // Guardar resultados para pintar los requisitos
-            requisitosPwd.put("len", len);
-            requisitosPwd.put("may", may);
-            requisitosPwd.put("min", min);
-            requisitosPwd.put("num", num);
-            requisitosPwd.put("spec", spec);
-        }
-        // Siempre pon los requisitos en el request
-        req.setAttribute("requisitosPwd", requisitosPwd);
-
 
         // DNI
         int dni = 0;
@@ -144,7 +112,9 @@ public class RegistroEncuestadorServlet extends HttpServlet {
             req.setAttribute("direccion",  direccion);
             req.setAttribute("distrito",   distritoParam);
             req.setAttribute("correo",     correo);
-            req.getRequestDispatcher("/encuestador/form.jsp").forward(req, resp);
+            // Si hay errores se reenvía al formulario público ubicado en la
+            // carpeta "Sistema".
+            req.getRequestDispatcher("/Sistema/form.jsp").forward(req, resp);
             return;
         }
 
@@ -157,16 +127,20 @@ public class RegistroEncuestadorServlet extends HttpServlet {
         u.setZona_idzona(idZona);
         u.setDistritos_iddistritos(idDistrito);
         u.setCorreo(correo);
-
-        // **Hasheo la contraseña y la asigno**
-        String hashed = dao.hashPassword(password);
-        u.setContrasena(hashed);
         u.setCod_enc(dao.generarCodigoUnico());
-        u.setEstado((byte)1);
+        // estado 0 = pendiente de activación
+        u.setEstado((byte)0);
         u.setRoles_idroles(3);
 
         try {
             dao.insert(u);
+            // Después de registrar, enviar correo de verificación
+            String base = req.getRequestURL().toString()
+                    .replace(req.getRequestURI(), req.getContextPath());
+            String link = base + "/verify?code=" + u.getCod_enc();
+            String cuerpo = "Para activar su cuenta haga clic en el siguiente " +
+                    "enlace: <a href='" + link + "'>Verificar correo</a>";
+            EmailUtil.sendEmail(correo, "Verificación de cuenta", cuerpo);
         } catch (SQLException ex) {
             throw new ServletException("Error al insertar usuario", ex);
         }

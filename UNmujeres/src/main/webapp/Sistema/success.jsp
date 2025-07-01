@@ -13,7 +13,7 @@
 <div class="container-fluid mt-5">
   <div class="text-center">
     <h1 class="h3 mb-4 text-gray-800">¡Registro Exitoso!</h1>
-    <p>Tu registro se ha realizado correctamente. Ahora puedes iniciar sesion.</p>
+    <p>Tu registro se ha realizado correctamente. Revisa tu correo para activar tu cuenta.</p>
     <a href="${pageContext.request.contextPath}/login"
        class="btn btn-primary btn-user btn-block" style="max-width:320px; margin:0 auto;">
       Ir al login

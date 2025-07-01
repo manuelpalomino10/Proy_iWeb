@@ -198,7 +198,12 @@
 <!-- Script de inicialización -->
 <script>
     $(function(){
-        $('#dataTable').DataTable({destroy:true});
+        $('#dataTable').DataTable({
+            destroy:true,
+            language: {
+                url: "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json"
+            }
+        });
         $('#banModal').on('show.bs.modal', e => {
             let btn = $(e.relatedTarget);
             let id   = btn.data('id');
