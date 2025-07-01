@@ -29,8 +29,7 @@ public class UsuarioDao extends BaseDAO {
 
                 usuariodto.setId(rs.getInt("idUsuario"));
                 usuariodto.setDni(rs.getString("DNI"));
-                usuariodto.setNombres(rs.getString("nombres"));
-                usuariodto.setApellidos(rs.getString("apellidos"));
+                usuariodto.setNombreCompleto(rs.getString("Nombre_Usuario"));
                 usuariodto.setCorreo(rs.getString("correo"));
                 usuariodto.setNombreRol(rs.getString("nombreRol"));
                 usuariodto.setNombreZona(rs.getString("nombreZona"));
