@@ -12,9 +12,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Base64;
 
-@WebServlet("/coordinador/editarPasswordCoordi")
-public class EditarPasswordServlet extends HttpServlet {
+@WebServlet("/coordinador/editarPerfilCoordi")
+public class EditarPerfilServlet extends HttpServlet {
 
     private UsuarioDAO usuarioDAO;
 
@@ -33,8 +34,37 @@ public class EditarPasswordServlet extends HttpServlet {
             return;
         }
 
-        request.getRequestDispatcher("/coordinador/editarPassword.jsp")
-                .forward(request, response);
+        try {
+            // Obtener usuario completo con distrito (como en PerfilServlet)
+            Usuario usuarioSesion = (Usuario) session.getAttribute("usuario");
+            Usuario usuario = usuarioDAO.obtenerUsuarioConDistrito(usuarioSesion.getIdUsuario());
+
+            if (usuario == null) {
+                request.setAttribute("error", "Usuario no encontrado");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+                return;
+            }
+
+            // Parte CRÍTICA para manejo de foto (igual que en PerfilServlet)
+            byte[] fotoBytes = usuario.getFotoBytes();
+            if (fotoBytes != null && fotoBytes.length > 0) {
+                String base64Image = Base64.getEncoder().encodeToString(fotoBytes);
+                request.setAttribute("fotoBase64", base64Image);
+                session.setAttribute("fotoBase64", base64Image);  // Almacena en sesión
+            } else {
+                request.setAttribute("fotoVacia", true);
+                session.removeAttribute("fotoBase64");  // Limpia la sesión si no hay foto
+            }
+
+            // Pasar el usuario completo a la vista
+            request.setAttribute("usuario", usuario);
+            request.getRequestDispatcher("/coordinador/editarDatosCOORD.jsp").forward(request, response);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Error de base de datos: " + e.getMessage());
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+        }
     }
 
     @Override
@@ -99,7 +129,8 @@ public class EditarPasswordServlet extends HttpServlet {
             );
 
             if (actualizado) {
-                Usuario usuarioActualizado = usuarioDAO.obtenerUsuarioPorId(usuario.getIdUsuario());
+                // Actualizar usuario en sesión con datos completos
+                Usuario usuarioActualizado = usuarioDAO.obtenerUsuarioConDistrito(usuario.getIdUsuario());
                 session.setAttribute("usuario", usuarioActualizado);
                 response.sendRedirect(request.getContextPath() +
                         "/coordinador/perfilCOORD?success=Contrase%C3%B1a+actualizada+correctamente");

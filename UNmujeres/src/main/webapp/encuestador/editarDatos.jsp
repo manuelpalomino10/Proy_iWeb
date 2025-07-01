@@ -32,10 +32,105 @@
             <div class="container-fluid">
 
                 <div class="card shadow m-4 d-flex m-auto" style="max-width: 900px;margin: 2rem auto">
+                    <div class="card-header py-2 bg-gradient-primary p-4 d-flex flex-row align-items-center fa-inverse">
+                        <i class="fas fa-2x fa-image mr-2"></i>
+                        <h5 class="m-0 font-weight-bold white">Actualizar Foto</h5>
+                    </div>
+                    <br>
+
+                    <!-- FORMULARIO DE ACTUALIZACIÓN DE FOTO -->
+                    <form action="${pageContext.request.contextPath}/subirFoto" method="post" enctype="multipart/form-data" id="fotoForm" class="text-center">
+                        <div id="messageContainer"></div>
+
+                        <div id="imageContainer">
+                            <c:choose>
+                                <c:when test="${not empty usuario.fotoBytes}">
+                                    <img id="currentProfileImage" src="data:image/jpeg;base64,${fotoBase64}"
+                                         class="profile-img" alt="Foto de perfil" style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover;"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <img id="currentProfileImage" src="${pageContext.request.contextPath}/img/perfil-del-usuario.png"
+                                         class="profile-img" alt="Foto de perfil por defecto"/>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                        <br>
+                        <button type="button" class="btn btn-primary" onclick="document.getElementById('fileInput').click();">
+                            <i class="fas fa-camera mr-2"></i>Actualizar Foto
+                        </button>
+                        <input type="file" name="foto" id="fileInput" class="d-none"
+                               accept="image/jpeg,image/jpg,image/png"
+                               onchange="uploadImage(this);">
+                        <ul style="list-style: none; padding-left: 0; margin: 8px 0 0 0;">
+                            <li style="color: #6c757d; font-size: 13px; font-weight: 600; margin-bottom: 2px;">
+                                Solo se permiten formatos JPG, JPEG y PNG
+                            </li>
+                        </ul>
+                        <br>
+                    </form>
+
+                    <script>
+                        function uploadImage(input) {
+                            if (!input.files[0]) return;
+
+                            // 1) Preview inmediato
+                            const reader = new FileReader();
+                            reader.onload = e => {
+                                document.getElementById('currentProfileImage').src = e.target.result;
+                            };
+                            reader.readAsDataURL(input.files[0]);
+
+                            // 2) Envío a BD
+                            const formData = new FormData(document.getElementById('fotoForm'));
+                            showMessage('Subiendo foto…', 'info');
+
+                            fetch('${pageContext.request.contextPath}/subirFoto', {
+                                method: 'POST',
+                                body: formData
+                            })
+                                .then(res => {
+                                    if (!res.ok) {
+                                        return res.json().then(err => { throw new Error(err.error); });
+                                    }
+                                    return res.json();
+                                })
+                                .then(data => {
+                                    // 3) Recarga la versión guardada
+                                    const ts = new Date().getTime();
+                                    document.getElementById('currentProfileImage').src =
+                                        `${pageContext.request.contextPath}/obtenerFoto?dni=${userDni}&t=${ts}`;
+                                    showMessage('¡Foto actualizada correctamente! Recargando...', 'success');
+
+                                    // Recarga la página después de 1 segundo para ver el mensaje
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 20);
+                                });
+                        }
+
+                        function showMessage(text, type) {
+                            const c = document.getElementById('messageContainer');
+                            c.innerHTML = '';
+                            let icon = 'info-circle';
+                            if (type === 'success') icon = 'check-circle';
+                            if (type === 'danger') icon = 'exclamation-circle';
+
+                            const div = document.createElement('div');
+                            div.className = `alert alert-${type} text-center`;
+                            div.innerHTML = `<i class="fas fa-${icon} mr-1"></i>${text}`;
+                            c.appendChild(div);
+                            if (type !== 'danger') setTimeout(() => div.remove(), 4000);
+                        }
+                    </script>
+
+                </div>
+                <br><br>
+
+                <div class="card shadow m-4 d-flex m-auto" style="max-width: 900px;margin: 2rem auto">
 
                     <div class="card-header py-2 bg-gradient-primary p-4 d-flex flex-row align-items-center fa-inverse">
-                        <i class="fas fa-2x mr-2 fa-user-circle"></i>
-                        <h5 class="m-0 font-weight-bold white">Editar Perfil de Usuario</h5>
+                        <i class="fas fa-2x mr-2 fa-user-edit"></i>
+                        <h5 class="m-0 font-weight-bold white">Actualizar datos</h5>
                     </div>
 
                     <div class="card-body">
@@ -108,8 +203,10 @@
                             </div>
                             <br>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                                <a href="${pageContext.request.contextPath}/encuestador/perfil" class="btn btn-secondary">Cancelar</a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save mr-2"></i>Guardar</button>
+                                <a href="${pageContext.request.contextPath}/encuestador/perfil" class="btn btn-secondary">
+                                    <i class="fas fa-times mr-2"></i>Cancelar</a>
                             </div>
                         </form>
                         <br>

@@ -47,7 +47,7 @@
 
           <div class="card-header py-2 bg-gradient-primary p-4 d-flex flex-row align-items-center fa-inverse">
             <i class="fas fa-2x mr-2 fa-key"></i>
-            <h5 class="m-0 font-weight-bold white">Cambiar Contraseña</h5>
+            <h5 class="m-0 font-weight-bold white">Editar Contraseña</h5>
           </div>
 
           <div class="card-body">
