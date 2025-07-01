@@ -9,6 +9,11 @@ public class FormularioDto {
     private String nombreCat;
     private boolean estado;
 
+    private int NRegCompletados;
+    private int regEsperados;
+    private Date fechaLimite;
+    private int idEncHasFormulario;
+
     public int getId() {
         return id;
     }
@@ -47,5 +52,34 @@ public class FormularioDto {
 
     public void setEstado(boolean estado) {
         this.estado = estado;
+    }
+
+
+    public int getNRegCompletados() {
+        return NRegCompletados;
+    }
+    public void setNRegCompletados(int NRegCompletados) {
+        this.NRegCompletados = NRegCompletados;
+    }
+
+    public int getRegEsperados() {
+        return regEsperados;
+    }
+    public void setRegEsperados(int regEsperados) {
+        this.regEsperados = regEsperados;
+    }
+
+    public Date getFechaLimite() {
+        return fechaLimite;
+    }
+    public void setFechaLimite(Date fechaLimite) {
+        this.fechaLimite = fechaLimite;
+    }
+
+    public int getIdEncHasFormulario() {
+        return idEncHasFormulario;
+    }
+    public void setIdEncHasFormulario(int idEncHasFormulario) {
+        this.idEncHasFormulario = idEncHasFormulario;
     }
 }

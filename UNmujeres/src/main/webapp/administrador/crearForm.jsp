@@ -50,86 +50,88 @@
         <!-- Page Heading -->
         <h1 class="h3 mb-2 text-gray-800">Generar Reporte</h1>
 
-        <!-- ------------- FORMULARIO DE PARAMETROS DE FORMULARIO ------------- -->
-        <div class="container">
-          <form id="fparametros" method="POST" action="<%=request.getContextPath()%>/administrador/NuevoFormServlet" class="row g-3" enctype="multipart/form-data">
+          <!-- Contenedor del formulario centrado -->
+          <div class="col-lg-10 mx-auto">
+              <div class="card shadow mb-4">
+                  <div class="card-body">
 
-            <!-- Sección 8 (Zona, Rol y Fecha) -->
-            <div class="col-md-8">
+                        <!-- ------------- FORMULARIO DE PARAMETROS DE FORMULARIO ------------- -->
+                      <form id="fparametros" method="POST" action="<%=request.getContextPath()%>/administrador/NuevoFormServlet" enctype="multipart/form-data">
 
-                <!-- Primera fila: Nombre -->
-              <div class="row mt-3">
-                <div class="col-md-12">
-                  <label for="nombreForm" class="form-label">Nombre de formulario:</label>
-                  <input type="text" name="nombreForm" id="nombreForm" class="form-control" placeholder="Nombre de formulario" required/>
-                </div>
+                        <!-- Primera fila: Nombre -->
+                          <div class="form-row">
+                            <div class=" form-group col-md-12">
+                              <label for="nombreForm" class="form-label">Nombre de formulario:</label>
+                              <input type="text" name="nombreForm" id="nombreForm" class="form-control" placeholder="Nombre de formulario" required/>
+                            </div>
+                          </div>
+
+                          <!-- Segunda fila: Categoría y Registros Esperados -->
+                          <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="idCategoria" class="form-label">Categoría:</label>
+                                <select name="idCategoria" id="idCategoria" class="form-control">
+                                <option <%= (catSel==0) ? "selected" : "" %> >Seleccionar Categoría</option>
+                                <% for (Categoria categoria : categorias) { %>
+                                <option value="<%= categoria.getIdCategoria() %>" <%= (categoria.getIdCategoria() == catSel) ? "selected" : "" %>>
+                                  <%= categoria.getNombre() %>
+                                </option>
+                                <% } %>
+                              </select>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="esperados" class="form-label">Registros Esperados:</label>
+                                <input type="number" name="esperados" id="esperados" class="form-control" min="50" placeholder="100" />
+                            </div>
+
+                          </div>
+
+                          <!-- Tercera fila: Fechas -->
+                          <div class="form-row">
+                            <div class="form-group col-md-6">
+                              <label for="fechaCreacion" class="form-label">Fecha de Creación:</label>
+                              <input type="date" name="fechaCreacion" id="fechaCreacion" class="form-control" placeholder="DD-MM-YYYY" value="<%= LocalDate.now() %>" readonly/>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="fechaLimite" class="form-label">Fecha límite:</label>
+                                <input type="date" name="fechaLimite" id="fechaLimite" class="form-control" placeholder="DD-MM-YYYY" min="<%= LocalDate.now().plusDays(1) %>"/>
+                            </div>
+                          </div>
+
+    <%--                          <!-- Quinta fila: Registros esperados -->--%>
+    <%--                          <div class="row mt-3">--%>
+    <%--                            <div class="col-md-4">--%>
+    <%--                              <label for="esperados" class="form-label">Registros Esperados:</label>--%>
+    <%--                              <input type="number" name="esperados" id="esperados" class="form-control" min="50" placeholder="100" />--%>
+    <%--                            </div>--%>
+    <%--                          </div>--%>
+
+                          <!-- Cuarta fila: Archivo -->
+                          <div class="form-row">
+                            <div class="form-group col-md-8">
+                              <label for="csvFile" class="form-label">Archivo CSV:</label>
+                              <input type="file" name="csvFile" id="csvFile" class="form-control" accept=".csv" required/>
+                            </div>
+                          </div>
+
+                        <!-- Sección 2 (Botón centrado) -->
+                          <div class="text-center d-flex align-items-center justify-content-center">
+                          <!-- Botón de filtrado -->
+                              <button class="btn btn-primary w-25" type="submit">
+                                  <span class="icon text-white-50">
+                                      <i class="fas fa-upload"></i>
+                                  </span>
+                                  <span class="text">Crear</span>
+                              </button>
+                          </div>
+                      </form>
+                  </div>
               </div>
+          </div>
 
-              <!-- Segunda fila: Categoría -->
-              <div class="row mt-3">
-                <div class="col-md-5">
-                  <label for="idCategoria" class="form-label">Categoría:</label>
-                  <select name="idCategoria" id="idCategoria" class="form-select">
-                    <option <%= (catSel==0) ? "selected" : "" %> >Seleccionar Categoría</option>
-                    <% for (Categoria categoria : categorias) { %>
-                    <option value="<%= categoria.getIdCategoria() %>" <%= (categoria.getIdCategoria() == catSel) ? "selected" : "" %>>
-                      <%= categoria.getNombre() %>
-                    </option>
-                    <% } %>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Tercera fila: Fecha de Creacion -->
-              <div class="row mt-3">
-                <div class="col-md-5">
-                  <label for="fechaCreacion" class="form-label">Fecha de Creación:</label>
-                  <input type="date" name="fechaCreacion" id="fechaCreacion" class="form-control" placeholder="DD-MM-YYYY" value="<%= LocalDate.now() %>" readonly/>
-                </div>
-              </div>
-
-              <!-- Cuarta fila: Fecha límite -->
-              <div class="row mt-3">
-                <div class="col-md-5">
-                  <label for="fechaLimite" class="form-label">Fecha límite:</label>
-                  <input type="date" name="fechaLimite" id="fechaLimite" class="form-control" placeholder="DD-MM-YYYY" min="<%= LocalDate.now().plusDays(1) %>"/>
-                </div>
-              </div>
-
-              <!-- Quinta fila: Registros esperados -->
-              <div class="row mt-3">
-                <div class="col-md-4">
-                  <label for="esperados" class="form-label">Registros Esperados:</label>
-                  <input type="number" name="esperados" id="esperados" class="form-control" min="50" placeholder="100" />
-<%--                  value="<%= null %>"--%>
-                </div>
-              </div>
-
-              <!-- Sexta fila: Archivo -->
-              <div class="row mt-3">
-                <div class="col-md-8">
-                  <label for="csvFile" class="form-label">Archivo CSV:</label>
-                  <input type="file" name="csvFile" id="csvFile" class="form-control" accept=".csv" required/>
-                </div>
-              </div>
-
-            </div>
-
-            <!-- Sección 4 (Botón centrado) -->
-            <div class="col-md-4 d-flex align-items-center justify-content-center">
-              <!-- Botón de filtrado -->
-              <button class="btn btn-primary w-100" type="submit">
-                <span class="icon text-white-50">
-                          <i class="fas fa-upload"></i>
-                </span>
-                <span class="text">Crear</span>
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <hr/>
-
+        <hr>
           <% if (session.getAttribute("error") != null) { %>
         <div>
           <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
@@ -145,8 +147,7 @@
         </div>
           <% session.removeAttribute("success"); %>
           <% } %>
-
-        </hr>
+        <hr>
 
       </div>
       <!-- /.container-fluid -->

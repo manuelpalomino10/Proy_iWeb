@@ -59,6 +59,27 @@
             <jsp:include page="../topbarCoordi.jsp" />
 
             <div class="container-fluid">
+
+                <hr/>
+
+                <% if (session.getAttribute("error") != null) { %>
+                <div>
+                    <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
+                    </div>
+                </div>
+                <% session.removeAttribute("error"); %>
+                <% } %>
+
+                <% if (session.getAttribute("success") != null) { %>
+                <div>
+                    <div class="alert alert-success" role="alert"><%=session.getAttribute("success")%>
+                    </div>
+                </div>
+                <% session.removeAttribute("success"); %>
+                <% } %>
+
+                </hr>
+
                 <h1 class="h3 mb-4 text-gray-800">Gestión de Formularios</h1>
 
                 <form id="filtroCategoriaForm" method="get" action="<%=request.getContextPath()%>/coordinador/GestionFormServlet" class="mb-3">
@@ -106,7 +127,9 @@
                                 <thead class="thead-light">
                                 <tr>
                                     <th>Nombre de Formulario</th>
+                                    <th>Registros Completados</th>
                                     <th>Fecha creación</th>
+                                    <th>Fecha límite</th>
                                     <th>Estado</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -115,7 +138,9 @@
                                 <% for (FormularioDto formularioDto : lista) { %>
                                 <tr>
                                     <td><%= formularioDto.getNombreForm() %></td>
+                                    <td><%= formularioDto.getNRegCompletados() %></td>
                                     <td><%= formularioDto.getFechaCreacion() %></td>
+                                    <td><%= formularioDto.getFechaLimite() %></td>
                                     <td>
                                         <%-- ESTADO: Usar badges como en la tabla de encuestadores --%>
                                         <% if (formularioDto.isEstado()) { %>
@@ -147,7 +172,7 @@
                                                 </a>
 
                                                 <%-- Opción Crear Respuesta --%>
-                                                <a class="dropdown-item" href="<%=request.getContextPath()%>/coordinador/CrearRespuestaServlet?idFormulario=<%= formularioDto.getId() %>">
+                                                <a class="dropdown-item" href="<%=request.getContextPath()%>/coordinador/ServletA?action=guardar&id_asig=<%= formularioDto.getIdEncHasFormulario() %>&id_form=<%= formularioDto.getId() %>">
                                                     <i class="fas fa-plus-circle"></i> Crear Respuesta
                                                 </a>
 
@@ -156,9 +181,12 @@
                                                    data-toggle="modal"
                                                    data-target="#subirRespuestasModal"
                                                    data-nombre-formulario="<%= formularioDto.getNombreForm() %>"
-                                                   data-id-formulario="<%= formularioDto.getId() %>">
-                                                    <i class="fas fa-upload"></i> Subir Respuestas
+                                                   data-id-formulario="<%= formularioDto.getId() %>"
+                                                   data-id-ehf="<%= formularioDto.getIdEncHasFormulario() %>">
+                                                    <i class="fas fa-upload"></i> Subir Registros
                                                 </a>
+
+                                                <div class="dropdown-divider"></div>
 
                                                 <%-- Opción Eliminar (ACTIVA EL MODAL) --%>
                                                 <a class="dropdown-item" href="#"
@@ -254,9 +282,10 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="<%=request.getContextPath()%>/coordinador/SubirRespuestasServlet" method="post" enctype="multipart/form-data">
+            <form action="<%=request.getContextPath()%>/coordinador/SubirRegistrosServlet" method="post" enctype="multipart/form-data">
                 <div class="modal-body">
                     <input type="hidden" name="idFormulario" id="uploadFormularioIdInput"/>
+                    <input type="hidden" name="idEhf" id="uploadEhfIdInput"/>
                     <div class="form-group">
                         <label for="fileInput">Selecciona un archivo CSV o Excel (.csv, .xls, .xlsx):</label>
                         <input type="file" class="form-control-file" id="fileInput" name="file" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
@@ -333,12 +362,16 @@
             let button = $(event.relatedTarget); // Botón que activó el modal
             let idFormulario = button.data('id-formulario');
             let nombreFormulario = button.data('nombre-formulario');
+            let idEhf = button.data('id-ehf');
+            console.log("el id de asignacion ehf es: ", idEhf);
 
             let modal = $(this);
             // Establece el nombre del formulario en el título del modal
             modal.find('#uploadFormularioName').text(nombreFormulario);
             // Pasa el ID del formulario al campo oculto del formulario dentro del modal
             modal.find('#uploadFormularioIdInput').val(idFormulario);
+            // Pasa el ID de la asignación al campo oculto del formulario dentro del modal
+            modal.find('#uploadEhfIdInput').val(idEhf);
             // Opcional: Limpiar el campo de archivo si se ha seleccionado uno previamente
             modal.find('#fileInput').val('');
         });

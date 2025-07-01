@@ -1,4 +1,4 @@
-package com.example.unmujeres.servlets.encuestador;
+package com.example.unmujeres.servlets;
 
 import com.example.unmujeres.daos.Usuario;
 import com.example.unmujeres.beans.Distritos;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
-@WebServlet("/encuestador/register")
+@WebServlet("/register")
 public class RegistroEncuestadorServlet extends HttpServlet {
     private final EncuestadorDAO dao        = new EncuestadorDAO();
     private final DistritoDAO  distritoDao = new DistritoDAO();

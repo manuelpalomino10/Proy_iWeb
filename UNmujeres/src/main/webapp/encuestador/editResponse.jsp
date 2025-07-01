@@ -9,6 +9,7 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.example.unmujeres.beans.OpcionPregunta" %>
 <%@ page import="com.example.unmujeres.beans.*" %>
+<%@ page import="java.util.Map" %>
 <%
     ArrayList<Respuesta> respuestas = (ArrayList<Respuesta>) request.getAttribute("respuestas");
     RegistroRespuestas registro = (RegistroRespuestas) request.getAttribute("registro");
@@ -50,8 +51,35 @@
                         <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
                         </div>
                     </div>
-                    <% session.removeAttribute("error"); %>
-                    <% } %>
+                    <% session.removeAttribute("error");
+                    } %>
+
+
+                    <%
+                        Map<Integer, String> errores = (Map<Integer, String>) session.getAttribute("validationErrors");
+                        if (errores != null) {
+                    %>
+                    <div class="alert alert-danger">
+                        <ul>
+                            <%
+                                for (Map.Entry<Integer, String> entry : errores.entrySet()) {
+                            %>
+                            <li><strong>Pregunta <%= entry.getKey() %>:</strong> <%= entry.getValue() %></li>
+                            <%
+                                }
+                                session.removeAttribute("validationErrors");
+                            %>
+                        </ul>
+                    </div>
+                    <%
+                        }
+                        Map<Integer, String> valoresForm = (Map<Integer, String>) session.getAttribute("valoresFormulario");
+                        if (valoresForm != null) {
+                            // Puedes copiar esos datos a un atributo de la request y luego removerlos
+                            //request.setAttribute("valoresFormulario", valoresForm);
+                            session.removeAttribute("valoresFormulario");
+                        }
+                    %>
 
 
                     <%
@@ -102,15 +130,21 @@
                                                     %>
                                                     <select name="respuesta_<%= respuesta.getIdRespuesta() %>"
                                                             id="respuesta_<%= respuesta.getIdRespuesta() %>"
+                                                            <%= pregunta.getRequerido() ? "required" : "" %>>
                                                             class="form-control">
                                                         <option value="">-- Seleccione --</option>
                                                         <%
                                                             if(opciones != null) {
                                                                 for(OpcionPregunta opcion : opciones) {
                                                                     if(opcion.getPregunta().getIdPregunta() == pregunta.getIdPregunta()) {
-                                                                        String selected = "";
-                                                                        if (respuesta.getRespuesta() != null && respuesta.getRespuesta().equals(opcion.getOpcion())) {
-                                                                            selected = "selected";
+                                                                        String selected = null;
+//                                                                        if (respuesta.getRespuesta() != null && respuesta.getRespuesta().equals(opcion.getOpcion())) {
+//                                                                            selected = "selected";
+//                                                                        }
+                                                                        if (valoresForm!=null) {
+                                                                            if (opcion.getOpcion().equals(valoresForm.get(pregunta.getIdPregunta()))) {
+                                                                                selected = "selected";
+                                                                            }
                                                                         }
                                                         %>
                                                         <option value="<%= opcion.getOpcion() %>" <%= selected %>>
@@ -130,14 +164,30 @@
                                                         } else if ("date".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             inputType = "date";
                                                         }
+                                                        String inputValue = "";
+                                                        if (valoresForm!=null){
+                                                            inputValue = valoresForm.get(pregunta.getIdPregunta()) != null ? valoresForm.get(pregunta.getIdPregunta()) : "";
+                                                        }
+                                                        String inputError= "";
+                                                        if (errores!=null) {
+                                                            if (errores.containsKey(pregunta.getIdPregunta())) {
+                                                                inputError = "falta-respuesta";
+                                                            }
+                                                        }
                                                     %>
                                                     <input type="<%= inputType %>"
-                                                           class="form-control"
+                                                           class="form-control <%= inputError %>"
                                                            id="respuesta_<%= respuesta.getIdRespuesta() %>"
                                                            name="respuesta_<%= respuesta.getIdRespuesta() %>"
-                                                           value="<%= (respuesta.getRespuesta() != null ? respuesta.getRespuesta() : "") %>" />
+                                                           value="<%= inputValue %>" />
+<%--                                                            value="<%= (respuesta.getRespuesta() != null ? respuesta.getRespuesta() : "") %>" />--%>
+
                                                     <%
-                                                        }
+                                                        if (pregunta.getRequerido()) {
+                                                    %>
+                                                    <small class="form-text text-muted">* Respuesta obligatoria.</small>
+                                                    <%  }
+                                                    }
                                                     %>
                                                 </div>
                                             </div>

@@ -1,8 +1,9 @@
 package com.example.unmujeres.servlets.coordinador;
 
-import com.example.unmujeres.daos.GestionFormDao;
-import com.example.unmujeres.daos.CategoriaDAO;
 import com.example.unmujeres.beans.Categoria;
+import com.example.unmujeres.beans.Usuario;
+import com.example.unmujeres.daos.CategoriaDAO;
+import com.example.unmujeres.daos.GestionFormDao;
 import com.example.unmujeres.dtos.FormularioDto;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -20,6 +21,11 @@ public class GestionFormServlet extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
 
+        HttpSession session = request.getSession(false);
+
+        Usuario user = (Usuario) session.getAttribute("usuario");
+        int idUser = user.getIdUsuario();
+
         GestionFormDao formularioDao = new GestionFormDao();
         CategoriaDAO categoriaDAO = new CategoriaDAO();
 
@@ -35,7 +41,7 @@ public class GestionFormServlet extends HttpServlet {
             }
         }
 
-        ArrayList<FormularioDto> list = formularioDao.listar(idCategoria);
+        ArrayList<FormularioDto> list = formularioDao.listar(idUser,idCategoria);
 
         request.setAttribute("selectedCategoria", idCategoria);
         request.setAttribute("lista", list);

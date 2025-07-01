@@ -156,6 +156,11 @@
                                     }
                                 %>
                             </select>
+                                <%
+                                if (pregunta.getRequerido()) {
+                                %>
+                                <small class="form-text text-muted">* Respuesta obligatoria.</small>
+                                <% } %>
                             <%
                             } else {
                                 // Para otros tipos definimos el input adecuado; "date" e "int" se manejan, por defecto "text"
@@ -184,7 +189,11 @@
                                    value="<%= inputValue %>" />
 <%--                                   value=""/>--%>
                             <%
-                                }
+                                if (pregunta.getRequerido()) {
+                            %>
+                            <small class="form-text text-muted">* Respuesta obligatoria.</small>
+                            <% }
+                            }
                             %>
                         </div>  <!-- /.form-group -->
                     </div>  <!-- /.pregunta -->

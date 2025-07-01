@@ -5,7 +5,7 @@
   <!-- Sidebar - Brand -->
   <a class="sidebar-brand d-flex align-items-center justify-content-center" href="${pageContext.request.contextPath}/dashboard">
     <div class="sidebar-brand-icon">
-      <img src="${pageContext.request.contextPath}/img/ONU.png" alt="Logo ONU Mujeres" style="max-width: 100%;">
+      <img src="${pageContext.request.contextPath}/img/logo-ONU-MUJERES_blanco.png" alt="Logo ONU Mujeres" style="max-width: 100%;">
     </div>
   </a>
 
@@ -40,12 +40,12 @@
     </a>
   </li>
 
-  <li class="nav-item">
-    <a class="nav-link" href="${pageContext.request.contextPath}/coordinador/SubirRegistrosServlet">
-      <i class="fas fa-fw fa-edit"></i>
-      <span>Formularios</span>
-    </a>
-  </li>
+<%--  <li class="nav-item">--%>
+<%--    <a class="nav-link" href="${pageContext.request.contextPath}/coordinador/SubirRegistrosServlet">--%>
+<%--      <i class="fas fa-fw fa-edit"></i>--%>
+<%--      <span>Formularios</span>--%>
+<%--    </a>--%>
+<%--  </li>--%>
 
   <hr class="sidebar-divider d-none d-md-block">
   <div class="text-center d-none d-md-inline">

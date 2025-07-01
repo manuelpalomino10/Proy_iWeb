@@ -19,6 +19,7 @@ public class RespuestaDAO extends BaseDAO{
                 "    p.idpregunta, " +
                 "    p.enunciado, " +
                 "    p.tipo_dato, " +
+                "    p.requerido, " +
                 "    r.idrespuesta, " +
                 "    r.respuesta, " +
                 "    s.idseccion, " +
@@ -30,7 +31,8 @@ public class RespuestaDAO extends BaseDAO{
                 "INNER JOIN " +
                 "    seccion s ON p.idseccion = s.idseccion " +
                 "WHERE " +
-                "    r.idregistro_respuestas = ?";
+                "    r.idregistro_respuestas = ? " +
+                "ORDER BY s.idseccion ASC; ";
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);) {
             ps.setInt(1, idRegistro);
@@ -45,6 +47,9 @@ public class RespuestaDAO extends BaseDAO{
                         pregunta.setIdPregunta(rs.getInt("idpregunta"));
                         pregunta.setEnunciado(rs.getString("enunciado"));
                         pregunta.setTipoDato(rs.getString("tipo_dato"));
+                        int req = rs.getInt("requerido");
+                        boolean requerido = req==1 ? true : false;
+                        pregunta.setRequerido(requerido);
                             Seccion seccion = new Seccion();
                             seccion.setIdSeccion(rs.getInt("idseccion"));
                             seccion.setNombreSec(rs.getString("nombre_sec"));

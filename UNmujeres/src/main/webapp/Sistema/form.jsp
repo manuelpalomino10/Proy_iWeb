@@ -25,7 +25,7 @@
         <div class="titulo-form text-gray-900">Registro de Encuestador</div>
       </div>
 
-      <form method="post" action="${pageContext.request.contextPath}/encuestador/register" class="user">
+      <form method="post" action="${pageContext.request.contextPath}/register" class="user">
 
         <!-- Nombre / Apellido -->
         <div class="form-group row">
