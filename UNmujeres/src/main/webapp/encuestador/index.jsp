@@ -1,16 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-
-
 <%
     response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     response.setHeader("Pragma", "no-cache");
     response.setDateHeader("Expires", 0);
 %>
-
-
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -53,7 +48,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            FORMULARIOS ASIGNADOS
+                                            FORMULARIOS DISPONIBLES PARA TI
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">${formulariosAsignados}</div>
                                     </div>
@@ -72,7 +67,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            FORMULARIOS COMPLETADOS 7 DIAS
+                                            FORMULARIOS COMPLETADOS ESTA SEMANA
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">${completadosUltimos7Dias}</div>
                                     </div>
@@ -91,7 +86,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            FORMULARIOS PENDIENTES
+                                            FORMULARIOS GUARDADOS COMO BORRADOR
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">${borradores}</div>
                                     </div>
@@ -132,7 +127,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                            FORMULARIOS POR VENCER PRONTO
+                                            FORMULARIOS QUE VENCEN PRONTO
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">${formulariosPorVencer}</div>
                                     </div>
@@ -173,7 +168,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                            FORMULARIOS ASIGNADOS HOY
+                                            RESPUESTAS COMPLETADAS HOY
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">${formulariosAsignadosHoy}</div>
                                     </div>
@@ -189,73 +184,76 @@
 
                 <br>
 
-                <!-- Aquí podrías mantener los gráficos existentes, o agregarlos debajo -->
-
-                <!-- Gráficos existentes -->
+                <!-- NUEVOS GRÁFICOS -->
                 <div class="row">
-
-                    <!-- Gráfico de Barras: Totales Generales -->
-                    <div class="col-xl-7 col-lg-7">
+                    <!-- Gráfico de Barras: Formularios más respondidos -->
+                    <div class="col-lg-7">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Totales de Formularios</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Cantidad de Respuestas por formularios</h6>
                             </div>
-                            <div class="card-body">
-                                <canvas id="barChartTotales" width="500" height="350"></canvas>
+                            <div class="card-body" style="height: 400px;">
+                                <canvas id="barChartFormularios" style="width: 100%; height: 100%;"></canvas>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Gráfico de Pastel: Formularios por Tipo -->
-                    <div class="col-xl-5 col-lg-5">
+                    <!-- Gráfico de Pastel: Formularios más utilizados -->
+                    <div class="col-lg-5">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Distribución por Tipo</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Tipos de formularios</h6>
+                            </div>
+                            <div class="card-body" style="height: 400px;">
+                                <canvas id="pieChartTipos" style="width: 100%; height: 100%;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Gráfico: Formularios completados por distrito -->
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Formularios por zona geográfica</h6>
                             </div>
                             <div class="card-body">
-                                <canvas id="pieChartTipos" width="300" height="300"></canvas>
+                                <canvas id="barChartZonas" style="width:100%; height:350px;"></canvas>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Gráfico: Estado de respuestas -->
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Estado de tus respuestas</h6>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="estadoRespuestasChart" style="width:100%; height:350px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Chart.js -->
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
                 <script>
-                    // Gráfico de Barras (Horizontal) para Totales Generales
-                    const barChart = new Chart(document.getElementById('barChartTotales'), {
-                        type: 'bar',
-                        data: {
-                            labels: ['Última semana', 'Último mes'],
-                            datasets: [{
-                                label: 'Cantidad',
-                                data: [${avanceResultados.totalesGenerales[0]}, ${avanceResultados.totalesGenerales[1]}],
-                                backgroundColor: ['#36A2EB', '#FFCE56']
-                            }]
-                        },
-                        options: {
-                            indexAxis: 'y',
-                            responsive: false,
-                            plugins: {
-                                legend: {
-                                    display: false
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    beginAtZero: true,
-                                    type: 'linear',
+                    // Datos para los gráficos
+                    const formularioLabels = [
+                        <c:forEach items="${formulariosPorCategoria}" var="form" varStatus="loop">
+                        "${form.key}"<c:if test="${!loop.last}">,</c:if>
+                        </c:forEach>
+                    ];
 
-                                    ticks: { stepSize: 1,} // Incrementa en 1, mostrando solo números enteros
-                                }
+                    const formularioData = [
+                        <c:forEach items="${formulariosPorCategoria}" var="form" varStatus="loop">
+                        ${form.value}<c:if test="${!loop.last}">,</c:if>
+                        </c:forEach>
+                    ];
 
-                            }
-                        }
-                    });
-
-                    // Gráfico de Pastel para Formularios por Tipo
                     const pieLabels = [
                         <c:forEach items="${listaFormularios}" var="formulario" varStatus="loop">
                         "${formulario.key}"<c:if test="${!loop.last}">,</c:if>
@@ -268,13 +266,77 @@
                         </c:forEach>
                     ];
 
+                    const zonaLabels = [
+                        <c:forEach items="${formulariosPorZona}" var="zona" varStatus="loop">
+                        "${zona.key}"<c:if test="${!loop.last}">,</c:if>
+                        </c:forEach>
+                    ];
+
+                    const zonaData = [
+                        <c:forEach items="${formulariosPorZona}" var="zona" varStatus="loop">
+                        ${zona.value}<c:if test="${!loop.last}">,</c:if>
+                        </c:forEach>
+                    ];
+
+                    // Configuración de gráficos con tooltips mejorados
+                    const barChartFormularios = new Chart(document.getElementById('barChartFormularios'), {
+                        type: 'bar',
+                        data: {
+                            labels: formularioLabels,
+                            datasets: [{
+                                label: 'Cantidad de respuestas',
+                                data: formularioData,
+                                backgroundColor: '#36A2EB'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return 'Respuestas: ${context.parsed.y}';
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    ticks: {
+                                        color: '#36A2EB',
+                                        callback: function(value) {
+                                            let label = this.getLabelForValue(value);
+                                            return label.length > 20 ? label.substring(0, 20) + '…' : label;
+                                        }
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: 'Formularios',
+                                        color: '#000'
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { stepSize: 1 },
+                                    title: {
+                                        display: true,
+                                        text: 'Cantidad de respuestas',
+                                        color: '#000'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
                     const pieChart = new Chart(document.getElementById('pieChartTipos'), {
                         type: 'pie',
                         data: {
                             labels: pieLabels,
                             datasets: [{
                                 data: pieData,
-                                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
+                                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#F67019']
                             }]
                         },
                         options: {
@@ -282,7 +344,109 @@
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: {
-                                    position: 'bottom'
+                                    position: 'bottom',
+                                    labels: { color: '#000' }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const value = context.raw;
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = Math.round((value / total) * 100);
+                                            return '${context.label}: ${value} respuestas (${percentage}%)';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    const barChartZonas = new Chart(document.getElementById('barChartZonas'), {
+                        type: 'bar',
+                        data: {
+                            labels: zonaLabels,
+                            datasets: [{
+                                label: 'Cantidad de formularios',
+                                data: zonaData,
+                                backgroundColor: '#4BC0C0'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return 'Formularios: ${context.parsed.y}';
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Zona / Distrito',
+                                        color: '#000'
+                                    },
+                                    ticks: {
+                                        color: '#4BC0C0',
+                                        callback: function(value) {
+                                            let label = this.getLabelForValue(value);
+                                            return label.length > 15 ? label.substring(0, 15) + '…' : label;
+                                        }
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Cantidad',
+                                        color: '#000'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    const estadoData = {
+                        labels: ['Completadas', 'Borradores'],
+                        datasets: [{
+                            label: 'Cantidad de respuestas',
+                            data: [
+                                ${estadoCompletadas != null ? estadoCompletadas : 0},
+                                ${estadoBorradores != null ? estadoBorradores : 0}
+                            ],
+                            backgroundColor: ['#4CAF50', '#FFC107'],
+                            borderColor: ['#388E3C', '#FFA000'],
+                            borderWidth: 1
+                        }]
+                    };
+
+                    const estadoChart = new Chart(document.getElementById('estadoRespuestasChart'), {
+                        type: 'doughnut',
+                        data: estadoData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: { color: '#000' }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const dataset = context.dataset;
+                                            const total = dataset.data.reduce((a, b) => a + b, 0);
+                                            const value = dataset.data[context.dataIndex];
+                                            const percentage = Math.round((value / total) * 100);
+                                        }
+
+                                        
+                                    }
                                 }
                             }
                         }
@@ -290,7 +454,6 @@
                 </script>
 
             </div>
-
             <!-- /.container-fluid -->
         </div>
         <!-- End of Main Content -->

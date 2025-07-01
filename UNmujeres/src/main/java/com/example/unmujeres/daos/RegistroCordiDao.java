@@ -11,17 +11,27 @@ public class RegistroCordiDao extends BaseDAO {
     public void nuevoCordi(String nombres, String apellidos, int dni, String correo, int idZona) {
 
         String sql = "INSERT INTO usuario (nombres, apellidos, DNI, correo, contraseña, estado, idroles, fecha_incorporacion, idzona) " +
-                "VALUES (?, ?, ?, ?, SHA2(?,256), ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
+
+            // Hash SHA-256 directamente
+            String password = "wenaswenas";
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            String hashedPassword = sb.toString();
 
             ps.setString(1, nombres);
             ps.setString(2, apellidos);
             ps.setInt(3, dni);
             ps.setString(4, correo);
 
-            ps.setString(5, "wenaswenas");
+            ps.setString(5, hashedPassword);
             ps.setInt(6, 1);
             ps.setInt(7, 2);
             ps.setDate(8, new java.sql.Date(System.currentTimeMillis()));
@@ -31,6 +41,8 @@ public class RegistroCordiDao extends BaseDAO {
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
     }
 

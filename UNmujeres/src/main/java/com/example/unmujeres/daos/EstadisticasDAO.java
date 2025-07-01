@@ -1,6 +1,9 @@
 package com.example.unmujeres.daos;
 
 
+import com.example.unmujeres.beans.EstadisticasFormulario;
+import com.example.unmujeres.beans.RespuestaDetallada;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -19,6 +19,14 @@ public class Formulario {
     public Formulario(){
     }
 
+
+    // Nuevo constructor con parámetros
+    public Formulario(int idFormulario, String nombre) {
+        this.idFormulario = idFormulario;
+        this.nombre = nombre;
+    }
+
+
     public int getIdFormulario() {
         return idFormulario;
     }
