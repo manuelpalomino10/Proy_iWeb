@@ -49,11 +49,11 @@
                                 <c:choose>
                                     <c:when test="${not empty usuario.fotoBytes}">
                                         <img id="currentProfileImage" src="data:image/jpeg;base64,${fotoBase64}"
-                                             class="profile-img" alt="Foto de perfil" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;"/>
+                                             class="profile-img" alt="Foto de perfil" style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover;"/>
                                     </c:when>
                                     <c:otherwise>
                                         <img id="currentProfileImage" src="${pageContext.request.contextPath}/img/perfil-del-usuario.png"
-                                             class="profile-img" alt="Foto de perfil por defecto" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;"/>
+                                             class="profile-img" alt="Foto de perfil por defecto" style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover;"/>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
@@ -128,5 +128,32 @@
 
 
 <jsp:include page="../footer.jsp" />
+
+<script>
+    // Función para ocultar mensajes automáticamente
+    function autoHideAlerts() {
+        // Seleccionar todos los mensajes de alerta
+        const alerts = document.querySelectorAll('.alert.alert-success, .alert.alert-danger');
+
+        alerts.forEach(alert => {
+            // Configurar temporizador para ocultar cada alerta
+            setTimeout(() => {
+                // Usar el método 'fade' de Bootstrap y luego remover
+                $(alert).fadeTo(500, 0, function() {
+                    $(this).slideUp(500, function() {
+                        $(this).remove();
+                    });
+                });
+            }, 2000); // 2 segundos
+        });
+    }
+
+    // Ejecutar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', autoHideAlerts);
+
+    // También ejecutar después de recargar la página (para mensajes en parámetros URL)
+    window.onload = autoHideAlerts;
+</script>
+
 </body>
 </html>

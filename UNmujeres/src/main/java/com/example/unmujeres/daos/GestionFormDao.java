@@ -120,4 +120,110 @@ public class GestionFormDao extends BaseDAO {
         }
         return actualizado;
     }
+
+    
+    public boolean eliminarFormularioSiMenorA12(int idFormulario) throws SQLException {
+        boolean eliminado = false;
+
+        String contarSql = "SELECT COUNT(*) FROM registro_respuestas rr " +
+                "JOIN enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
+                "WHERE ehf.idformulario = ?";
+
+        String eliminarRespuestasSql = "DELETE FROM respuesta WHERE idpregunta IN " +
+                "(SELECT idpregunta FROM pregunta WHERE idseccion IN " +
+                "(SELECT idseccion FROM seccion WHERE idformulario = ?))";
+
+        String eliminarOpcionesSql = "DELETE FROM opcion_pregunta WHERE idpregunta IN " +
+                "(SELECT idpregunta FROM pregunta WHERE idseccion IN " +
+                "(SELECT idseccion FROM seccion WHERE idformulario = ?))";
+
+        String eliminarPreguntasSql = "DELETE FROM pregunta WHERE idseccion IN " +
+                "(SELECT idseccion FROM seccion WHERE idformulario = ?)";
+
+        String eliminarSeccionesSql = "DELETE FROM seccion WHERE idformulario = ?";
+
+        String eliminarRegistroRespuestasSql = "DELETE FROM registro_respuestas WHERE idenc_has_formulario IN " +
+                "(SELECT idenc_has_formulario FROM enc_has_formulario WHERE idformulario = ?)";
+
+        String eliminarAsignacionesSql = "DELETE FROM enc_has_formulario WHERE idformulario = ?";
+
+        String eliminarFormularioSql = "DELETE FROM formulario WHERE idformulario = ?";
+
+        try (Connection con = getConnection();
+             PreparedStatement psContar = con.prepareStatement(contarSql)) {
+
+            psContar.setInt(1, idFormulario);
+            ResultSet rs = psContar.executeQuery();
+
+            if (rs.next()) {
+                int totalRespuestas = rs.getInt(1);
+
+                if (totalRespuestas < 12) {
+                    try {
+                        con.setAutoCommit(false); // Inicia la transacción
+
+                        // 1. Eliminar respuestas
+                        try (PreparedStatement ps = con.prepareStatement(eliminarRespuestasSql)) {
+                            ps.setInt(1, idFormulario);
+                            ps.executeUpdate();
+                        }
+
+                        // 2. Eliminar opciones
+                        try (PreparedStatement ps = con.prepareStatement(eliminarOpcionesSql)) {
+                            ps.setInt(1, idFormulario);
+                            ps.executeUpdate();
+                        }
+
+                        // 3. Eliminar preguntas
+                        try (PreparedStatement ps = con.prepareStatement(eliminarPreguntasSql)) {
+                            ps.setInt(1, idFormulario);
+                            ps.executeUpdate();
+                        }
+
+                        // 4. Eliminar secciones
+                        try (PreparedStatement ps = con.prepareStatement(eliminarSeccionesSql)) {
+                            ps.setInt(1, idFormulario);
+                            ps.executeUpdate();
+                        }
+
+                        // 5. Eliminar registro_respuestas
+                        try (PreparedStatement ps = con.prepareStatement(eliminarRegistroRespuestasSql)) {
+                            ps.setInt(1, idFormulario);
+                            ps.executeUpdate();
+                        }
+
+                        // 6. Eliminar enc_has_formulario
+                        try (PreparedStatement ps = con.prepareStatement(eliminarAsignacionesSql)) {
+                            ps.setInt(1, idFormulario);
+                            ps.executeUpdate();
+                        }
+
+                        // 7. Finalmente, eliminar el formulario
+                        try (PreparedStatement ps = con.prepareStatement(eliminarFormularioSql)) {
+                            ps.setInt(1, idFormulario);
+                            int filasAfectadas = ps.executeUpdate();
+                            eliminado = filasAfectadas > 0;
+                        }
+
+                        con.commit(); // Confirma los cambios
+
+                    } catch (SQLException e) {
+                        con.rollback(); // Revierte todo si hay error
+                        e.printStackTrace();
+                        throw e;
+                    } finally {
+                        con.setAutoCommit(true); // Restaura el autocommit
+                    }
+                } else {
+                    System.out.println("No se puede eliminar: el formulario tiene " + totalRespuestas + " respuestas.");
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        return eliminado;
+    }
 }

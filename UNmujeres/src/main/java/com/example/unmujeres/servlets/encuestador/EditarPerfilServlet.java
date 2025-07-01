@@ -39,6 +39,16 @@ public class EditarPerfilServlet extends HttpServlet {
             Usuario usuarioActual = usuarioDAO.obtenerUsuarioPorId(usuario.getIdUsuario());
             List<Distritos> distritos = distritoDAO.obtenerTodosDistritos();
 
+            byte[] fotoBytes = usuarioActual.getFotoBytes();
+            if (fotoBytes != null && fotoBytes.length > 0) {
+                String base64Image = Base64.getEncoder().encodeToString(fotoBytes);
+                request.setAttribute("fotoBase64", base64Image);
+                session.setAttribute("fotoBase64", base64Image);
+            } else {
+                request.setAttribute("fotoVacia", true);
+                session.removeAttribute("fotoBase64");
+            }
+
             request.setAttribute("usuario", usuarioActual);
             request.setAttribute("distritos", distritos);
             request.getRequestDispatcher("/encuestador/editarDatos.jsp").forward(request, response);
@@ -122,7 +132,7 @@ public class EditarPerfilServlet extends HttpServlet {
                 Usuario usuarioCompleto = usuarioDAO.obtenerUsuarioPorId(usuarioSesion.getIdUsuario());
                 session.setAttribute("usuario", usuarioCompleto);
                 session.setAttribute("exito", "Datos actualizados correctamente");
-                response.sendRedirect(request.getContextPath() + "/encuestador/perfil");
+                response.sendRedirect(request.getContextPath() + "/encuestador/perfil?success=Datos+actualizados+correctamente");
             } else {
                 manejarError(request, response, "No se pudo actualizar los datos", usuarioActualizado);
             }
@@ -165,12 +175,12 @@ public class EditarPerfilServlet extends HttpServlet {
     private void manejarError(HttpServletRequest request, HttpServletResponse response,
                               String mensaje, Usuario usuario) throws ServletException, IOException {
 
-        request.setAttribute("error", mensaje);
-
+        // Mantener el usuario en la solicitud para mostrar en el formulario
         if (usuario != null) {
             request.setAttribute("usuario", usuario);
         }
 
+        // Cargar distritos para el select
         try {
             List<Distritos> distritos = distritoDAO.obtenerTodosDistritos();
             request.setAttribute("distritos", distritos);
@@ -178,6 +188,26 @@ public class EditarPerfilServlet extends HttpServlet {
             request.setAttribute("errorSecundario", "Error al cargar distritos");
         }
 
+        // Procesar la foto del usuario si existe
+        if (usuario != null) {
+            byte[] fotoBytes = usuario.getFotoBytes();
+            if (fotoBytes != null && fotoBytes.length > 0) {
+                String base64Image = Base64.getEncoder().encodeToString(fotoBytes);
+                request.setAttribute("fotoBase64", base64Image);
+            } else {
+                request.setAttribute("fotoVacia", true);
+            }
+        }
+
+        // Manejo de errores de validación de contraseña
+        if (request.getAttribute("requisitosPwd") != null) {
+            request.setAttribute("requisitosPwd", request.getAttribute("requisitosPwd"));
+        }
+
+        // Establecer el mensaje de error principal
+        request.setAttribute("error", mensaje);
+
+        // Forward a la página de edición manteniendo todos los datos
         request.getRequestDispatcher("/encuestador/editarDatos.jsp").forward(request, response);
     }
 }

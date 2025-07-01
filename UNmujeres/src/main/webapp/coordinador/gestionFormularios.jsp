@@ -187,15 +187,16 @@
                                                 </a>
 
                                                 <div class="dropdown-divider"></div>
-
-                                                <%-- Opción Eliminar (ACTIVA EL MODAL) --%>
-                                                <a class="dropdown-item" href="#"
-                                                   data-toggle="modal"
-                                                   data-target="#eliminarFormularioModal"
-                                                   data-nombre-formulario="<%= formularioDto.getNombreForm() %>"
-                                                   data-id-formulario="<%= formularioDto.getId() %>">
-                                                    <i class="fas fa-trash-alt"></i> Eliminar
-                                                </a>
+                                                <%if (!formularioDto.isEstado()) { %>
+                                                    <%-- Opción Eliminar (ACTIVA EL MODAL) --%>
+                                                    <a class="dropdown-item" href="#"
+                                                       data-toggle="modal"
+                                                       data-target="#eliminarFormularioModal"
+                                                       data-nombre-formulario="<%= formularioDto.getNombreForm() %>"
+                                                       data-id-formulario="<%= formularioDto.getId() %>">
+                                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                                    </a>
+                                                <% } %>
                                             </div>
                                         </div>
                                     </td>
@@ -246,30 +247,30 @@
 
 
 <%-- Modal para Confirmar Eliminación de Formulario --%>
-<div class="modal fade" id="eliminarFormularioModal" tabindex="-1" role="dialog" aria-labelledby="eliminarFormularioModalTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="eliminarFormularioModalTitle">Confirmar Eliminación</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                ¿Estás seguro de que deseas eliminar el formulario "<strong id="eliminarFormularioName"></strong>"?
-                Esta acción no se puede deshacer.
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button id="confirmEliminarFormularioBtn" class="btn btn-danger">Eliminar</button>
+<%-- Modal para Confirmar Eliminación de Formulario --%>
+<form id="formEliminarFormulario" action="<%=request.getContextPath()%>/coordinador/GestionFormServlet" method="post">
+    <div class="modal fade" id="eliminarFormularioModal" tabindex="-1" role="dialog" aria-labelledby="eliminarFormularioModalTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eliminarFormularioModalTitle">Confirmar Eliminación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ¿Estás seguro de que deseas eliminar el formulario "<strong id="eliminarFormularioName"></strong>"?
+                    Esta acción no se puede deshacer.
+                    <input type="hidden" name="id" id="eliminarFormularioIdInput" value=""/>
+                    <input type="hidden" name="action" value="eliminar"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<%-- Formulario oculto para enviar la acción de eliminación --%>
-<form id="formEliminarFormulario" action="<%=request.getContextPath()%>/coordinador/EliminarFormServlet" method="post" style="display:none">
-    <input type="hidden" name="id" id="eliminarFormularioIdInput" value=""/>
 </form>
 
 <%-- NUEVO: Modal para Subir Archivos CSV/Excel --%>

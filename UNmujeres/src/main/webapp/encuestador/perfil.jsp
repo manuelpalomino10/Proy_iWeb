@@ -15,6 +15,19 @@
 
 
 <body id="page-top">
+<%-- Mostrar mensajes de éxito/error --%>
+<c:if test="${not empty param.success}">
+    <div class="alert alert-success alert-dismissible fade show">
+        ¡Datos actualizados corectamente!
+        <button type="button" class="close" data-dismiss="alert">×</button>
+    </div>
+</c:if>
+<c:if test="${not empty param.error}">
+    <div class="alert alert-danger alert-dismissible fade show">
+        Error: ${param.error}
+        <button type="button" class="close" data-dismiss="alert">×</button>
+    </div>
+</c:if>
 <div id="wrapper">
     <jsp:include page="../sidebarEnc.jsp" />
 
@@ -32,87 +45,22 @@
                     <div class="card-body">
                         <div id="messageContainer"></div>
 
-                        <!-- FORMULARIO DE ACTUALIZACIÓN DE FOTO -->
-                        <form action="${pageContext.request.contextPath}/subirFoto" method="post" enctype="multipart/form-data" id="fotoForm" class="text-center">
+                        <!-- SECCIÓN DE FOTO DE PERFIL (solo visualización) -->
+                        <div class="text-center">
                             <div id="imageContainer">
                                 <c:choose>
                                     <c:when test="${not empty usuario.fotoBytes}">
                                         <img id="currentProfileImage" src="data:image/jpeg;base64,${fotoBase64}"
-                                             class="profile-img" alt="Foto de perfil"/>
+                                             class="profile-img" alt="Foto de perfil" style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover;"/>
                                     </c:when>
                                     <c:otherwise>
                                         <img id="currentProfileImage" src="${pageContext.request.contextPath}/img/perfil-del-usuario.png"
-                                             class="profile-img" alt="Foto de perfil por defecto"/>
+                                             class="profile-img" alt="Foto de perfil por defecto" style="width: 200px; height: 200px; border-radius: 50%; object-fit: cover;"/>
                                     </c:otherwise>
                                 </c:choose>
                             </div>
-                            <br>
-                            <button type="button" class="btn btn-primary" onclick="document.getElementById('fileInput').click();">
-                                <i class="fas fa-camera mr-2"></i>Actualizar Foto
-                            </button>
-                            <input type="file" name="foto" id="fileInput" class="d-none"
-                                   accept="image/jpeg,image/jpg,image/png"
-                                   onchange="uploadImage(this);">
-                            <ul style="list-style: none; padding-left: 0; margin: 8px 0 0 0;">
-                                <li style="color: #6c757d; font-size: 13px; font-weight: 600; margin-bottom: 2px;">
-                                    Solo se permiten formatos JPG, JPEG y PNG
-                                </li>
-                            </ul><br>
-                        </form>
-
-                        <script>
-                            function uploadImage(input) {
-                                if (!input.files[0]) return;
-
-                                // 1) Preview inmediato
-                                const reader = new FileReader();
-                                reader.onload = e => {
-                                    document.getElementById('currentProfileImage').src = e.target.result;
-                                };
-                                reader.readAsDataURL(input.files[0]);
-
-                                // 2) Envío a BD
-                                const formData = new FormData(document.getElementById('fotoForm'));
-                                showMessage('Subiendo foto…', 'info');
-
-                                fetch('${pageContext.request.contextPath}/subirFoto', {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                    .then(res => {
-                                        if (!res.ok) {
-                                            return res.json().then(err => { throw new Error(err.error); });
-                                        }
-                                        return res.json();
-                                    })
-                                    .then(data => {
-                                        // 3) Recarga la versión guardada
-                                        const ts = new Date().getTime();
-                                        document.getElementById('currentProfileImage').src =
-                                            `obtenerFoto?dni=${userDni}&t=${ts}`;
-                                        showMessage('¡Foto actualizada correctamente! Recargando...', 'success');
-
-                                        // Recarga la página después de 1 segundo para ver el mensaje
-                                        setTimeout(() => {
-                                            location.reload();
-                                        }, 100);
-                                    });
-                            }
-
-                            function showMessage(text, type) {
-                                const c = document.getElementById('messageContainer');
-                                c.innerHTML = '';
-                                let icon = 'info-circle';
-                                if (type === 'success') icon = 'check-circle';
-                                if (type === 'danger') icon = 'exclamation-circle';
-
-                                const div = document.createElement('div');
-                                div.className = `alert alert-${type} text-center`;
-                                div.innerHTML = `<i class="fas fa-${icon} mr-1"></i>${text}`;
-                                c.appendChild(div);
-                                if (type !== 'danger') setTimeout(() => div.remove(), 4000);
-                            }
-                        </script>
+                        </div>
+                        <br>
 
                         <!-- Datos del usuario -->
                         <div class="row">
@@ -212,5 +160,32 @@
 </c:if>
 
 <jsp:include page="../footer.jsp" />
+
+<script>
+    // Función para ocultar mensajes automáticamente
+    function autoHideAlerts() {
+        // Seleccionar todos los mensajes de alerta
+        const alerts = document.querySelectorAll('.alert.alert-success, .alert.alert-danger');
+
+        alerts.forEach(alert => {
+            // Configurar temporizador para ocultar cada alerta
+            setTimeout(() => {
+                // Usar el método 'fade' de Bootstrap y luego remover
+                $(alert).fadeTo(500, 0, function() {
+                    $(this).slideUp(500, function() {
+                        $(this).remove();
+                    });
+                });
+            }, 2000); // 2 segundos
+        });
+    }
+
+    // Ejecutar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', autoHideAlerts);
+
+    // También ejecutar después de recargar la página (para mensajes en parámetros URL)
+    window.onload = autoHideAlerts;
+</script>
+
 </body>
 </html>

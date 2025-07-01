@@ -56,5 +56,14 @@
         <filter-name>EncCordiFilter</filter-name>
         <url-pattern>/shared/*</url-pattern>
     </filter-mapping>
+    <!-- Errores -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error-handler.jsp</location>
+    </error-page>
 
+    <error-page>
+        <error-code>403</error-code>
+        <location>/error-handler.jsp</location>
+    </error-page>
 </web-app>
