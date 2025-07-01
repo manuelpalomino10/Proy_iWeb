@@ -15,7 +15,8 @@
 
     <!-- Custom fonts -->
     <link href="${pageContext.request.contextPath}/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <!-- Fuente Montserrat para coincidir con la página de error -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Custom styles -->
     <link href="${pageContext.request.contextPath}/css/sb-admin-2.min.css" rel="stylesheet">
@@ -64,101 +65,21 @@
 
         .login-title {
             font-size: 2.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #224abe; /* Color más fuerte del gradiente */
-        }
-
-        .login-subtitle {
-            color: #6c757d;
-            margin-bottom: 2rem;
-        }
-
-        .form-control {
-            padding-left: 2.5rem;
-            height: calc(2.5em + 0.75rem + 2px);
-        }
-
-        .input-group-text {
-            background-color: transparent;
-            border-right: 0;
-            padding: 0.375rem 0.75rem; /* Ajuste para mejor visualización */
-        }
-
-        .input-group .form-control {
-            border-left: 0;
-            border-right: 1px solid #ced4da; /* Se añade borde derecho */
-        }
-
-        .input-group-append .input-group-text {
-            border-left: 0;
-            border-right: 1px solid #ced4da; /* Borde para el ícono del ojo */
-        }
-
-        .input-group .form-control:focus {
-            box-shadow: none;
-            border-color: #ced4da;
-        }
-
-        .input-group:focus-within {
-            border-radius: 0.375rem;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-        }
-
-        .input-group:focus-within .input-group-text {
-            color: #495057;
-            border-color: #80bdff;
-        }
-
-        .input-group:focus-within .form-control {
-            border-color: #80bdff;
-        }
-
-        .password-toggle {
-            cursor: pointer;
-            color: #6c757d;
-            transition: color 0.15s ease-in-out;
-            background-color: transparent;
-            border-top-right-radius: 0.375rem !important;
-            border-bottom-right-radius: 0.375rem !important;
-        }
-
-        .password-toggle:hover {
-            color: #495057;
-            background-color: #f8f9fa;
-        }
-
-        .btn-login {
             font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #224abe;
+            font-family: 'Montserrat', sans-serif;
             letter-spacing: 0.5px;
         }
 
-        .forgot-password-link {
+        .login-subtitle {
+            font-size: 1.1rem;
             color: #6c757d;
-            transition: color 0.15s ease-in-out;
+            margin-bottom: 2rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 400;
         }
 
-        .forgot-password-link:hover {
-            color: #0056b3;
-            text-decoration: none;
-        }
-
-        @media (max-width: 992px) {
-            .login-container {
-                flex-direction: column;
-                padding: 1.5rem;
-            }
-
-            .brand-wrapper {
-                padding-right: 0;
-                padding-bottom: 1.5rem;
-                justify-content: center;
-            }
-
-            .brand-logo {
-                max-height: 30vh;
-            }
-        }
     </style>
 </head>
 

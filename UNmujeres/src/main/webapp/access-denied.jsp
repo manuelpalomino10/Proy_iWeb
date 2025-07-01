@@ -15,6 +15,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             background: linear-gradient(155deg, #f6f9fc 0%, #eef2f6 100%);
@@ -64,20 +65,33 @@
         .card-body {
             padding: 2.5rem;
         }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        .text-muted {
+            font-size: 1.1rem;
+            color: #6c757d !important;
+            line-height: 1.6;
+            margin-bottom: 2rem !important;
+            font-weight: 400; /* Peso regular para el subtítulo */
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="card denied-card mx-auto text-center">
         <div class="card-body py-4">
-            <i class="bi bi-shield-lock denied-icon"></i>
-            <h1 class="denied-title mb-3">Acceso Denegado</h1>
-            <p class="denied-text mb-4">
-                No tienes los permisos necesarios para acceder a esta sección del sistema.
+            <i class="bi bi-exclamation-triangle-fill denied-icon"></i>
+            <h1 class="h1 mb-3">Lo sentimos, hubo un error...</h1>
+            <p class="text-muted error-text mb-4">
+                No se puede llevar a cabo esta acción
             </p>
             <div class="d-grid gap-2 col-md-8 mx-auto">
                 <a href="${pageContext.request.contextPath}/logout" class="btn btn-denied text-white">
-                    <i class="bi bi-box-arrow-left me-2"></i>Volver al Login
+                    <i class="fas fa-home me-2"></i>Volver al Login
                 </a>
             </div>
         </div>
