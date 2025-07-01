@@ -2,6 +2,7 @@ package com.example.unmujeres.servlets.administrador;
 import com.example.unmujeres.beans.Zona;
 import com.example.unmujeres.daos.RegistroCordiDao;
 import com.example.unmujeres.daos.administrador.ZonaDao;
+import com.example.unmujeres.utils.EmailUtil;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -75,7 +76,16 @@ public class CrearCordiServlet extends HttpServlet {
               return;
           }
 
-         registroCordiDao.nuevoCordi(nombres, apellidos, dni, correo, idZona);
+          String codigo = registroCordiDao.generarCodigoUnico();
+          registroCordiDao.insertarPendiente(nombres, apellidos, dni, correo, idZona, codigo);
+
+          // Enviar correo de verificación
+          String base = request.getRequestURL().toString()
+                  .replace(request.getRequestURI(), request.getContextPath());
+          String link = base + "/verify?code=" + codigo;
+          String cuerpo = "Para activar su cuenta haga clic en el siguiente enlace: " +
+                  "<a href='" + link + "'>Verificar correo</a>";
+          EmailUtil.sendEmail(correo, "Verificación de cuenta", cuerpo);
 
          // Redirige al doGet() correctamente usando ruta completa
          response.sendRedirect(request.getContextPath() + "/administrador/CrearCordiServlet?exito=true");
