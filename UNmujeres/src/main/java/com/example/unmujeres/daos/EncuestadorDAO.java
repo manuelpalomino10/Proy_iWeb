@@ -50,6 +50,23 @@ public class EncuestadorDAO extends BaseDAO {
         return DigestUtils.sha256Hex(plain);
     }
 
+    /** Obtener usuario por código de activación */
+    public Usuario findByCodigo(String code) throws SQLException {
+        String sql = "SELECT idusuario FROM usuario WHERE cod_enc = ?";
+        try (Connection con = this.getConnection();
+             PreparedStatement p = con.prepareStatement(sql)) {
+            p.setString(1, code);
+            try (ResultSet rs = p.executeQuery()) {
+                if (rs.next()) {
+                    Usuario u = new Usuario();
+                    u.setIdusuario(rs.getInt(1));
+                    return u;
+                }
+            }
+        }
+        return null;
+    }
+
     /** 5) Insertar nuevo encuestador en la tabla usuario (sin contraseña) */
     public void insert(Usuario u) throws SQLException {
         String sql =
