@@ -9,6 +9,14 @@ public class UsuarioDto {
     private String nombreRol;
     private String nombreZona;
     private boolean estado;
+    private String nombreCompleto;
+
+    public String getNombreCompleto() {
+        return nombreCompleto;
+    }
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
+    }
 
     public int getId() {
         return id;
