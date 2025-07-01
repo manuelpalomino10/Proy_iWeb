@@ -61,37 +61,48 @@ public class GestionFormServlet extends HttpServlet {
 
         if (idParam == null || idParam.isEmpty() || action == null || action.isEmpty()) {
             message = "Parámetros incompletos para cambiar el estado del formulario.";
+
         } else {
             try {
                 int idFormulario = Integer.parseInt(idParam);
-                boolean nuevoEstado;
 
-                if ("activar".equals(action)) {
-                    nuevoEstado = true;
-                    if (gestionFormDao.cambiarEstado(idFormulario, nuevoEstado)) {
-                        message = "Formulario activado exitosamente.";
-                        type = "success";
-                    } else {
-                        message = "Error al activar el formulario.";
-                    }
-                } else if ("desactivar".equals(action)) {
-                    nuevoEstado = false;
-                    if (gestionFormDao.cambiarEstado(idFormulario, nuevoEstado)) {
-                        message = "Formulario desactivado exitosamente.";
-                        type = "success";
-                    } else {
-                        message = "Error al desactivar el formulario.";
-                    }
-                } else {
-                    message = "Acción no reconocida para el cambio de estado.";
+                switch (action) {
+                    case "activar":
+                        if (gestionFormDao.cambiarEstado(idFormulario, true)) {
+                            message = "Formulario activado exitosamente.";
+                            type = "success";
+                        } else {
+                            message = "Error al activar el formulario.";
+                        }
+                        break;
+
+                    case "desactivar":
+                        if (gestionFormDao.cambiarEstado(idFormulario, false)) {
+                            message = "Formulario desactivado exitosamente.";
+                            type = "success";
+                        } else {
+                            message = "Error al desactivar el formulario.";
+                        }
+                        break;
+
+                    case "eliminar":
+                        if (gestionFormDao.eliminarFormularioSiMenorA12(idFormulario)) {
+                            message = "Formulario eliminado correctamente.";
+                            type = "success";
+                        } else {
+                            message = "No se puede eliminar. El formulario tiene 12 o más respuestas.";
+                        }
+                        break;
+
+                    default:
+                        message = "Acción no reconocida.";
                 }
 
             } catch (NumberFormatException e) {
                 message = "ID de formulario inválido.";
             } catch (Exception e) {
-                // Captura cualquier otra excepción que pueda ocurrir en el DAO
-                message = "Ocurrió un error inesperado: " + e.getMessage();
-                e.printStackTrace(); // Imprime el stack trace para depuración
+                message = "Error inesperado: " + e.getMessage();
+                e.printStackTrace();
             }
         }
 
@@ -99,9 +110,13 @@ public class GestionFormServlet extends HttpServlet {
         String encodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8);
 
         if ("success".equals(type)) {
-            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet?success=" + encodedMessage);
+            request.getSession().setAttribute("success", message);
+            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
+
         } else {
-            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet?error=" + encodedMessage);
+            request.getSession().setAttribute("error", message);
+            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
+
         }
     }
 }
