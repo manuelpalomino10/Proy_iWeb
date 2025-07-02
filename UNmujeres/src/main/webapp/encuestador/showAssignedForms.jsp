@@ -71,8 +71,8 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                     <tr>
-                                        <th >ID de formulario</th>
-                                        <th>Nombre</th>
+<%--                                        <th >ID de formulario</th>--%>
+                                        <th>Nombre de Formulario</th>
                                         <th>Respuestas registradas</th>
                                         <th>Respuestas esperadas</th>
                                         <th>Fecha de asignación</th>
@@ -87,7 +87,7 @@
                                             for (Map<String, Object> item: datos) {
                                     %>
                                     <tr>
-                                        <td style="width: 100px;"><%= item.get("id_formulario") %></td>
+<%--                                        <td style="width: 100px;"><%= item.get("id_formulario") %></td>--%>
                                         <td><%= item.get("nombre_formulario") %></td>
                                         <td><%= item.get("registros_completados") %></td>
                                         <td><%= item.get("registros_esperados") %></td>

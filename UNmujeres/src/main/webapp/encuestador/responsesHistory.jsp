@@ -76,7 +76,7 @@
                   <thead>
                   <tr>
                     <th># de registro</th>
-                    <th >ID de formulario</th>
+<%--                    <th >ID de formulario</th>--%>
                     <th>Nombre</th>
                     <th>Fecha de creación</th>
                     <th>Fecha límite</th>
@@ -90,7 +90,7 @@
                   %>
                   <tr>
                     <td style="width: 90px;"><%= item.get("id_registro") %></td>
-                    <td><%= item.get("id_formulario") %></td>
+<%--                    <td><%= item.get("id_formulario") %></td>--%>
                     <td><%= item.get("nombre_formulario") %></td>
                     <td>
                       <%= new java.text.SimpleDateFormat("dd-MM-yyyy")
@@ -132,8 +132,8 @@
                 <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
                   <thead>
                   <tr>
-                    <th># de registro</th>
-                    <th>ID de formulario</th>
+<%--                    <th># de registro</th>--%>
+<%--                    <th>ID de formulario</th>--%>
                     <th>Nombre de formulario</th>
                     <th>Fecha de registro</th>
                   </tr>
@@ -144,8 +144,8 @@
                       for (Map<String, Object> item: records) {
                   %>
                   <tr>
-                    <td style="width: 90px;"><%= item.get("id_registro") %></td>
-                    <td><%= item.get("id_formulario") %></td>
+<%--                    <td style="width: 90px;"><%= item.get("id_registro") %></td>--%>
+<%--                    <td><%= item.get("id_formulario") %></td>--%>
                     <td><%= item.get("nombre_formulario") %></td>
                     <td style="white-space: nowrap;">
                       <%= new java.text.SimpleDateFormat("dd-MM-yyyy")

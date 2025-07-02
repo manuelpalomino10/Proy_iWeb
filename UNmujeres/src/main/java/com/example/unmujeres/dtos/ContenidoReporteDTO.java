@@ -5,6 +5,7 @@ public class ContenidoReporteDTO {
     private String respuesta;
     private int idPregunta;
     private int idRegistro;
+    private String codEnc;
 
 
     public int getIdRespuesta() {
@@ -34,4 +35,7 @@ public class ContenidoReporteDTO {
     public void setIdRegistro(int idRegistro) {
         this.idRegistro = idRegistro;
     }
+
+    public String getCodEnc() {return codEnc;}
+    public void setCodEnc(String codEnc) {this.codEnc = codEnc;}
 }

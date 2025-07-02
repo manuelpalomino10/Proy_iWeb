@@ -201,9 +201,11 @@ public class ReportesServlet extends HttpServlet {
 
                         for (ContenidoReporteDTO resp : contenido) {
                             String respuestaValue = (resp.getRespuesta() == null) ? "" : resp.getRespuesta();
+                            String code = (resp.getCodEnc() == null) ? "" : resp.getCodEnc();
                             if (resp.getIdRegistro() != currentRegistro) {
                                 // Si no es el primer registro, escribir la fila anterior
                                 if (currentRegistro != -1) {
+                                    rowContent.append(delimiter).append(code);
                                     pw.println(rowContent.toString());
                                 }
                                 // Comenzar una nueva línea
@@ -221,7 +223,6 @@ public class ReportesServlet extends HttpServlet {
                         if (rowContent.length() > 0) {
                             pw.println(rowContent.toString());
                         }
-                        System.out.println("Numero de respuestas en contenido: " + contenido.size());
 
                     }
 
