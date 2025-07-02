@@ -142,7 +142,11 @@ public class RegistroEncuestadorServlet extends HttpServlet {
                     "enlace: <a href='" + link + "'>Verificar correo</a>";
             EmailUtil.sendEmail(correo, "Verificación de cuenta", cuerpo);
         } catch (SQLException ex) {
+            ex.printStackTrace();
             throw new ServletException("Error al insertar usuario", ex);
+        } catch (Exception ex) { // <-- Captura cualquier error de correo
+            ex.printStackTrace();
+            throw new ServletException("Error al enviar correo", ex);
         }
 
         resp.sendRedirect(req.getContextPath() + "/Sistema/success.jsp");

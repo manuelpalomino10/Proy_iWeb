@@ -8,14 +8,6 @@ import java.util.Properties;
 
 public class EmailUtil {
 
-    /**
-     * Configuración para el envío de correos mediante Gmail.
-     * <p>
-     * Reemplazar los valores de USERNAME y PASSWORD con las credenciales de la
-     * cuenta de Gmail que se utilizará para enviar los mensajes o cargar estos
-     * datos desde variables de entorno/archivos de configuración según se
-     * prefiera.
-     */
     private static final String USERNAME = "onu.mujeres.proyecto@gmail.com";    // TODO cambiar
     private static final String PASSWORD = "tfpd yszc fnjo azap";          // TODO cambiar
     private static final String HOST = "smtp.gmail.com";
@@ -48,4 +40,15 @@ public class EmailUtil {
             e.printStackTrace();
         }
     }
+
+    //prueba de que si envía correos
+    /*
+    public static void main(String[] args) {
+        sendEmail(
+                "tteffahh1002@gmail.com",          // Usa tu propio correo para ver si llega
+                "Prueba de correo ONU Mujeres",
+                "<h2>¡Hola, lapepelin!</h2><p>Esto es un correo de prueba enviado desde Java usando App Password y Gmail. </p>"
+        );
+    }
+    */
 }
