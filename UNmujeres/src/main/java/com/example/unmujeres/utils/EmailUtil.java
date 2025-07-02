@@ -40,4 +40,16 @@ public class EmailUtil {
             e.printStackTrace();
         }
     }
+
+    //prueba de que si envía correos
+    /*
+    public static void main(String[] args) {
+        sendEmail(
+                "tteffahh1002@gmail.com",          // Usa tu propio correo para ver si llega
+                "Prueba de correo ONU Mujeres",
+                "<h2>¡Hola, lapepelin!</h2><p>Esto es un correo de prueba enviado desde Java usando App Password y Gmail. </p>"
+        );
+    }
+    */
 }
+
