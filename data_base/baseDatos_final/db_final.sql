@@ -112,6 +112,7 @@ CREATE TABLE IF NOT EXISTS `iweb_proy`.`usuario` (
   `fecha_incorporacion` DATE NOT NULL,
   `foto` LONGBLOB NULL DEFAULT NULL,
   `cod_enc` VARCHAR(30) NULL DEFAULT NULL,
+  `token` VARCHAR(64) NULL DEFAULT NULL,
   PRIMARY KEY (`idusuario`),
   UNIQUE INDEX `DNI_UNIQUE` (`DNI` ASC) VISIBLE,
   UNIQUE INDEX `correo_UNIQUE` (`correo` ASC) VISIBLE,
