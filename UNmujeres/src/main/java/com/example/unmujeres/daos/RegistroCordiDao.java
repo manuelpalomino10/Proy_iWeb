@@ -11,7 +11,7 @@ public class RegistroCordiDao extends BaseDAO {
     public void nuevoCordi(String nombres, String apellidos, int dni, String correo, int idZona) {
 
         String sql = "INSERT INTO usuario (nombres, apellidos, DNI, correo, estado, idroles, fecha_incorporacion, idzona) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                "VALUES (?, ?, ?, ?, SHA2(?,256), ?, ?, ?)";
 
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
