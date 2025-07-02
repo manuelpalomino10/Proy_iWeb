@@ -27,21 +27,21 @@ INSERT INTO distritos(iddistritos,nombre,idzona) VALUES
 (38,'Santiago de Surco',4),(39,'Barranco',4),(40,'Chorrillos',4),(41,'San Luis',4),
 (42,'Miraflores',4);
 
-INSERT INTO usuario (idusuario,nombres,apellidos,contraseña,DNI,correo,direccion,estado,idroles,idzona,iddistritos,fecha_incorporacion,foto,cod_enc) VALUES
+INSERT INTO usuario (idusuario,nombres,apellidos,contraseña,DNI,correo,direccion,estado,idroles,idzona,iddistritos,fecha_incorporacion,foto,cod_enc,token) VALUES
 -- admins
-(1, 'Ana María', 'García Cornejo', SHA2('AnaSecure#1', 256), '12345678', 'ana.garcia@unmujeres.org', NULL, 1, 1, 1, NULL, '2023-07-24', NULL, NULL),
-(2, 'Lucía Yreva', 'Martínez Díaz', SHA2('AdminUN2025!', 256), '34567890', 'lucia.martinez@unmujeres.org', NULL, 1, 1, 2, NULL, '2023-09-05', NULL, NULL),
+(1, 'Ana María', 'García Cornejo', SHA2('AnaSecure#1', 256), '12345678', 'ana.garcia@unmujeres.org', NULL, 1, 1, 1, NULL, '2023-07-24', NULL, NULL, NULL),
+(2, 'Lucía Yreva', 'Martínez Díaz', SHA2('AdminUN2025!', 256), '34567890', 'lucia.martinez@unmujeres.org', NULL, 1, 1, 2, NULL, '2023-09-05', NULL, NULL, NULL),
 -- cordis
-(3, 'Pedro Pablo', 'López García', SHA2('C0ord!pdr', 256), '09876543', 'pedro.lopez@unmujeres.org', NULL, 1, 2, 1, 1, '2024-09-12', NULL, NULL),
-(4, 'Luisa Fernanda', 'Torres Méndez', SHA2('Lt0rres2024!', 256), '23456789', 'luisa.torres@unmujeres.org', NULL, 1, 2, 3, NULL, '2024-01-10', NULL, NULL),
-(5, 'Roberto Carlos', 'Silva Castro', SHA2('Pv3ga2@UN', 256), '34567891', 'roberto.silva@unmujeres.org', NULL, 0, 2, 2, 5, '2024-03-15', NULL, NULL),
-(6, 'Frank', 'Vega Leiva', SHA2('Fqv3g4q!', 256), 99001122, 'frank.vega@unmujeres.org', NULL, 1, 2, 3, 7, '2025-04-01', NULL, NULL),
+(3, 'Pedro Pablo', 'López García', SHA2('C0ord!pdr', 256), '09876543', 'pedro.lopez@unmujeres.org', NULL, 1, 2, 1, 1, '2024-09-12', NULL, NULL, NULL),
+(4, 'Luisa Fernanda', 'Torres Méndez', SHA2('Lt0rres2024!', 256), '23456789', 'luisa.torres@unmujeres.org', NULL, 1, 2, 3, NULL, '2024-01-10', NULL, NULL, NULL),
+(5, 'Roberto Carlos', 'Silva Castro', SHA2('Pv3ga2@UN', 256), '34567891', 'roberto.silva@unmujeres.org', NULL, 0, 2, 2, 5, '2024-03-15', NULL, NULL, NULL),
+(6, 'Frank', 'Vega Leiva', SHA2('Fqv3g4q!', 256), 99001122, 'frank.vega@unmujeres.org', NULL, 1, 2, 3, 7, '2025-04-01', NULL, NULL, NULL),
 -- encuestadores
-(7, 'Juan Carlos', 'Pérez López', SHA2('JuanP*2025', 256), '87654321', 'juan.perez@unmujeres.org', 'Av. Principal 123', 1, 3, 1, 1, '2024-01-15', NULL, 'ENC-001'),
-(8, 'María Elena', 'Gómez Sánchez', SHA2('ABrDFW255@', 256), '15935746', 'maria.gomez@unmujeres.org', 'Av. Primavera 456', 1, 3, 1, 2, '2024-03-10', NULL, 'ENC-002'),
-(9, 'Carlos Alberto', 'Rodríguez Vargas', SHA2('CARV*enc3', 256), '321456987', 'carlos.rodriguez@unmujeres.org', 'Calle Los Olivos 789', 1, 3, 2, 5, '2024-05-20', NULL, 'ENC-003'),
-(10, 'Rosa', 'Díaz Condezo', SHA2('R0s4D1az!', 256), '56789012', 'rosa.diaz@unmujeres.org', 'Jr. San Martín 159', 0, 3, 2, 8, '2024-11-25', NULL, 'ENC-004'),
-(11, 'Jose Roberto', 'Perez Caceres', SHA2('jOrO*2024', 256), '123654789', 'jose.perez@unmujeres.org', 'Calle Lima 357', 1, 3, 3, 9, '2024-08-03', NULL, 'ENC-005');
+(7, 'Juan Carlos', 'Pérez López', SHA2('JuanP*2025', 256), '87654321', 'juan.perez@unmujeres.org', 'Av. Principal 123', 1, 3, 1, 1, '2024-01-15', NULL, 'ENC-001', NULL),
+(8, 'María Elena', 'Gómez Sánchez', SHA2('ABrDFW255@', 256), '15935746', 'maria.gomez@unmujeres.org', 'Av. Primavera 456', 1, 3, 1, 2, '2024-03-10', NULL, 'ENC-002', NULL),
+(9, 'Carlos Alberto', 'Rodríguez Vargas', SHA2('CARV*enc3', 256), '321456987', 'carlos.rodriguez@unmujeres.org', 'Calle Los Olivos 789', 1, 3, 2, 5, '2024-05-20', NULL, 'ENC-003', NULL),
+(10, 'Rosa', 'Díaz Condezo', SHA2('R0s4D1az!', 256), '56789012', 'rosa.diaz@unmujeres.org', 'Jr. San Martín 159', 0, 3, 2, 8, '2024-11-25', NULL, 'ENC-004', NULL),
+(11, 'Jose Roberto', 'Perez Caceres', SHA2('jOrO*2024', 256), '123654789', 'jose.perez@unmujeres.org', 'Calle Lima 357', 1, 3, 3, 9, '2024-08-03', NULL, 'ENC-005', NULL);
 
 INSERT INTO formulario (idformulario,nombre,fecha_creacion,fecha_limite,estado,registros_esperados,idcategoria) VALUES
 (1, 'Ficha de Necesidades Ciudadanas de Cuidados', 								'2025-01-01', '2025-08-01', 1, 150, 101),		-- ficha de registro REAL
