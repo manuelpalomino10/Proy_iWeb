@@ -8,16 +8,8 @@ import java.util.Properties;
 
 public class EmailUtil {
 
-    /**
-     * Configuración para el envío de correos mediante Gmail.
-     * <p>
-     * Reemplazar los valores de USERNAME y PASSWORD con las credenciales de la
-     * cuenta de Gmail que se utilizará para enviar los mensajes o cargar estos
-     * datos desde variables de entorno/archivos de configuración según se
-     * prefiera.
-     */
-    private static final String USERNAME = "tu_correo@gmail.com";    // TODO cambiar
-    private static final String PASSWORD = "tu_contraseña";          // TODO cambiar
+    private static final String USERNAME = "onu.mujeres.proyecto@gmail.com";    
+    private static final String PASSWORD = "tfpd yszc fnjo azap";         
     private static final String HOST = "smtp.gmail.com";
     private static final String PORT = "587";
 
