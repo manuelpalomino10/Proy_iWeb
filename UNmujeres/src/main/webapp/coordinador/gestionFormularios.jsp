@@ -289,7 +289,7 @@
                     <input type="hidden" name="idEhf" id="uploadEhfIdInput"/>
                     <div class="form-group">
                         <label for="fileInput">Selecciona un archivo CSV o Excel (.csv, .xls, .xlsx):</label>
-                        <input type="file" class="form-control-file" id="fileInput" name="file" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+                        <input type="file" class="form-control-file" id="csvFile" name="csvFile" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
                         <small class="form-text text-muted">Asegúrate de que el archivo tenga el formato correcto para las respuestas del formulario.</small>
                     </div>
                 </div>
@@ -308,9 +308,9 @@
 <script>
     $(document).ready(function() {
         // Inicializa DataTables. Si 'datatables-demo.js' ya lo hace, puedes ajustar o quitar esta parte.
-        if ($.fn.DataTable.isDataTable('#dataTable')) {
-            $('#dataTable').DataTable().destroy(); // Destruye cualquier instancia existente
-        }
+        // if ($.fn.DataTable.isDataTable('#dataTable')) {
+        //     $('#dataTable').DataTable().destroy(); // Destruye cualquier instancia existente
+        // }
         $('#dataTable').DataTable({
             "order": [], // Deshabilita el orden inicial si lo deseas, o ajusta según necesites
             "pageLength": 10, // Número de filas por página por defecto
@@ -374,7 +374,7 @@
             // Pasa el ID de la asignación al campo oculto del formulario dentro del modal
             modal.find('#uploadEhfIdInput').val(idEhf);
             // Opcional: Limpiar el campo de archivo si se ha seleccionado uno previamente
-            modal.find('#fileInput').val('');
+            modal.find('#csvFile').val('');
         });
     });
 </script>
