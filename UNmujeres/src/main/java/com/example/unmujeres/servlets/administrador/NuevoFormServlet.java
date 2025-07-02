@@ -107,12 +107,12 @@ public class NuevoFormServlet extends HttpServlet {
             } catch (NumberFormatException e) {
                 session.setAttribute("error", "Categoría o cantidad de Registros esperados no válidos");
                 response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
-//                response.sendRedirect("error.jsp");
+                //response.sendError(400, "Solicitud malformada");
                 return;
             } catch (IllegalArgumentException e) {
-                session.setAttribute("error", e.getMessage());
+                session.setAttribute("error", "Solicitud malformada");
                 response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
-//                response.sendRedirect("error.jsp");
+                //response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Solicitud malformada");
                 return;
             }
         } else {
@@ -140,9 +140,9 @@ public class NuevoFormServlet extends HttpServlet {
             nuevoFormulario.setNombre(nombreFormParam);
 
         } catch (IllegalArgumentException | DateTimeParseException e) {
-            session.setAttribute("error", e.getMessage());
+            session.setAttribute("error", "Solicitud malformada");
             response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
-//            response.sendRedirect("error.jsp");
+            //response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             return;
         }
 
@@ -151,6 +151,7 @@ public class NuevoFormServlet extends HttpServlet {
             //request.setAttribute("error", "Debe seleccionar un archivo.");
             session.setAttribute("error", "Debe seleccionar un archivo.");
             response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
+            //response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Debe seleccionar un archivo.");
             return;
         }
         String fileName = filePart.getSubmittedFileName();
@@ -163,6 +164,13 @@ public class NuevoFormServlet extends HttpServlet {
 
         int numPreguntas = 0;
         Connection conn = null;
+        File savedFile = null;
+
+        String tempFileName = "temp_" + System.currentTimeMillis() + ".csv";
+        String uploadPath =getServletContext().getRealPath("/WEB-INF/reportes");
+        System.out.println(uploadPath);
+        File tempFile = getFile(uploadPath, tempFileName, filePart);
+
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePart.getInputStream(), "UTF-8"))) {
             conn = baseDAO.getConnection();
             conn.setAutoCommit(false);
@@ -254,6 +262,25 @@ public class NuevoFormServlet extends HttpServlet {
             }
             conn.commit();
 
+            // Renombrar el archivo con el formato requerido
+            String newFileName = "PLANTILLA_UN_Formulario" + idForm + ".csv";
+            savedFile = new File(uploadPath + File.separator + newFileName);
+
+            System.out.println("Archivo guardado: " + savedFile.getAbsolutePath());
+
+            if (!tempFile.renameTo(savedFile)) {
+                // Si falla el renombrado (puede pasar entre sistemas de archivos), copiar manualmente
+                try (InputStream in = new FileInputStream(tempFile);
+                     OutputStream out = new FileOutputStream(savedFile)) {
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = in.read(buffer)) > 0) {
+                        out.write(buffer, 0, length);
+                    }
+                }
+                tempFile.delete(); // Eliminar el archivo temporal
+            }
+
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -266,6 +293,9 @@ public class NuevoFormServlet extends HttpServlet {
                     // Log adicional si falla el rollback
                 }
             }
+
+            //asignarNuevoForm(nuevoFormulario);
+
             response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
             return;
         }finally {
@@ -283,6 +313,31 @@ public class NuevoFormServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
         return;
 
+    }
+
+    private void asignarNuevoForm(Formulario nuevoFormulario) {
+        ArrayList<Usuario> cordis = new ArrayList<>();
+
+        for (Usuario cordi : cordis) {
+
+        }
+
+    }
+
+    private static File getFile(String uploadPath, String tempFileName, Part filePart) {
+        File tempFile = new File(uploadPath + File.separator + tempFileName);
+        try {
+            // Guardar el archivo subido temporalmente
+            try (InputStream fileContent = filePart.getInputStream();
+                 OutputStream out = new FileOutputStream(tempFile)) {
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = fileContent.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
+            }
+        } catch (Exception _) {}
+        return tempFile;
     }
 
     @Override
