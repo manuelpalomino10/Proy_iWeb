@@ -78,5 +78,19 @@
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
+<script>
+    // Inicializa DataTables. Si 'datatables-demo.js' ya lo hace, puedes ajustar o quitar esta parte.
+    if ($.fn.DataTable.isDataTable('#dataTable')) {
+        $('#dataTable').DataTable().destroy(); // Destruye cualquier instancia existente
+    }
+    $('#dataTable').DataTable({
+        "order": [], // Deshabilita el orden inicial si lo deseas, o ajusta según necesites
+        "pageLength": 10, // Número de filas por página por defecto
+        "language": { // Configuración del idioma
+            "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json" // URL para español
+        }
+    });
+</script>
 </body>
+
 </html>

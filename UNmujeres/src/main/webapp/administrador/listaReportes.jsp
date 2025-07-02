@@ -180,7 +180,7 @@
                 } else {
                 %>
 
-                <table class="table table-bordered" id="tablaAsig" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
                   <tr>
                     <th>Título Formulario</th>
@@ -238,6 +238,19 @@
 <%--<script>--%>
 <%--  $(function(){ $('#tablaRep').DataTable(); });--%>
 <%--</script>--%>
+<script>
+    if ($.fn.DataTable.isDataTable('#dataTable')) {
+        $('#dataTable').DataTable().destroy(); // Destruye cualquier instancia existente
+    }
+    $('#dataTable').DataTable({
+        "order": [], // Deshabilita el orden inicial si lo deseas, o ajusta según necesites
+        "pageLength": 10, // Número de filas por página por defecto
+        "language": { // Configuración del idioma
+            "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json" // URL para español
+        }
+    });
+
+</script>
 <script>
   $(function() {
     var dateRangeInput = $('#daterange');

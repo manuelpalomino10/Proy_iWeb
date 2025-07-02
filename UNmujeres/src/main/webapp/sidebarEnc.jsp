@@ -62,11 +62,7 @@
     <button class="rounded-circle border-0" id="sidebarToggle"></button>
   </div>
 
-  <!-- Sidebar Message -->
-  <div class="sidebar-card d-none d-lg-flex">
-    <p class="text-center mb-2"><strong>ONU</strong></p>
-    <a class="btn btn-success btn-sm mb-2" href="https://www.unwomen.org/es">Contacto</a>
-  </div>
+
 
 </ul>
 <!-- End of Sidebar -->
