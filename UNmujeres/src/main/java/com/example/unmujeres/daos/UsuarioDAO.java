@@ -3,6 +3,7 @@ package com.example.unmujeres.daos;
 import com.example.unmujeres.beans.Distritos;
 import com.example.unmujeres.beans.Usuario;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class UsuarioDAO extends BaseDAO {
@@ -138,30 +139,27 @@ public class UsuarioDAO extends BaseDAO {
         }
     }
 
-    public Usuario getById(int id) {
-        Usuario usuario = null;
-        String sql = "SELECT * FROM usuario WHERE idusuario = ?";
+    public ArrayList<Usuario> getCordis() {
+        ArrayList<Usuario> cordis = new ArrayList<>();
+        String sql = "SELECT idusuario, nombres, apellidos, estado FROM usuario WHERE idroles=2 ";
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
+        try (Connection con = this.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery()) {
 
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    usuario = new Usuario();
-                    usuario.setIdUsuario(rs.getInt("idusuario"));
-                    usuario.setNombres(rs.getString("nombres"));
-                    usuario.setApellidos(rs.getString("apellidos"));
-                    usuario.setFechaIncorporacion(rs.getDate("fecha_incorporacion"));
-                    usuario.setEstado(rs.getBoolean("estado"));
-                }
+            while (rs.next()) {
+                Usuario usuario = new Usuario();
+                usuario.setIdUsuario(rs.getInt("idusuario"));
+                usuario.setNombres(rs.getString("nombres"));
+                usuario.setApellidos(rs.getString("apellidos"));
+                usuario.setEstado(rs.getBoolean("estado"));
+
+                cordis.add(usuario);
             }
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return usuario;
+        return cordis;
     }
 
     public Usuario validarUsuario(String correo, String contraseñaHasheada) {
