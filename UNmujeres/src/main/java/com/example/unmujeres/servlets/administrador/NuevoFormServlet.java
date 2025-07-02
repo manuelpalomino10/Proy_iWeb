@@ -29,6 +29,7 @@ public class NuevoFormServlet extends HttpServlet {
     PreguntaDAO preguntaDAO = new PreguntaDAO();
     OpcionPreguntaDAO opcionDAO = new OpcionPreguntaDAO();
     BaseDAO baseDAO = new BaseDAO();
+    UsuarioDAO usuarioDAO = new UsuarioDAO();
 
 
     @Override
@@ -294,8 +295,6 @@ public class NuevoFormServlet extends HttpServlet {
                 }
             }
 
-            //asignarNuevoForm(nuevoFormulario);
-
             response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
             return;
         }finally {
@@ -309,6 +308,7 @@ public class NuevoFormServlet extends HttpServlet {
                 }
             }
         }
+        asignarNuevoForm(nuevoFormulario);
         session.setAttribute("success", "Nuevo Formulario creado con éxito con "+numPreguntas+" preguntas");
         response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
         return;
@@ -316,10 +316,20 @@ public class NuevoFormServlet extends HttpServlet {
     }
 
     private void asignarNuevoForm(Formulario nuevoFormulario) {
-        ArrayList<Usuario> cordis = new ArrayList<>();
+        System.out.println("asignando nuevo formulario");
+        ArrayList<Usuario> cordis = usuarioDAO.getCordis();
+
+        int idForm = nuevoFormulario.getIdFormulario();
+        System.out.println("id Form: "+idForm);
 
         for (Usuario cordi : cordis) {
 
+            try {
+                CoordiGestionEncDAO asigDAO = new CoordiGestionEncDAO();
+                asigDAO.asignarFormulario(cordi.getIdUsuario(), idForm);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
 
     }

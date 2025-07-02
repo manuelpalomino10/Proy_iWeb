@@ -14,6 +14,9 @@
     ArrayList<Respuesta> respuestas = (ArrayList<Respuesta>) request.getAttribute("respuestas");
     RegistroRespuestas registro = (RegistroRespuestas) request.getAttribute("registro");
     ArrayList<OpcionPregunta> opciones = (ArrayList<OpcionPregunta>) request.getAttribute("opciones");
+
+    Usuario user = (Usuario) session.getAttribute("usuario");
+    String codEnc = user.getCodEnc();
 %>
 
 <html lang="es">
@@ -45,8 +48,18 @@
                         <h1 class="h3 mb-0 text-gray-800">Editar respuesta</h1>
                     </div>
 
-
-                    <% if (session.getAttribute("error") != null) { %>
+                    <% if (codEnc != null) { %>
+                    <div class="d-flex align-items-center mb-3">
+                        <label for="cod" class="me-2 mb-0 fw-semibold">Tu código es: </label>
+                        <input type="text"
+                               class="form-control w-auto"
+                               id="cod"
+                               name="cod"
+                               value="<%= codEnc %>"
+                               readonly />
+                    </div>
+                    <% }
+                    if (session.getAttribute("error") != null) { %>
                     <div>
                         <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
                         </div>
@@ -130,7 +143,7 @@
                                                     %>
                                                     <select name="respuesta_<%= respuesta.getIdRespuesta() %>"
                                                             id="respuesta_<%= respuesta.getIdRespuesta() %>"
-                                                            <%= pregunta.getRequerido() ? "required" : "" %>>
+                                                            <%= pregunta.getRequerido() ? "required" : "" %>
                                                             class="form-control">
                                                         <option value="">-- Seleccione --</option>
                                                         <%

@@ -157,8 +157,8 @@
 
                         <!-- Forgot Password Link -->
                         <div class="text-center">
-                            <a href="${pageContext.request.contextPath}/forgot-password" class="forgot-password-link">
-                                ¿Olvidaste tu contraseña?
+                            <a href="${pageContext.request.contextPath}/register" class="forgot-password-link">
+                                Registrate como Encuestador
                             </a>
                         </div>
                     </form>
