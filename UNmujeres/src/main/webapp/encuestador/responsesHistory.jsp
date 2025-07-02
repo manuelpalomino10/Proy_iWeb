@@ -72,11 +72,11 @@
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="tablaDrafts" width="100%" cellspacing="0">
                   <thead>
                   <tr>
                     <th># de registro</th>
-                    <th >ID de formulario</th>
+<%--                    <th >ID de formulario</th>--%>
                     <th>Nombre</th>
                     <th>Fecha de creación</th>
                     <th>Fecha límite</th>
@@ -90,7 +90,7 @@
                   %>
                   <tr>
                     <td style="width: 90px;"><%= item.get("id_registro") %></td>
-                    <td><%= item.get("id_formulario") %></td>
+<%--                    <td><%= item.get("id_formulario") %></td>--%>
                     <td><%= item.get("nombre_formulario") %></td>
                     <td>
                       <%= new java.text.SimpleDateFormat("dd-MM-yyyy")
@@ -129,11 +129,11 @@
             </div>
             <div class="card-body">
               <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                <table class="table table-bordered" id="tablaRecords" width="100%" cellspacing="0">
                   <thead>
                   <tr>
-                    <th># de registro</th>
-                    <th>ID de formulario</th>
+<%--                    <th># de registro</th>--%>
+<%--                    <th>ID de formulario</th>--%>
                     <th>Nombre de formulario</th>
                     <th>Fecha de registro</th>
                   </tr>
@@ -144,8 +144,8 @@
                       for (Map<String, Object> item: records) {
                   %>
                   <tr>
-                    <td style="width: 90px;"><%= item.get("id_registro") %></td>
-                    <td><%= item.get("id_formulario") %></td>
+<%--                    <td style="width: 90px;"><%= item.get("id_registro") %></td>--%>
+<%--                    <td><%= item.get("id_formulario") %></td>--%>
                     <td><%= item.get("nombre_formulario") %></td>
                     <td style="white-space: nowrap;">
                       <%= new java.text.SimpleDateFormat("dd-MM-yyyy")
@@ -192,29 +192,29 @@
   <!-- End of Page Wrapper -->
   <jsp:include page="../footer.jsp" />
   </body>
-  <script>
-    // Inicializa DataTables. Si 'datatables-demo.js' ya lo hace, puedes ajustar o quitar esta parte.
-    if ($.fn.DataTable.isDataTable('#dataTable')) {
-      $('#dataTable').DataTable().destroy(); // Destruye cualquier instancia existente
-    }
-    $('#dataTable').DataTable({
-      "order": [], // Deshabilita el orden inicial si lo deseas, o ajusta según necesites
-      "pageLength": 10, // Número de filas por página por defecto
-      "language": { // Configuración del idioma
-        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json" // URL para español
-      }
-    });
+<%--  <script>--%>
+<%--    // Inicializa DataTables. Si 'datatables-demo.js' ya lo hace, puedes ajustar o quitar esta parte.--%>
+<%--    if ($.fn.DataTable.isDataTable('#dataTable')) {--%>
+<%--      $('#dataTable').DataTable().destroy(); // Destruye cualquier instancia existente--%>
+<%--    }--%>
+<%--    $('#dataTable').DataTable({--%>
+<%--      "order": [], // Deshabilita el orden inicial si lo deseas, o ajusta según necesites--%>
+<%--      "pageLength": 10, // Número de filas por página por defecto--%>
+<%--      "language": { // Configuración del idioma--%>
+<%--        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json" // URL para español--%>
+<%--      }--%>
+<%--    });--%>
 
-    // Inicializa DataTables. Si 'datatables-demo.js' ya lo hace, puedes ajustar o quitar esta parte.
-    if ($.fn.DataTable.isDataTable('#dataTable1')) {
-      $('#dataTable1').DataTable().destroy(); // Destruye cualquier instancia existente
-    }
-    $('#dataTable1').DataTable({
-      "order": [], // Deshabilita el orden inicial si lo deseas, o ajusta según necesites
-      "pageLength": 10, // Número de filas por página por defecto
-      "language": { // Configuración del idioma
-        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json" // URL para español
-      }
-    });
-  </script>
+<%--    // Inicializa DataTables. Si 'datatables-demo.js' ya lo hace, puedes ajustar o quitar esta parte.--%>
+<%--    if ($.fn.DataTable.isDataTable('#dataTable1')) {--%>
+<%--      $('#dataTable1').DataTable().destroy(); // Destruye cualquier instancia existente--%>
+<%--    }--%>
+<%--    $('#dataTable1').DataTable({--%>
+<%--      "order": [], // Deshabilita el orden inicial si lo deseas, o ajusta según necesites--%>
+<%--      "pageLength": 10, // Número de filas por página por defecto--%>
+<%--      "language": { // Configuración del idioma--%>
+<%--        "url": "//cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json" // URL para español--%>
+<%--      }--%>
+<%--    });--%>
+<%--  </script>--%>
 </html>

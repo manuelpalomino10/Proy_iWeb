@@ -8,8 +8,8 @@ import java.util.Properties;
 
 public class EmailUtil {
 
-    private static final String USERNAME = "onu.mujeres.proyecto@gmail.com";    // TODO cambiar
-    private static final String PASSWORD = "tfpd yszc fnjo azap";          // TODO cambiar
+    private static final String USERNAME = "onu.mujeres.proyecto@gmail.com";    
+    private static final String PASSWORD = "tfpd yszc fnjo azap";         
     private static final String HOST = "smtp.gmail.com";
     private static final String PORT = "587";
 
@@ -52,3 +52,4 @@ public class EmailUtil {
     }
     */
 }
+

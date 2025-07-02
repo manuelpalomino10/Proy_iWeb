@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `iweb_proy`.`usuario` (
   `idusuario` INT NOT NULL AUTO_INCREMENT,
   `nombres` VARCHAR(150) NULL DEFAULT NULL,
   `apellidos` VARCHAR(150) NULL DEFAULT NULL,
-  `contraseña` VARCHAR(255) NULL,
+  `contraseña` VARCHAR(255) NULL DEFAULT NULL,
   `DNI` INT NOT NULL,
   `correo` VARCHAR(150) NOT NULL,
   `direccion` VARCHAR(200) NULL DEFAULT NULL,

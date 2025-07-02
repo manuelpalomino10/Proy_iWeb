@@ -114,7 +114,8 @@ public class FormularioDAO extends BaseDAO {
                         "    r.idrespuesta, " +
                         "    r.respuesta, " +
                         "    r.idpregunta, " +
-                        "    r.idregistro_respuestas " +
+                        "    r.idregistro_respuestas, " +
+                        "    u.cod_enc " +
                         "FROM respuesta r " +
                         "INNER JOIN registro_respuestas reg ON r.idregistro_respuestas = reg.idregistro_respuestas " +
                         "INNER JOIN enc_has_formulario ehf ON reg.idenc_has_formulario = ehf.idenc_has_formulario " +
@@ -163,6 +164,7 @@ public class FormularioDAO extends BaseDAO {
                     item.setRespuesta(rs.getString(2));
                     item.setIdPregunta(rs.getInt(3));
                     item.setIdRegistro(rs.getInt(4));
+                    item.setCodEnc(rs.getString(5));
 
                     contenido.add(item);
                 }

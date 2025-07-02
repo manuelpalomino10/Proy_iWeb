@@ -12,12 +12,17 @@
 <%@ page import="com.example.unmujeres.beans.Usuario" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.List" %>
+<%@ page import="jakarta.mail.Session" %>
 <%
     // Se obtiene la lista de preguntas y las opciones desde el request.
     ArrayList<Pregunta> preguntas = (ArrayList<Pregunta>) request.getAttribute("preguntas");
     ArrayList<OpcionPregunta> opciones = (ArrayList<OpcionPregunta>) request.getAttribute("opciones");
     String idasignacion = request.getParameter("id_asig");
-    System.out.println("asignacion id es:" + idasignacion);
+    // System.out.println("asignacion id es:" + idasignacion);
+
+
+    Usuario user = (Usuario) session.getAttribute("usuario");
+    String codEnc = user.getCodEnc();
 %>
 
 <html lang="es">
@@ -44,7 +49,18 @@
                 </div>
 
 
-                <% if (session.getAttribute("error") != null) { %>
+                <% if (codEnc != null) { %>
+                <div class="d-flex align-items-center mb-3">
+                    <label for="cod" class="me-2 mb-0 fw-semibold">Tu código es: </label>
+                    <input type="text"
+                           class="form-control w-auto"
+                           id="cod"
+                           name="cod"
+                           value="<%= codEnc %>"
+                           readonly />
+                </div>
+                <% }
+                if (session.getAttribute("error") != null) { %>
                 <div>
                     <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
                     </div>
