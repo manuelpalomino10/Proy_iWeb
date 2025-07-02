@@ -44,6 +44,8 @@ public class UsuarioDAO extends BaseDAO {
                     distrito.setIddistritos(rs.getInt("iddistritos"));
                     distrito.setNombre(rs.getString("nombre_distrito"));
                     usuario.setDistrito(distrito);
+
+                    usuario.setCodEnc(rs.getString("cod_enc"));
                 }
             }
         }

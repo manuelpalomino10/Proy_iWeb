@@ -57,6 +57,7 @@ public class VerFormulariosServlet extends HttpServlet {
         Usuario user = (Usuario) session.getAttribute("usuario");
         int idUser = user.getIdUsuario();
         int userRole = user.getIdroles();
+        String codEnc = user.getCodEnc();
 
         ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idUser);
 
@@ -127,7 +128,9 @@ public class VerFormulariosServlet extends HttpServlet {
                             idsFormAsig.add(asignacion.getFormulario().getIdFormulario());
                         }
                         if (!idsFormAsig.contains(idFormulario)) {
-                            throw new IllegalArgumentException("No puede crear registros de formularios no asignados");
+//                            throw new IllegalArgumentException("No puede crear registros de formularios no asignados");
+                            throw new IllegalArgumentException();
+
                         }
 
                     } catch (NumberFormatException e) {
@@ -137,7 +140,7 @@ public class VerFormulariosServlet extends HttpServlet {
                         return;
 
                     } catch (IllegalArgumentException e) {
-                    session.setAttribute("error", e.getMessage());
+                    //session.setAttribute("error", e.getMessage());
                     response.sendRedirect(getRedirectUrl(userRole));
                     return;
                     }
@@ -153,7 +156,6 @@ public class VerFormulariosServlet extends HttpServlet {
 
                 request.setAttribute("preguntas", preguntas);
                 request.setAttribute("opciones", opciones1);
-                request.setAttribute("idformulario", idFormulario);
                 request.getRequestDispatcher("/encuestador/crearRespuesta.jsp").forward(request, response);
 
                 break;
@@ -257,7 +259,7 @@ public class VerFormulariosServlet extends HttpServlet {
 
                 } catch (NumberFormatException e) {
                     System.out.println("Parámetros de form o registro inválidos");
-                    session.setAttribute("error", "Parámetros de form o registro inválidos");
+                    session.setAttribute("error", "Parámetro de registro inválido");
                     response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
                     return;
                 } catch (IllegalArgumentException | NotFoundException e) {
@@ -595,12 +597,14 @@ public class VerFormulariosServlet extends HttpServlet {
                     response.sendRedirect(getRedirectUrl(userRole));
                     return;
                 }
+                session.setAttribute("success", "Registro creado con éxito");
+
                 response.sendRedirect(getRedirectUrl(userRole));
 
             break;
 
             default:
-                response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 
 
         }
