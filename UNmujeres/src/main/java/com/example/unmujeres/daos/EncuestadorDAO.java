@@ -101,7 +101,7 @@ public class EncuestadorDAO extends BaseDAO {
     public void activate(String code, String hashedPwd) throws SQLException {
         String sql =
                 "UPDATE usuario " +
-                        "SET contraseña = ?, estado = 1, cod_enc = NULL " +
+                        "SET contraseña = ?, estado = 1 " +
                         "WHERE cod_enc = ?";
         try (Connection con = this.getConnection();
              PreparedStatement p = con.prepareStatement(sql)) {
