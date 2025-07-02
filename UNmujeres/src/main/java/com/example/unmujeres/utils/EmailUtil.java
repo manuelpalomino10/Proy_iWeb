@@ -16,8 +16,8 @@ public class EmailUtil {
      * datos desde variables de entorno/archivos de configuración según se
      * prefiera.
      */
-    private static final String USERNAME = "tu_correo@gmail.com";    // TODO cambiar
-    private static final String PASSWORD = "tu_contraseña";          // TODO cambiar
+    private static final String USERNAME = "onu.mujeres.proyecto@gmail.com";    // TODO cambiar
+    private static final String PASSWORD = "tfpd yszc fnjo azap";          // TODO cambiar
     private static final String HOST = "smtp.gmail.com";
     private static final String PORT = "587";
 
