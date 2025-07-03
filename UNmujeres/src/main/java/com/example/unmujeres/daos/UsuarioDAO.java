@@ -212,8 +212,9 @@ public class UsuarioDAO extends BaseDAO {
 
             ps.setString(1, contraseñaPlana); // Se hashea en la BD con SHA2
             ps.setInt(2, idUsuario);
-
-            return ps.executeUpdate() > 0;
+            boolean result = ps.executeUpdate() > 0;
+            System.out.println("[DEBUG] Contraseña " + (result ? "actualizada" : "no actualizada") + " para usuario ID: " + idUsuario);
+            return result;
         }
     }
 
@@ -234,5 +235,87 @@ public class UsuarioDAO extends BaseDAO {
         return false;
     }
 
+    public boolean crearTokenRecuperacion(int idUsuario, String token) throws SQLException {
+        System.out.println("[DEBUG] Creando token para usuario ID: " + idUsuario);
+        String sql = "UPDATE usuario SET token = ?, token_expires = DATE_ADD(NOW(), INTERVAL 10 MINUTE) WHERE idusuario = ?";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setString(1, token);
+            pstmt.setInt(2, idUsuario);
+            boolean result = pstmt.executeUpdate() > 0;
+            System.out.println("[DEBUG] Token " + (result ? "creado" : "no creado") + " para usuario ID: " + idUsuario);
+            return result;
+        }
+    }
+
+    public Usuario buscarPorToken(String token) throws SQLException {
+        System.out.println("[DEBUG] Buscando usuario por token: " + token);
+        String sql = "SELECT * FROM usuario WHERE token = ? AND token_expires > NOW()";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setString(1, token);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Usuario usuario = mapearUsuario(rs);
+                    usuario.setToken(rs.getString("token"));
+                    System.out.println("[DEBUG] Token válido para usuario ID: " + usuario.getIdUsuario());
+                    return usuario;
+                }
+            }
+        }
+        System.out.println("[DEBUG] Token no encontrado o expirado: " + token);
+        return null;
+    }
+
+    public boolean limpiarToken(int idUsuario) throws SQLException {
+        System.out.println("[DEBUG] Limpiando token para usuario ID: " + idUsuario);
+        String sql = "UPDATE usuario SET token = NULL, token_expires = NULL WHERE idusuario = ?";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idUsuario);
+            boolean result = pstmt.executeUpdate() > 0;
+            System.out.println("[DEBUG] Token " + (result ? "limpiado" : "no limpiado") + " para usuario ID: " + idUsuario);
+            return result;
+        }
+    }
+
+    public void limpiarTokensExpirados() throws SQLException {
+        String sql = "UPDATE usuario SET token = NULL, token_expires = NULL WHERE token_expires < NOW()";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.executeUpdate();
+        }
+    }
+
+    public Usuario buscarPorCorreo(String correo) throws SQLException {
+        if (correo == null || correo.trim().isEmpty()) {
+            return null;
+        }
+
+        String sql = "SELECT * FROM usuario WHERE LOWER(correo) = LOWER(?)";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement pstmt = con.prepareStatement(sql)) {
+
+            pstmt.setString(1, correo.trim());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Usuario usuario = mapearUsuario(rs);
+                    System.out.println("[DEBUG] Usuario encontrado: " + usuario.getCorreo());
+                    return usuario;
+                }
+            }
+        }
+        System.out.println("[DEBUG] No se encontró usuario con correo: " + correo);
+        return null;
+    }
 }
 

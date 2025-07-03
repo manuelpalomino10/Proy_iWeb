@@ -27,6 +27,7 @@
             background-image: linear-gradient(180deg,#4e73df 10%,#224abe 100%);
             background-size: cover;
             height: 100vh;
+            overflow-x: hidden;
         }
 
         .login-container {
@@ -35,14 +36,23 @@
             align-items: center;
         }
 
-        .brand-wrapper {
-            padding-right: 2rem;
+        .login-content {
             display: flex;
-            justify-content: flex-end;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 0 2rem;
+        }
+
+        .brand-wrapper {
+            display: flex;
+            justify-content: center;
+            padding-right: 4rem; /* Espacio entre logo y formulario */
         }
 
         .brand-logo {
             max-height: 50vh;
+            max-width: 100%;
             transition: all 0.3s ease;
         }
 
@@ -57,6 +67,8 @@
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
             width: 100%;
             max-width: 28rem;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .login-card-body {
@@ -80,21 +92,37 @@
             font-weight: 400;
         }
 
+        @media (max-width: 992px) {
+            .login-content {
+                flex-direction: column;
+                padding: 2rem;
+            }
+
+            .brand-wrapper {
+                padding-right: 0;
+                margin-bottom: 2rem;
+            }
+
+            .brand-logo {
+                max-height: 30vh;
+            }
+        }
+
     </style>
 </head>
 
 <body>
 <div class="container-fluid login-container">
-    <div class="row justify-content-center align-items-center w-100 mx-0">
+    <div class="login-content">
         <!-- Brand Logo Column -->
-        <div class="col-lg-6 brand-wrapper">
+        <div class="brand-wrapper">
             <img src="${pageContext.request.contextPath}/img/logo-ONU-MUJERES_blanco.png"
                  alt="ONU Mujeres"
                  class="brand-logo img-fluid">
         </div>
 
         <!-- Login Form Column -->
-        <div class="col-lg-5">
+        <div class="login-form-wrapper">
             <div class="card login-card">
                 <div class="card-body login-card-body">
                     <div class="text-center mb-4">
@@ -156,6 +184,12 @@
                         </button>
 
                         <!-- Forgot Password Link -->
+                        <div class="text-center">
+                            <a href="${pageContext.request.contextPath}/forgot-password" class="forgot-password-link">
+                                ¿Olvidaste tu contraseña?
+                            </a>
+                        </div>
+                        <br>
                         <div class="text-center">
                             <a href="${pageContext.request.contextPath}/register" class="forgot-password-link">
                                 Registrate como Encuestador
