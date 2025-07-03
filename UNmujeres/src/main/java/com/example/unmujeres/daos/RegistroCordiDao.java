@@ -47,7 +47,7 @@ public class RegistroCordiDao extends BaseDAO {
                                   String correo, int idZona, String codigo) throws SQLException {
         String sql = "INSERT INTO usuario " +
                 "(nombres, apellidos, DNI, correo, contraseña, estado, idroles, " +
-                "fecha_incorporacion, idzona, cod_enc) " +
+                "fecha_incorporacion, idzona, token) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = getConnection();

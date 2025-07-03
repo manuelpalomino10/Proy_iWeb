@@ -127,7 +127,7 @@ public class RegistroEncuestadorServlet extends HttpServlet {
         u.setZona_idzona(idZona);
         u.setDistritos_iddistritos(idDistrito);
         u.setCorreo(correo);
-        u.setCod_enc(dao.generarCodigoUnico());
+        u.setToken(dao.generarCodigoUnico());
         // estado 0 = pendiente de activación
         u.setEstado((byte)0);
         u.setRoles_idroles(3);
@@ -137,7 +137,7 @@ public class RegistroEncuestadorServlet extends HttpServlet {
             // Después de registrar, enviar correo de verificación
             String base = req.getRequestURL().toString()
                     .replace(req.getRequestURI(), req.getContextPath());
-            String link = base + "/verify?code=" + u.getCod_enc();
+            String link = base + "/verify?code=" + u.getToken();
             String cuerpo = "Para activar su cuenta haga clic en el siguiente " +
                     "enlace: <a href='" + link + "'>Verificar correo</a>";
             EmailUtil.sendEmail(correo, "Verificación de cuenta", cuerpo);

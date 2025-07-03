@@ -18,6 +18,7 @@ public class Usuario {
     private Date fecha_incorporacion;
     private byte[] foto;
     private String cod_enc;
+    private String token;
 
     //-------------------------------------------------
     public Usuario() {}
@@ -133,6 +134,14 @@ public class Usuario {
 
     public void setCod_enc(String cod_enc) {
         this.cod_enc = cod_enc;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }
 

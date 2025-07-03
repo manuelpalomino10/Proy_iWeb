@@ -17,7 +17,7 @@ public class BaseDAO {
 
         String URL = "jdbc:mysql://localhost:3306/iweb_proy";
         String USER = "root";
-        String PASSWORD = "12345678";
+        String PASSWORD = "root";
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 }
