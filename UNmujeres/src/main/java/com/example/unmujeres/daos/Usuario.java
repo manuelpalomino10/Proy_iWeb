@@ -19,6 +19,7 @@ public class Usuario {
     private byte[] foto;
     private String cod_enc;
     private String token;
+    private java.sql.Timestamp tokenExpires;
 
     //-------------------------------------------------
     public Usuario() {}
@@ -142,6 +143,14 @@ public class Usuario {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public java.sql.Timestamp getTokenExpires() {
+        return tokenExpires;
+    }
+
+    public void setTokenExpires(java.sql.Timestamp tokenExpires) {
+        this.tokenExpires = tokenExpires;
     }
 }
 

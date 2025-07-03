@@ -128,6 +128,7 @@ public class RegistroEncuestadorServlet extends HttpServlet {
         u.setDistritos_iddistritos(idDistrito);
         u.setCorreo(correo);
         u.setToken(dao.generarCodigoUnico());
+        u.setTokenExpires(new java.sql.Timestamp(System.currentTimeMillis() + 24L * 60 * 60 * 1000));
         // estado 0 = pendiente de activación
         u.setEstado((byte)0);
         u.setRoles_idroles(3);
