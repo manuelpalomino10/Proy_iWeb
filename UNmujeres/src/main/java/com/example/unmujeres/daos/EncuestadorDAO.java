@@ -1,6 +1,4 @@
 package com.example.unmujeres.daos;
-
-
 import com.example.unmujeres.daos.Usuario;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -50,9 +48,9 @@ public class EncuestadorDAO extends BaseDAO {
         return DigestUtils.sha256Hex(plain);
     }
 
-    /** Obtener usuario por código de activación */
+    /** Obtener usuario por token de activación */
     public Usuario findByCodigo(String code) throws SQLException {
-        String sql = "SELECT idusuario FROM usuario WHERE cod_enc = ?";
+        String sql = "SELECT idusuario FROM usuario WHERE token = ?";
         try (Connection con = this.getConnection();
              PreparedStatement p = con.prepareStatement(sql)) {
             p.setString(1, code);
@@ -72,7 +70,7 @@ public class EncuestadorDAO extends BaseDAO {
         String sql =
                 "INSERT INTO usuario " +
                         "(nombres, apellidos, contraseña, DNI, correo, direccion, estado, " +
-                        " idroles, idzona, iddistritos, fecha_incorporacion, foto, cod_enc) " +
+                        " idroles, idzona, iddistritos, fecha_incorporacion, foto, token) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE(), ?, ?)";
         try (Connection con = this.getConnection();
              PreparedStatement p = con.prepareStatement(sql)) {
@@ -91,7 +89,7 @@ public class EncuestadorDAO extends BaseDAO {
             else                                      p.setNull(10, Types.INTEGER);
             if (u.getFoto() != null) p.setBytes(11, u.getFoto());
             else                     p.setNull(11, Types.BLOB);
-            p.setString(12, u.getCod_enc());
+            p.setString(12, u.getToken());
 
             p.executeUpdate();
         }
@@ -102,7 +100,7 @@ public class EncuestadorDAO extends BaseDAO {
         String sql =
                 "UPDATE usuario " +
                         "SET contraseña = ?, estado = 1 " +
-                        "WHERE cod_enc = ?";
+                        "WHERE token = ?";
         try (Connection con = this.getConnection();
              PreparedStatement p = con.prepareStatement(sql)) {
             p.setString(1, hashedPwd);

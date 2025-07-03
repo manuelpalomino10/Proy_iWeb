@@ -18,6 +18,7 @@ public class Usuario {
     private Date fechaIncorporacion;
     private byte[] fotoBytes;
     private String codEnc;
+    private String token;
     private Distritos distrito;
 
     public Usuario(String codEnc, Date fechaIncorporacion, int iddistritos, int idUsuario, int idroles, boolean estado, int idzona, String direccion, int DNI, String correo, String contraseña, String apellidos, String nombres) {
@@ -142,6 +143,14 @@ public class Usuario {
     }
     public void setCodEnc(String codEnc) {
         this.codEnc = codEnc;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public Distritos getDistrito() {
