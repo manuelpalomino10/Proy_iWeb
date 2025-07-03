@@ -80,7 +80,7 @@
                         </div>
                     </c:if>
 
-                    <c:if test="${empty error}">
+<%--                    <c:if test="${empty error}">--%>
                         <form id="resetForm" action="reset-password" method="post" class="needs-validation" novalidate>
                             <input type="hidden" name="token" value="${token}">
 
@@ -143,7 +143,7 @@
                                 </a>
                             </div>
                         </form>
-                    </c:if>
+<%--                    </c:if>--%>
                 </div>
             </div>
         </div>

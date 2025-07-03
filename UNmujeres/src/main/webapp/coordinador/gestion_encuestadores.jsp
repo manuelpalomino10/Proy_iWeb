@@ -41,65 +41,67 @@
                         <h6 class="m-0 font-weight-bold text-primary">Encuestadores</h6>
                     </div>
                     <div class="card-body px-3">
-                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                            <thead class="thead-light">
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <c:forEach var="enc" items="${listaEncuestadores}">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead class="thead-light">
                                 <tr>
-                                    <td><c:out value="${enc.nombres} ${enc.apellidos}"/></td>
-                                    <td><c:out value="${enc.correo}"/></td>
-                                    <td>
-                                        <c:choose>
-                                            <c:when test="${enc.estado}">
-                                                <span class="badge badge-success">Activo</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="badge badge-danger">Baneado</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-sm btn-danger"
-                                                data-toggle="modal"
-                                                data-target="#banModal"
-                                                data-nombre="${enc.nombres} ${enc.apellidos}"
-                                                data-id="${enc.idUsuario}"
-                                                data-action="${enc.estado ? 'banear' : 'desbanear'}">
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <c:forEach var="enc" items="${listaEncuestadores}">
+                                    <tr>
+                                        <td><c:out value="${enc.nombres} ${enc.apellidos}"/></td>
+                                        <td><c:out value="${enc.correo}"/></td>
+                                        <td>
                                             <c:choose>
                                                 <c:when test="${enc.estado}">
-                                                    Banear
+                                                    <span class="badge badge-success">Activo</span>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    Desbanear
+                                                    <span class="badge badge-danger">Baneado</span>
                                                 </c:otherwise>
                                             </c:choose>
-                                        </button>
-                                        <c:choose>
-                                            <c:when test="${enc.estado}">
-                                                <a class="btn btn-sm btn-primary"
-                                                   href="${pageContext.request.contextPath}/coordinador/gestion_encuestadores?idusuario=${enc.idUsuario}">
-                                                    Asignar
-                                                </a>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <a class="btn btn-sm btn-secondary disabled" tabindex="-1" aria-disabled="true" data-toggle="tooltip"
-                                                   title="No se puede asignar porque el encuestador est\u00E1 baneado">
-                                                    Asignar
-                                                </a>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger"
+                                                    data-toggle="modal"
+                                                    data-target="#banModal"
+                                                    data-nombre="${enc.nombres} ${enc.apellidos}"
+                                                    data-id="${enc.idUsuario}"
+                                                    data-action="${enc.estado ? 'banear' : 'desbanear'}">
+                                                <c:choose>
+                                                    <c:when test="${enc.estado}">
+                                                        Banear
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        Desbanear
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </button>
+                                            <c:choose>
+                                                <c:when test="${enc.estado}">
+                                                    <a class="btn btn-sm btn-primary"
+                                                       href="${pageContext.request.contextPath}/coordinador/gestion_encuestadores?idusuario=${enc.idUsuario}">
+                                                        Asignar
+                                                    </a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a class="btn btn-sm btn-secondary disabled" tabindex="-1" aria-disabled="true" data-toggle="tooltip"
+                                                       title="No se puede asignar porque el encuestador est\u00E1 baneado">
+                                                        Asignar
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 

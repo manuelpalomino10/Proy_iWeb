@@ -185,7 +185,7 @@
                                                         if (valoresForm!=null){
                                                             inputValue = valoresForm.get(pregunta.getIdPregunta()) != null ? valoresForm.get(respuesta.getIdRespuesta()) : "";
                                                         } else {
-                                                            inputValue = respuesta.getRespuesta();
+                                                            inputValue = respuesta.getRespuesta()!= null ? respuesta.getRespuesta() : "";
                                                         }
                                                         String inputError= "";
                                                         if (errores!=null) {

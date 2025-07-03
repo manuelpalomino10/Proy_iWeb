@@ -48,7 +48,7 @@
       <div class="container-fluid">
 
         <!-- Page Heading -->
-        <h1 class="h3 mb-2 text-gray-800">Generar Reporte</h1>
+        <h1 class="h3 mb-2 text-gray-800">Crear Nuevo Formulario</h1>
 
           <!-- Contenedor del formulario centrado -->
           <div class="col-lg-10 mx-auto">
