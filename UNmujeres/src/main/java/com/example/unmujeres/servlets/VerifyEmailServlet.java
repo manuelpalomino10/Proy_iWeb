@@ -18,18 +18,36 @@ public class VerifyEmailServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String code = req.getParameter("code");
-        boolean valido = false;
-        if (code != null) {
-            try {
-                valido = dao.findByCodigo(code) != null;
-            } catch (SQLException e) {
-                throw new ServletException("Error de base de datos", e);
-            }
-        }
-        if (!valido) {
+        if (code == null) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+        Map<String, Object> info;
+        try {
+            info = dao.getTokenInfo(code);
+        } catch (SQLException e) {
+            throw new ServletException("Error de base de datos", e);
+        }
+
+        if (info == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        byte estado = (byte) info.get("estado");
+        java.sql.Timestamp expires = (java.sql.Timestamp) info.get("token_expires");
+        String token = (String) info.get("token");
+
+        if (token == null || estado != 0) {
+            req.getRequestDispatcher("/Sistema/token_used.jsp").forward(req, resp);
+            return;
+        }
+
+        if (expires != null && expires.before(new java.sql.Timestamp(System.currentTimeMillis()))) {
+            req.getRequestDispatcher("/Sistema/token_expired.jsp").forward(req, resp);
+            return;
+        }
+
         req.setAttribute("code", code);
         req.getRequestDispatcher("/Sistema/verify.jsp").forward(req, resp);
     }
@@ -43,6 +61,16 @@ public class VerifyEmailServlet extends HttpServlet {
         Map<String, String> errores = new HashMap<>();
         Map<String, Boolean> requisitosPwd = new LinkedHashMap<>();
         List<String> erroresPwd = new ArrayList<>();
+
+        try {
+            if (dao.findByCodigo(code) == null) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+        } catch (SQLException e) {
+            throw new ServletException("Error de base de datos", e);
+        }
+
 
         if (password == null || password.trim().isEmpty()) {
             erroresPwd.add("La contraseña es obligatoria");

@@ -48,9 +48,29 @@ public class EncuestadorDAO extends BaseDAO {
         return DigestUtils.sha256Hex(plain);
     }
 
+    /** Obtener información de token sin validar */
+    public java.util.Map<String, Object> getTokenInfo(String code) throws SQLException {
+        String sql = "SELECT estado, token_expires, token FROM usuario WHERE token = ?";
+        try (Connection con = this.getConnection();
+             PreparedStatement p = con.prepareStatement(sql)) {
+            p.setString(1, code);
+            try (ResultSet rs = p.executeQuery()) {
+                if (rs.next()) {
+                    java.util.Map<String, Object> data = new java.util.HashMap<>();
+                    data.put("estado", rs.getByte("estado"));
+                    data.put("token_expires", rs.getTimestamp("token_expires"));
+                    data.put("token", rs.getString("token"));
+                    return data;
+                }
+            }
+        }
+        return null;
+    }
+
+
     /** Obtener usuario por token de activación */
     public Usuario findByCodigo(String code) throws SQLException {
-        String sql = "SELECT idusuario FROM usuario WHERE token = ?";
+        String sql = "SELECT idusuario FROM usuario WHERE token = ? AND estado = 0 AND token_expires > CURRENT_TIMESTAMP";
         try (Connection con = this.getConnection();
              PreparedStatement p = con.prepareStatement(sql)) {
             p.setString(1, code);
@@ -70,8 +90,8 @@ public class EncuestadorDAO extends BaseDAO {
         String sql =
                 "INSERT INTO usuario " +
                         "(nombres, apellidos, contraseña, DNI, correo, direccion, estado, " +
-                        " idroles, idzona, iddistritos, fecha_incorporacion, foto, token) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE(), ?, ?)";
+                        " idroles, idzona, iddistritos, fecha_incorporacion, foto, token, token_expires) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_DATE(), ?, ?, ?)";
         try (Connection con = this.getConnection();
              PreparedStatement p = con.prepareStatement(sql)) {
 
@@ -90,7 +110,8 @@ public class EncuestadorDAO extends BaseDAO {
             if (u.getFoto() != null) p.setBytes(11, u.getFoto());
             else                     p.setNull(11, Types.BLOB);
             p.setString(12, u.getToken());
-
+            if (u.getTokenExpires() != null) p.setTimestamp(13, u.getTokenExpires());
+            else                             p.setNull(13, Types.TIMESTAMP);
             p.executeUpdate();
         }
     }
@@ -99,7 +120,7 @@ public class EncuestadorDAO extends BaseDAO {
     public void activate(String code, String hashedPwd) throws SQLException {
         String sql =
                 "UPDATE usuario " +
-                        "SET contraseña = ?, estado = 1 " +
+                        "SET contraseña = ?, estado = 1, token = NULL, token_expires = NULL " +
                         "WHERE token = ?";
         try (Connection con = this.getConnection();
              PreparedStatement p = con.prepareStatement(sql)) {

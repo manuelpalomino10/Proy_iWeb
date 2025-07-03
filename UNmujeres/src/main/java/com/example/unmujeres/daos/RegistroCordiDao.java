@@ -47,8 +47,8 @@ public class RegistroCordiDao extends BaseDAO {
                                   String correo, int idZona, String codigo) throws SQLException {
         String sql = "INSERT INTO usuario " +
                 "(nombres, apellidos, DNI, correo, contraseña, estado, idroles, " +
-                "fecha_incorporacion, idzona, token) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "fecha_incorporacion, idzona, token, token_expires) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -63,6 +63,7 @@ public class RegistroCordiDao extends BaseDAO {
             ps.setDate(8, new java.sql.Date(System.currentTimeMillis()));
             ps.setInt(9, idZona);
             ps.setString(10, codigo);
+            ps.setTimestamp(11, new java.sql.Timestamp(System.currentTimeMillis() + 24L * 60 * 60 * 1000));
 
             ps.executeUpdate();
         }
