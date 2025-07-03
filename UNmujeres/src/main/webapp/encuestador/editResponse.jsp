@@ -118,8 +118,8 @@
                             </div>  <!-- Cierra card -->
                             <br/>
                     <%
-                                    }
-                                    currentSeccionId = sec.getIdSeccion();
+                                }
+                                currentSeccionId = sec.getIdSeccion();
                     %>
                             <!-- Nueva Card para la sección -->
                             <div class="card">
@@ -155,7 +155,11 @@
 //                                                                            selected = "selected";
 //                                                                        }
                                                                         if (valoresForm!=null) {
-                                                                            if (opcion.getOpcion().equals(valoresForm.get(pregunta.getIdPregunta()))) {
+                                                                            if (opcion.getOpcion().equals(valoresForm.get(respuesta.getIdRespuesta()))) {
+                                                                                selected = "selected";
+                                                                            }
+                                                                        } else {
+                                                                            if (opcion.getOpcion().equals(respuesta.getRespuesta())) {
                                                                                 selected = "selected";
                                                                             }
                                                                         }
@@ -179,7 +183,9 @@
                                                         }
                                                         String inputValue = "";
                                                         if (valoresForm!=null){
-                                                            inputValue = valoresForm.get(pregunta.getIdPregunta()) != null ? valoresForm.get(pregunta.getIdPregunta()) : "";
+                                                            inputValue = valoresForm.get(pregunta.getIdPregunta()) != null ? valoresForm.get(respuesta.getIdRespuesta()) : "";
+                                                        } else {
+                                                            inputValue = respuesta.getRespuesta();
                                                         }
                                                         String inputError= "";
                                                         if (errores!=null) {
@@ -251,7 +257,7 @@
                         </span>
                     <span class="text">Registrar Respuesta</span>
                 </button>
-                <button type="submit" name="acto" value="borrador" form="respuestaForm" class="btn btn-secondary btn-icon-split mr-2">
+                <button type="submit" name="acto" value="borrador" formnovalidate form="respuestaForm" class="btn btn-secondary btn-icon-split mr-2">
                         <span class="icon text-white-50">
                             <i class="fas fa-save"></i>
                         </span>
