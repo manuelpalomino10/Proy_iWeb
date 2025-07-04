@@ -181,6 +181,7 @@
                                                         String inputType = "text";
                                                         String patron = "";
                                                         String aviso = (pregunta.getRequerido() ? "* Respuesta obligatoria" : null);
+                                                        String place = "";
                                                         if ("int".equalsIgnoreCase(pregunta.getTipoDato()) ) {
                                                             inputType = "number";
                                                             patron = "pattern=\"\\d+\" min=\"0\" max=\"40\" inputmode=\"numeric\"";
@@ -189,13 +190,16 @@
                                                         } else if ("email".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             inputType = "email";
                                                             patron = "pattern=\"^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$\"";
+                                                            place = " @gmail.com";
                                                         } else if ("tel".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             inputType="tel";
                                                             patron = "pattern=\"9\\d{8}\" maxlength=\"9\" inputmode=\"numeric\"";
-                                                            aviso = "Número de celular de Perú";
+                                                            aviso = "* Número de celular de Perú";
+                                                            place = "9xxxxxxxx";
                                                         } else if ("dni".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             patron = "pattern=\"\\d{8}\" maxlength=\"8\" inputmode=\"numeric\"";
-                                                            aviso = "DNI";
+                                                            aviso = "* DNI";
+                                                            place = "12345678";
                                                         }
                                                         String inputValue = "";
                                                         if (valoresForm!=null){
@@ -215,6 +219,7 @@
                                                            id="respuesta_<%= respuesta.getIdRespuesta() %>"
                                                            name="respuesta_<%= respuesta.getIdRespuesta() %>"
                                                            title="pregunta <%= count %>"
+                                                           placeholder="<%= place %>"
                                                             <%= pregunta.getRequerido() ? "required" : "" %>
                                                             <%= patron %>
                                                            value="<%= inputValue %>" />

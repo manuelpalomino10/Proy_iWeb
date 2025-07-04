@@ -678,7 +678,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     return "Ingrese un DNI de Perú";
                 }
             } catch (NumberFormatException e) {
-                return "Debe ingresar un número de identifiación válido.";
+                return "Debe ingresar un número de identificación válido.";
             }
         }
 
