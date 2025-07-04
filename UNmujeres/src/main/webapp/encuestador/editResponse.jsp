@@ -49,8 +49,8 @@
                     </div>
 
                     <% if (codEnc != null) { %>
-                    <div class="d-flex align-items-center mb-3">
-                        <label for="cod" class="me-2 mb-0 fw-semibold">Tu código es: </label>
+                    <div class="m-2 form-group row align-items-center">
+                        <label for="cod" class="mr-2 mb-0 fw-semibold">Su código es: </label>
                         <input type="text"
                                class="form-control w-auto"
                                id="cod"
@@ -105,7 +105,9 @@
                         <input type="hidden" name="id" value="<%= registro.getIdRegistroRespuestas() %>" />
                     <%
                         // Recorrer cada respuesta (la cual contiene la pregunta y sección asociada)
+                        int count = 0;
                         for (Respuesta respuesta : respuestas) {
+                            count++;
                             Pregunta pregunta = respuesta.getPregunta();
                             Seccion sec = pregunta.getSeccion();
                             // Si cambia la sección (o es la primera iteración), se inicia una nueva card.
@@ -134,7 +136,7 @@
                                 <!-- Cada pregunta se coloca en una columna de 4 (12/4 = 3 columnas) -->
                                         <div class="col-md-4">
                                             <div class="pregunta">
-                                                <p><strong>Pregunta:</strong> <%= pregunta.getEnunciado() %></p>
+                                                <p><strong>Pregunta <%= count %>:</strong> <%= pregunta.getEnunciado() %></p>
                                                 <div class="form-group">
                                                     <label for="respuesta_<%= respuesta.getIdRespuesta() %>">Respuesta:</label>
                                                     <%
@@ -143,6 +145,7 @@
                                                     %>
                                                     <select name="respuesta_<%= respuesta.getIdRespuesta() %>"
                                                             id="respuesta_<%= respuesta.getIdRespuesta() %>"
+                                                            title="pregunta <%= count %>"
                                                             <%= pregunta.getRequerido() ? "required" : "" %>
                                                             class="form-control">
                                                         <option value="">-- Seleccione --</option>
@@ -176,10 +179,23 @@
                                                     <%
                                                     } else {
                                                         String inputType = "text";
-                                                        if ("int".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                                        String patron = "";
+                                                        String aviso = (pregunta.getRequerido() ? "* Respuesta obligatoria" : null);
+                                                        if ("int".equalsIgnoreCase(pregunta.getTipoDato()) ) {
                                                             inputType = "number";
+                                                            patron = "pattern=\"\\d+\" min=\"0\" max=\"40\" inputmode=\"numeric\"";
                                                         } else if ("date".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             inputType = "date";
+                                                        } else if ("email".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                                            inputType = "email";
+                                                            patron = "pattern=\"^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$\"";
+                                                        } else if ("tel".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                                            inputType="tel";
+                                                            patron = "pattern=\"9\\d{8}\" maxlength=\"9\" inputmode=\"numeric\"";
+                                                            aviso = "Número de celular de Perú";
+                                                        } else if ("dni".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                                            patron = "pattern=\"\\d{8}\" maxlength=\"8\" inputmode=\"numeric\"";
+                                                            aviso = "DNI";
                                                         }
                                                         String inputValue = "";
                                                         if (valoresForm!=null){
@@ -198,13 +214,14 @@
                                                            class="form-control <%= inputError %>"
                                                            id="respuesta_<%= respuesta.getIdRespuesta() %>"
                                                            name="respuesta_<%= respuesta.getIdRespuesta() %>"
+                                                           title="pregunta <%= count %>"
+                                                            <%= pregunta.getRequerido() ? "required" : "" %>
+                                                            <%= patron %>
                                                            value="<%= inputValue %>" />
-<%--                                                            value="<%= (respuesta.getRespuesta() != null ? respuesta.getRespuesta() : "") %>" />--%>
-
                                                     <%
-                                                        if (pregunta.getRequerido()) {
+                                                        if (aviso!=null) {
                                                     %>
-                                                    <small class="form-text text-muted">* Respuesta obligatoria.</small>
+                                                    <small class="form-text text-muted"><%= aviso %></small>
                                                     <%  }
                                                     }
                                                     %>
@@ -233,36 +250,26 @@
                         }
                     %>
 
-                </div>
-            </div>
-
-            <!-- Botones de Acción -->
-
-
-<%--            <!-- Botones para guardar -->--%>
-<%--            <div class="btn-group text-center mt-4">--%>
-<%--                <a type="submit" name="accion" value="borrador" class="btn btn-secondary btn-icon-split">--%>
-<%--                    <span class="icon text-white-50"><i class="fas fa-check"></i></span>--%>
-<%--                    Guardar como Borrador</a>--%>
-<%--                <a type="submit" name="accion" value="completado" class="btn btn-success btn-icon-split">--%>
-<%--                    <span class="icon text-white-50"><i class="fas fa-save"></i></span>--%>
-<%--                    Guardar Registro Completado</a>--%>
+<%--                </div>--%>
 <%--            </div>--%>
 
 
-            <div class="text-center mt-4 fixed-bottom">
-                <button id="completadoBtn" type="button" class="btn btn-success btn-icon-split mr-2">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-check"></i>
-                        </span>
-                    <span class="text">Registrar Respuesta</span>
-                </button>
-                <button type="submit" name="acto" value="borrador" formnovalidate form="respuestaForm" class="btn btn-secondary btn-icon-split mr-2">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-save"></i>
-                        </span>
-                    <span class="text">Guardar como Borrador</span>
-                </button>
+
+
+                <div class="text-center mt-4 fixed-bottom">
+                    <button id="completadoBtn" type="button" class="btn btn-success btn-icon-split mr-2">
+                            <span class="icon text-white-50">
+                                <i class="fas fa-check"></i>
+                            </span>
+                        <span class="text">Registrar Respuesta</span>
+                    </button>
+                    <button id="borradorBtn" type="submit" name="acto" value="borrador" formnovalidate form="respuestaForm" class="btn btn-secondary btn-icon-split mr-2">
+                            <span class="icon text-white-50">
+                                <i class="fas fa-save"></i>
+                            </span>
+                        <span class="text">Guardar como Borrador</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Footer -->
@@ -275,6 +282,26 @@
             </footer>
             <!-- End of Footer -->
 
+            <!-- Modal de validación -->
+            <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content border-danger">
+                        <div class="modal-header bg-danger text-white">
+                            <h5 class="modal-title" id="errorModalLabel">Ingrese Respuestas Válidas</h5>
+                            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <ul id="errorList" class="mb-0"></ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Entendido</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <!-- End of Content Wrapper -->
 
@@ -283,28 +310,87 @@
     <jsp:include page="../footer.jsp" />
 
     <script>
-        document.getElementById("completadoBtn").addEventListener("click", function(event) {
-            // Recoger todos los inputs cuya id empieza por "respuesta_"
-            var inputs = document.querySelectorAll("input[id^='respuesta_'], select[id^='respuesta_']");
-            var faltantes = [];
+        const form       = document.getElementById("respuestaForm");
+        const inputsAll  = form.querySelectorAll("input, textarea, select");
 
-            inputs.forEach(function(input) {
-                if (!input.value.trim()) {
-                    faltantes.push(input); // Guarda los campos incompletos
-                    input.classList.add("falta-respuesta"); // Aplica estilo
-                } else {
-                    input.classList.remove("falta-respuesta"); // Remueve el estilo si está completo
+        // Validación “completa”
+        document.getElementById("completadoBtn").addEventListener("click", e => {
+            let valido = true;
+            const errores = [];
+
+            inputsAll.forEach(input => {
+                input.classList.remove("falta-respuesta");
+                let nom=input.title;
+                const v = input.value.trim();
+
+                if (input.required && v === "") {
+                    let msj = "La respuesta a la "+nom+" es obligatoria";
+                    input.classList.add("falta-respuesta");
+                    errores.push(msj);
+                    valido = false;
+                    return;
+                }
+                if (v !== "" && !input.checkValidity()) {
+                    let msj = "La respuesta a la "+nom+" tiene formato inválido";
+                    input.classList.add("falta-respuesta");
+                    errores.push(msj);
+                    valido = false;
                 }
             });
 
-            if (faltantes.length > 0) {
-                event.preventDefault();
-                alert("Complete todas las respuestas antes de continuar.");
+            if (!valido) {
+                e.preventDefault();
+                showErrorModal(
+                    "Complete todos los campos requeridos",
+                    errores
+                );
             } else {
-                // Si la validación pasa, se muestra el modal manualmente.
-                $('#SaveRegModal').modal('show');
+                form.submit();
             }
         });
+
+        // Validación “borrador”
+        document.getElementById("borradorBtn").addEventListener("click", e => {
+            let valido = true;
+            const errores = [];
+
+            inputsAll.forEach(input => {
+                input.classList.remove("falta-respuesta");
+                let nom=input.title;
+                const v = input.value.trim();
+
+                if (v !== "" && !input.checkValidity()) {
+                    let msj ="La respuesta a la "+nom+" tiene formato inválido";
+                    input.classList.add("falta-respuesta");
+                    errores.push(msj);
+                    valido = false;
+                }
+            });
+
+            if (!valido) {
+                e.preventDefault();
+                showErrorModal(
+                    "Corrija el formato de los campos ingresados",
+                    errores
+                );
+            }
+        });
+
+        function showErrorModal(title, errores) {
+            // Título
+            document.getElementById("errorModalLabel").textContent = title;
+
+            // Lista de errores
+            const ul = document.getElementById("errorList");
+            ul.innerHTML = "";
+            errores.forEach(msg => {
+                const li = document.createElement("li");
+                li.textContent = msg;
+                ul.appendChild(li);
+            });
+
+            $('#errorModal').modal('show');
+        }
     </script>
 </body>
 

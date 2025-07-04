@@ -23,6 +23,7 @@
 
     Usuario user = (Usuario) session.getAttribute("usuario");
     String codEnc = user.getCodEnc();
+    String nombre = user.getNombres()+" "+user.getApellidos();
 %>
 
 <html lang="es">
@@ -50,8 +51,8 @@
 
 
                 <% if (codEnc != null) { %>
-                <div class="d-flex align-items-center mb-3">
-                    <label for="cod" class="me-2 mb-0 fw-semibold">Tu código es: </label>
+                <div class="m-2 form-group row align-items-center">
+                    <label for="cod" class="mr-2 mb-0 fw-semibold">Su código es: </label>
                     <input type="text"
                            class="form-control w-auto"
                            id="cod"
@@ -105,7 +106,9 @@
 
                 <%
                         // Recorremos la lista de preguntas
+                        int count = 0;
                         for (Pregunta pregunta : preguntas) {
+                            count++;
                             Seccion sec = pregunta.getSeccion();
                             // Si cambiamos de sección (o es la primera iteración), cerramos la sección anterior y abrimos una nueva.
                             if (sec.getIdSeccion() != currentSeccionId) {
@@ -132,7 +135,7 @@
                 <!-- Contenedor de cada pregunta (columna) -->
                 <div class="col-md-4">                         <!-- 3 columnas por fila -->
                     <div class="pregunta">
-                        <p><strong>Pregunta:</strong> <%= pregunta.getEnunciado() %></p>
+                        <p><strong>Pregunta <%= count %>:</strong> <%= pregunta.getEnunciado() %></p>
                         <div class="form-group">
                             <label for="pregunta_<%= pregunta.getIdPregunta() %>">Respuesta:</label>
                             <%
@@ -147,6 +150,7 @@
                             %>
                             <select name="pregunta_<%= pregunta.getIdPregunta() %>"
                                     id="pregunta_<%= pregunta.getIdPregunta() %>"
+                                    title="pregunta <%= count %>"
                                     class="form-control <%= inputError1 %>"
                                     <%= pregunta.getRequerido() ? "required" : "" %>>
                                 <option value="">-- Seleccione --</option>
@@ -181,14 +185,29 @@
                             } else {
                                 // Para otros tipos definimos el input adecuado; "date" e "int" se manejan, por defecto "text"
                                 String inputType = "text";
-                                if ("int".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                String patron = "";
+                                String aviso = (pregunta.getRequerido() ? "* Respuesta obligatoria" : null);
+                                if ("int".equalsIgnoreCase(pregunta.getTipoDato()) ) {
                                     inputType = "number";
+                                    patron = "pattern=\"\\d+\" min=\"0\" max=\"40\" inputmode=\"numeric\"";
                                 } else if ("date".equalsIgnoreCase(pregunta.getTipoDato())) {
                                     inputType = "date";
+                                } else if ("email".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                    inputType = "email";
+                                    patron = "pattern=\"^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$\"";
+                                } else if ("tel".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                    inputType="tel";
+                                    patron = "pattern=\"9\\d{8}\" maxlength=\"9\" inputmode=\"numeric\"";
+                                    aviso = "* Número de celular de Perú";
+                                } else if ("dni".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                    patron = "pattern=\"\\d{8}\" maxlength=\"8\" inputmode=\"numeric\"";
+                                    aviso = "* DNI";
                                 }
                                 String inputValue = "";
                                 if (valoresForm!=null){
                                     inputValue = valoresForm.get(pregunta.getIdPregunta()) != null ? valoresForm.get(pregunta.getIdPregunta()) : "";
+                                } else if (pregunta.getEnunciado().contains("persona que encuesta")) {
+                                    inputValue = nombre;
                                 }
                                 String inputError= "";
                                 if (errores!=null) {
@@ -201,13 +220,14 @@
                                    class="form-control <%= inputError %>"
                                    id="pregunta_<%= pregunta.getIdPregunta() %>"
                                    name="pregunta_<%= pregunta.getIdPregunta() %>"
-                                   <%= pregunta.getRequerido() ? "required" : "" %>
+                                   title="pregunta <%= count %>"
+                                    <%= pregunta.getRequerido() ? "required" : "" %>
+                                    <%= patron %>
                                    value="<%= inputValue %>" />
-<%--                                   value=""/>--%>
                             <%
-                                if (pregunta.getRequerido()) {
+                                if (aviso!=null) {
                             %>
-                            <small class="form-text text-muted">* Respuesta obligatoria.</small>
+                            <small class="form-text text-muted"><%= aviso %></small>
                             <% }
                             }
                             %>
@@ -240,7 +260,7 @@
         </button>
         <% 
             if (usuarioSesion != null && usuarioSesion.getIdroles() == 3) { %>
-        <button type="submit" formnovalidate form="respuestaForm" name="acto" value="borrador" class="btn btn-secondary btn-icon-split mr-2">
+        <button id="borradorBtn" type="submit" formnovalidate form="respuestaForm" name="acto" value="borrador" class="btn btn-secondary btn-icon-split mr-2">
             <span class="icon text-white-50"><i class="fas fa-save"></i></span>
             <span class="text">Guardar como Borrador</span>
         </button>
@@ -257,34 +277,110 @@
     </div>
 </footer>
 
-
-
+<!-- Modal de validación -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content border-danger">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="errorModalLabel">Ingrese Respuestas Válidas</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul id="errorList" class="mb-0"></ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Entendido</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <jsp:include page="../footer.jsp" />
 
     <script>
-        document.getElementById("completadoBtn").addEventListener("click", function(event) {
-            // Recoger todos los inputs cuya id empieza por "pregunta_"
-            var inputs = document.querySelectorAll("input[id^='pregunta_'][required], select[id^='pregunta_'][required]");
-            var faltantes = [];
+        const form       = document.getElementById("respuestaForm");
+        const inputsAll  = form.querySelectorAll("input, textarea, select");
 
-            inputs.forEach(function(input) {
-                if (!input.value.trim()) {
-                    faltantes.push(input); // Guarda los campos incompletos
-                    input.classList.add("falta-respuesta"); // Aplica estilo
-                } else {
-                    input.classList.remove("falta-respuesta"); // Remueve el estilo si está completo
+        // Validación “completa”
+        document.getElementById("completadoBtn").addEventListener("click", e => {
+            let valido = true;
+            const errores = [];
+
+            inputsAll.forEach(input => {
+                input.classList.remove("falta-respuesta");
+                let nom=input.title;
+                const v = input.value.trim();
+
+                if (input.required && v === "") {
+                    let msj = "La respuesta a la "+nom+" es obligatoria";
+                    input.classList.add("falta-respuesta");
+                    errores.push(msj);
+                    valido = false;
+                    return;
+                }
+                if (v !== "" && !input.checkValidity()) {
+                    let msj = "La respuesta a la "+nom+" tiene formato inválido";
+                    input.classList.add("falta-respuesta");
+                    errores.push(msj);
+                    valido = false;
                 }
             });
 
-            if (faltantes.length > 0) {
-                event.preventDefault();
-                alert("Complete todas las respuestas requeridas antes de continuar.");
+            if (!valido) {
+                e.preventDefault();
+                showErrorModal(
+                    "Complete todos los campos requeridos",
+                    errores
+                );
             } else {
-                // Si la validación pasa, se muestra el modal manualmente.
-                $('#SaveRegModal').modal('show');
+                form.submit();
             }
         });
+
+        // Validación “borrador”
+        document.getElementById("borradorBtn").addEventListener("click", e => {
+            let valido = true;
+            const errores = [];
+
+            inputsAll.forEach(input => {
+                input.classList.remove("falta-respuesta");
+                let nom=input.title;
+                const v = input.value.trim();
+
+                if (v !== "" && !input.checkValidity()) {
+                    let msj ="La respuesta a la "+nom+" tiene formato inválido";
+                    input.classList.add("falta-respuesta");
+                    errores.push(msj);
+                    valido = false;
+                }
+            });
+
+            if (!valido) {
+                e.preventDefault();
+                showErrorModal(
+                    "Corrija el formato de los campos ingresados",
+                    errores
+                );
+            }
+        });
+
+        function showErrorModal(title, errores) {
+            // Título
+            document.getElementById("errorModalLabel").textContent = title;
+
+            // Lista de errores
+            const ul = document.getElementById("errorList");
+            ul.innerHTML = "";
+            errores.forEach(msg => {
+                const li = document.createElement("li");
+                li.textContent = msg;
+                ul.appendChild(li);
+            });
+
+            $('#errorModal').modal('show');
+        }
     </script>
 </body>
 </html>

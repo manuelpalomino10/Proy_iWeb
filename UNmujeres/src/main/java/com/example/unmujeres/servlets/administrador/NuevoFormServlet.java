@@ -209,7 +209,8 @@ public class NuevoFormServlet extends HttpServlet {
 
                 // Validar tipo de dato
                 String tipo = tipos[i].trim().toLowerCase();
-                if (!"texto".equals(tipo) && !"número".equals(tipo) && !"fecha".equals(tipo) && !"combobox".equals(tipo)) {
+                if (!"texto".equals(tipo) && !"número".equals(tipo) && !"fecha".equals(tipo) && !"combobox".equals(tipo)
+                        && !"teléfono".equals(tipo) && !"email".equals(tipo) && !"dni".equals(tipo)) {
                     throw new Exception("Tipo de dato inválido: '"+tipo+"' en columna " +tipos[i]);
                 }
 
@@ -218,6 +219,9 @@ public class NuevoFormServlet extends HttpServlet {
                     case "número" -> "int";
                     case "fecha" -> "date";
                     case "combobox" -> "combobox";
+                    case "teléfono" -> "tel";
+                    case "email" -> "email";
+                    case "dni" -> "dni";
                     default -> "Default"; // Para texto
                 };
 

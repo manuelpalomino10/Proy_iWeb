@@ -630,7 +630,12 @@ public class VerFormulariosServlet extends HttpServlet {
 
         if ("int".equalsIgnoreCase(tipo) || "number".equalsIgnoreCase(tipo)) {
             try {
-                Integer.parseInt(valor);
+                int val = Integer.parseUnsignedInt(valor);
+                if (val > 110 ) {
+                    if (pregunta.getEnunciado().contains("Celular")) {
+                        return "Ingrese un número menor a 110";
+                    }
+                }
             } catch (NumberFormatException e) {
                 return "Debe ingresar un número válido.";
             }
@@ -650,6 +655,30 @@ public class VerFormulariosServlet extends HttpServlet {
             List<String> opcionesValidas = opcionDAO.getByPreguntaToString(pregunta.getIdPregunta());
             if (opcionesValidas != null && !opcionesValidas.contains(valor)) {
                 return "La opción seleccionada no es válida.";
+            }
+        } else if ("tel".equalsIgnoreCase(tipo)) {
+            try {
+                Integer.parseUnsignedInt(valor);
+                if (!valor.matches("^9\\d{8}$")) {
+                    return "Ingrese un número de Perú";
+                }
+            } catch (NumberFormatException e) {
+                return "Debe ingresar un teléfono válido.";
+            }
+        } else if ("email".equalsIgnoreCase(tipo)) {
+            String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@" +
+                    "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+            if (!valor.matches(regex)) {
+                return "Ingrese un mail válido";
+            }
+        } else if ("dni".equalsIgnoreCase(tipo)) {
+            try {
+                Integer.parseUnsignedInt(valor);
+                if (!valor.matches("^\\d{8}$")) {
+                    return "Ingrese un DNI de Perú";
+                }
+            } catch (NumberFormatException e) {
+                return "Debe ingresar un número de identifiación válido.";
             }
         }
 
