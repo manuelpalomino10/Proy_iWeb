@@ -288,9 +288,13 @@
                     <input type="hidden" name="idFormulario" id="uploadFormularioIdInput"/>
                     <input type="hidden" name="idEhf" id="uploadEhfIdInput"/>
                     <div class="form-group">
-                        <label for="fileInput">Selecciona un archivo CSV o Excel (.csv, .xls, .xlsx):</label>
-                        <input type="file" class="form-control-file" id="csvFile" name="csvFile" accept=".csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
-                        <small class="form-text text-muted">Asegúrate de que el archivo tenga el formato correcto para las respuestas del formulario.</small>
+                        <label for="csvFile">Selecciona un archivo CSV:</label>
+                        <input type="file" class="form-control-file" id="csvFile" name="csvFile" accept=".csv" required>
+                        <small class="form-text text-muted">
+                            Asegúrate de que el archivo tenga el
+                            <a id="templateLink" class="pe-auto" data-base-href="<%=request.getContextPath()%>/coordinador/downloadTemp?file=mass" href="#">formato correcto</a>
+                            para las respuestas del formulario.
+                        </small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -364,7 +368,7 @@
             let idFormulario = button.data('id-formulario');
             let nombreFormulario = button.data('nombre-formulario');
             let idEhf = button.data('id-ehf');
-            console.log("el id de asignacion ehf es: ", idEhf);
+            // console.log("el id de asignacion ehf es: ", idEhf);
 
             let modal = $(this);
             // Establece el nombre del formulario en el título del modal
@@ -375,6 +379,15 @@
             modal.find('#uploadEhfIdInput').val(idEhf);
             // Opcional: Limpiar el campo de archivo si se ha seleccionado uno previamente
             modal.find('#csvFile').val('');
+            // Obtener la forma del link para plantilla según ID del formulario
+            const link = modal.find("#templateLink");
+            const base = link.attr("data-base-href");
+            if (!base) {
+                console.warn("No se encontró data-base-href en #templateLink");
+                return;
+            }
+            //link.href = base+"&form="+encodeURIComponent(idFormulario);
+            link.attr("href", base + "&form=" + encodeURIComponent(idFormulario));
         });
     });
 </script>

@@ -631,10 +631,8 @@ public class VerFormulariosServlet extends HttpServlet {
         if ("int".equalsIgnoreCase(tipo) || "number".equalsIgnoreCase(tipo)) {
             try {
                 int val = Integer.parseUnsignedInt(valor);
-                if (val > 110 ) {
-                    if (pregunta.getEnunciado().contains("Celular")) {
-                        return "Ingrese un número menor a 110";
-                    }
+                if (val > 100 ) {
+                    return "Ingrese un número menor a 100";
                 }
             } catch (NumberFormatException e) {
                 return "Debe ingresar un número válido.";

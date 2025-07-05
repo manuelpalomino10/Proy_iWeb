@@ -53,6 +53,18 @@
           <!-- Contenedor del formulario centrado -->
           <div class="col-lg-10 mx-auto">
               <div class="card shadow mb-4">
+
+                  <div class="card-header">
+                      <ul class="nav nav-pills card-header-pills">
+                          <li class="nav-item">
+                              <a class="nav-link active" href="#">Personalizar</a>
+                          </li>
+                          <li class="nav-item">
+                              <a class="nav-link" href="<%=request.getContextPath()%>/administrador/downloadTemp?file=nform"> Descarga plantilla</a>
+                          </li>
+                      </ul>
+                  </div>
+
                   <div class="card-body">
 
                         <!-- ------------- FORMULARIO DE PARAMETROS DE FORMULARIO ------------- -->
@@ -99,14 +111,6 @@
                                 <input type="date" name="fechaLimite" id="fechaLimite" class="form-control" placeholder="DD-MM-YYYY" min="<%= LocalDate.now().plusDays(1) %>"/>
                             </div>
                           </div>
-
-    <%--                          <!-- Quinta fila: Registros esperados -->--%>
-    <%--                          <div class="row mt-3">--%>
-    <%--                            <div class="col-md-4">--%>
-    <%--                              <label for="esperados" class="form-label">Registros Esperados:</label>--%>
-    <%--                              <input type="number" name="esperados" id="esperados" class="form-control" min="50" placeholder="100" />--%>
-    <%--                            </div>--%>
-    <%--                          </div>--%>
 
                           <!-- Cuarta fila: Archivo -->
                           <div class="form-row">

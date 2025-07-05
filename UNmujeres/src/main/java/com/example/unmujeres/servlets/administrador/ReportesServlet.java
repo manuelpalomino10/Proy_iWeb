@@ -263,8 +263,8 @@ public class ReportesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Lógica para manejar solicitudes POST
-        doGet(request, response); // Ejemplo: reutilizar lógica GET
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+
     }
 
     @Override
