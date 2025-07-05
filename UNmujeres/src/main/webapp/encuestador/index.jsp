@@ -108,7 +108,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                            ÚLTIMO FORMULARIO REGISTRADO EN LA PLATAFORMA
+                                            ÚLTIMO FORMULARIO ASIGNADO
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">${ultimoFormularioRegistrado}</div>
                                     </div>
@@ -149,7 +149,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
-                                            TOTAL DE RESPUESTAS REGISTRADAS EN LA PLATAFORMA
+                                            TOTAL DE RESPUESTAS REGISTRADAS
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">${totalRespuestas}</div>
                                     </div>
@@ -202,10 +202,11 @@
                     <div class="col-lg-5">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Tipos de formularios</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Formularios completados por semana</h6>
                             </div>
                             <div class="card-body" style="height: 400px;">
-                                <canvas id="pieChartTipos" style="width: 100%; height: 100%;"></canvas>
+                                <canvas id="lineChartRespuestasPorDia" style="width:100%; height:400px;"></canvas>
+
                             </div>
                         </div>
                     </div>
@@ -278,7 +279,7 @@
                         </c:forEach>
                     ];
 
-                    // Configuración de gráficos con tooltips mejorados
+
                     const barChartFormularios = new Chart(document.getElementById('barChartFormularios'), {
                         type: 'bar',
                         data: {
@@ -451,6 +452,70 @@
                             }
                         }
                     });
+
+                    const diaLabels = [
+                        <c:forEach items="${respuestasPorDia}" var="dato" varStatus="loop">
+                        "${dato.key}"<c:if test="${!loop.last}">,</c:if>
+                        </c:forEach>
+                    ];
+
+                    const diaData = [
+                        <c:forEach items="${respuestasPorDia}" var="dato" varStatus="loop">
+                        ${dato.value}<c:if test="${!loop.last}">,</c:if>
+                        </c:forEach>
+                    ];
+
+                    const lineChart = new Chart(document.getElementById('lineChartRespuestasPorDia'), {
+                        type: 'line',
+                        data: {
+                            labels: diaLabels,
+                            datasets: [{
+                                label: 'Respuestas completadas',
+                                data: diaData,
+                                borderColor: '#36A2EB',
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Fecha',
+                                        color: '#000'
+                                    },
+                                    ticks: {
+                                        color: '#4BC0C0',
+                                        callback: function(value) {
+                                            let label = this.getLabelForValue(value);
+                                            return label.length > 15 ? label.substring(0, 15) + '…' : label;
+                                        }
+                                    }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Cantidad de Respuestas',
+                                        color: '#000'
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+
+
+
+
                 </script>
 
             </div>
