@@ -1,9 +1,4 @@
 package com.example.unmujeres.daos;
-
-
-import com.example.unmujeres.beans.EstadisticasFormulario;
-import com.example.unmujeres.beans.RespuestaDetallada;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +11,7 @@ public class EstadisticasDAO extends BaseDAO {
 
     //------------------------ESTADISTICAS PARA ENCUESTADOR ------------------------------
 
-    //--------------------- PRIMER CRUD ---------------------------------------
+    //--------------------- PRIMER CARD - FORMULARIOS DISPONIBLES PARA TI ---------------------------------------
     public int contarFormulariosAsignados(int idusuario) throws SQLException {
         String sql = "SELECT COUNT(f.idformulario) " +
                 "FROM iweb_proy.formulario f " +
@@ -42,6 +37,8 @@ public class EstadisticasDAO extends BaseDAO {
                 "FROM iweb_proy.registro_respuestas rr " +
                 "JOIN iweb_proy.enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
                 "WHERE rr.estado = 'C' AND ehf.enc_idusuario = ? " +
+                "AND rr.fecha_registro BETWEEN DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY) " +
+                "AND DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY) " +
                 "GROUP BY DATE(rr.fecha_registro) " +
                 "ORDER BY fecha ASC";
 
@@ -61,7 +58,8 @@ public class EstadisticasDAO extends BaseDAO {
     }
 
 
-    //--------------------- TERCER CRUD ---------------------------------------
+
+    //--------------------- TERCER CARD -  FORMULARIOS GUARDADOS COMO BORRADOR ---------------------------------------
     public int contarBorradores(int idUsuario) throws SQLException {
         String sql = "SELECT COUNT(*) FROM iweb_proy.registro_respuestas rr " +
                 "INNER JOIN iweb_proy.enc_has_formulario ehf ON rr.idenc_has_formulario = ehf.idenc_has_formulario " +
@@ -97,7 +95,7 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    //--------------------- QUINTO CRUD ---------------------------------------
+    //--------------------- SEGUNDO CARD - FORMULARIOS COMPLETADOS ESTA SEMANA  ---------------------------------------
     public int contarCompletadosUltimos7Dias() throws SQLException {
         String sql = "SELECT COUNT(*) FROM iweb_proy.registro_respuestas " +
                 "WHERE estado = 'C' AND fecha_registro >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)";
@@ -111,7 +109,7 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    //--------------------- SEXTO CRUD ---------------------------------------
+    //--------------------- PRIMER GRAFICO  : CANTIDAD DE RESPUESTAS POR FORMULARIO  ---------------------------------------
     public Map<String, Integer> obtenerRespuestasCompletadasPorFormulario(int idusuario) throws SQLException {
             String sql = "SELECT f.nombre AS nombre_formulario, " +
                     "COUNT(rr.idregistro_respuestas) AS respuestas_completadas " +
@@ -125,7 +123,7 @@ public class EstadisticasDAO extends BaseDAO {
 
         try (Connection con = this.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
-            stmt.setInt(1, idusuario); // Corregido: Usar el parámetro idusuario
+            stmt.setInt(1, idusuario);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     String nombreFormulario = rs.getString("nombre_formulario");
@@ -139,20 +137,29 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    //--------------------- SÉPTIMO CRUD ---------------------------------------
-    public String obtenerUltimoFormularioRegistrado() throws SQLException {
-        String sql = "SELECT nombre FROM iweb_proy.formulario ORDER BY fecha_creacion DESC LIMIT 1";
+    //--------------------- CUARTO CARD - ULTIMO FORMULARIO ASIGNADO ---------------------------------------
+    public String obtenerUltimoFormularioRegistrado(int idusuario) throws SQLException {
+        String sql = "SELECT f.nombre \n" +
+                "                 FROM iweb_proy.formulario f \n" +
+                "                 JOIN iweb_proy.enc_has_formulario ehf ON f.idformulario = ehf.idformulario \n" +
+                "                 JOIN iweb_proy.registro_respuestas rr ON rr.idenc_has_formulario = ehf.idenc_has_formulario \n" +
+                "                 WHERE ehf.enc_idusuario = ? AND rr.estado = 'C' \n" +
+                "                 ORDER BY rr.fecha_registro DESC \n" +
+                "                 LIMIT 1";
         try (Connection con = this.getConnection();
-             PreparedStatement stmt = con.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) {
-                return rs.getString("nombre");
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idusuario);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("nombre");
+                } else {
+                    return "Sin registros";
+                }
             }
-            return "Sin registros";
         }
     }
 
-    //--------------------- OCTAVO CRUD ---------------------------------------
+    //--------------------- QUINTO CARD - FORMULARIOS POR VENCER PRONTO ---------------------------------------
     public int contarFormulariosPorVencerPronto() throws SQLException {
         String sql = "SELECT COUNT(*) FROM iweb_proy.formulario WHERE fecha_limite BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)";
         try (Connection con = this.getConnection();
@@ -165,15 +172,13 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    //--------------------- NOVENO CRUD ---------------------------------------
+    //--------------------- SEXTO CARD - TOTAL DE RESPUESTAS REGISTRADAS  ---------------------------------------
     public int contarTotalRespuestasRegistradas(int encIdUsuario) throws SQLException {
-        String sql = "SELECT COUNT(*) " +
-                "FROM respuesta r " +
-                "INNER JOIN registro_respuestas reg " +
-                "    ON r.idregistro_respuestas = reg.idregistro_respuestas " +
-                "INNER JOIN enc_has_formulario ehf " +
-                "    ON reg.idenc_has_formulario = ehf.idenc_has_formulario " +
-                "WHERE ehf.enc_idusuario = ?";
+        String sql = "SELECT COUNT(*)\n" +
+                "FROM registro_respuestas reg\n" +
+                "INNER JOIN enc_has_formulario ehf\n" +
+                "  ON reg.idenc_has_formulario = ehf.idenc_has_formulario\n" +
+                "WHERE ehf.enc_idusuario = ?\n";
 
         try (Connection con = this.getConnection();
              PreparedStatement stmt = con.prepareStatement(sql)) {
@@ -187,7 +192,7 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    //--------------------- DÉCIMO CRUD ---------------------------------------
+    //--------------------- SEPTIMO CARD - RESPUESTAS COMPLETADAS HOY  ---------------------------------------
     public int contarRespuestasCompletadasHoy(int idUsuario) throws SQLException {
         String sql = "SELECT COUNT(*) " +
                 "FROM iweb_proy.registro_respuestas rr " +
@@ -202,7 +207,9 @@ public class EstadisticasDAO extends BaseDAO {
             }
         }
     }
-    // GRAFICOS NUMERO 3
+
+
+    // GRAFICOS  DE  FORMULARIOS POR ZONA
     public Map<String, Integer> obtenerFormulariosPorZona(int idUsuario) throws SQLException {
         Map<String, Integer> resultado = new LinkedHashMap<>();
         String sql = """
@@ -235,7 +242,7 @@ public class EstadisticasDAO extends BaseDAO {
         return resultado;
     }
 
-
+    // GRAFICO PARA FORMULAIROS COMPLETADAS VS BORRADORES
     public Map<String, Integer> obtenerCantidadPorEstado(int idEncuestador) {
         Map<String, Integer> resultado = new HashMap<>();
 
@@ -998,6 +1005,7 @@ public class EstadisticasDAO extends BaseDAO {
 
 
 }
+
 
 
 
