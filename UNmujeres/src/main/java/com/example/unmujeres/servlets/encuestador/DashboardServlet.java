@@ -105,8 +105,10 @@ public class DashboardServlet extends HttpServlet {
         Map<String, Integer> formulariosPorCategoria = estadisticasDAO.obtenerRespuestasCompletadasPorFormulario(idUsuario);
         List<Map.Entry<String, Integer>> listaFormularios = new ArrayList<>(formulariosPorCategoria.entrySet());
 
+
+
         // --------- NUEVAS estadísticas ---------
-        String ultimoFormularioRegistrado = estadisticasDAO.obtenerUltimoFormularioRegistrado();
+        String ultimoFormularioRegistrado = estadisticasDAO.obtenerUltimoFormularioRegistrado(idUsuario);
         int formulariosPorVencer = estadisticasDAO.contarFormulariosPorVencerPronto();
         int totalRespuestas = estadisticasDAO.contarTotalRespuestasRegistradas(idUsuario);
         int formulariosAsignadosHoy = estadisticasDAO.contarRespuestasCompletadasHoy(idUsuario);
@@ -212,5 +214,7 @@ public class DashboardServlet extends HttpServlet {
 
     }
 }
+
+
 
 
