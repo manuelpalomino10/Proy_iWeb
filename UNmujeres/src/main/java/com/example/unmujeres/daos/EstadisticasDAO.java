@@ -31,7 +31,7 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    //--------------------- SEGUNDO CRUD ---------------------------------------
+    //--------------------- SEGUNDO GRAFICO  ---------------------------------------
     public Map<String, Integer> obtenerRespuestasCompletadasPorDia(int idUsuario) throws SQLException {
         String sql = "SELECT DATE(rr.fecha_registro) AS fecha, COUNT(*) AS cantidad " +
                 "FROM iweb_proy.registro_respuestas rr " +
@@ -267,8 +267,10 @@ public class EstadisticasDAO extends BaseDAO {
         return resultado;
     }
 
+
+
     //------------------ESTADISTICAS PARA ADMIN ---------------------------------------------------
-    // Método para obtener total de usuarios (roles 1 y 2)
+    // Metodo para obtener total de usuarios (roles 1 y 2)
     public int getTotalUsuarios() throws SQLException {
         String sql = "SELECT COUNT(*) FROM usuario WHERE idroles IN (3,2)";
         try (Connection conn = this.getConnection();
@@ -278,7 +280,7 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    // Método para coordinadores activos (rol 1)
+    // Metodo para coordinadores activos (rol 1)
     public int getCoordinadoresActivos() throws SQLException {
         String sql = "SELECT COUNT(*) FROM usuario WHERE idroles = 2 AND estado = 1";
         try (Connection conn = this.getConnection();
@@ -288,7 +290,7 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    // Método para encuestadores activos (rol 2)
+    // Metodo para encuestadores activos (rol 2)
     public int getEncuestadoresActivos() throws SQLException {
         String sql = "SELECT COUNT(*) FROM usuario WHERE idroles = 3 AND estado = 1";
         try (Connection conn = this.getConnection();
@@ -438,7 +440,7 @@ public class EstadisticasDAO extends BaseDAO {
         return resultados;
     }
 
-    // Método auxiliar para ejecutar consultas que devuelven mapas clave-valor
+    // Metodo auxiliar para ejecutar consultas que devuelven mapas clave-valor
     private Map<String, Integer> ejecutarConsultaMapa(String sql) throws SQLException {
         Map<String, Integer> resultados = new HashMap<>();
         try (Connection conn = this.getConnection();
@@ -522,8 +524,8 @@ public class EstadisticasDAO extends BaseDAO {
 
     //-------------------------COORDINADOR --------------------------------------------------------
 
-    // 1. Total de encuestadores en la zona del coordinador
 
+    // PRIMERA CARD:  Total de encuestadores en la zona del coordinador
     public int getTotalEncuestadoresCoordinador(int idCoordinador) throws SQLException {
         String sql = "SELECT COUNT(*) " +
                 "FROM usuario u " +
@@ -546,7 +548,7 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    // 2. Encuestadores activos en la zona del coordinador
+    // SEGUNDA CARD: Encuestadores activos en la zona del coordinador
     public int getEncuestadoresActivosCoordinador(int idCoordinador) throws SQLException {
         String sql = "SELECT COUNT(*) " +
                 "FROM usuario u " +
@@ -560,7 +562,7 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    // 3. Encuestadores baneados en la zona del coordinador
+    // TERCERA CARD: Encuestadores baneados en la zona del coordinador
     public int getEncuestadoresBaneadosCoordinador(int idCoordinador) throws SQLException {
         String sql = "SELECT COUNT(*) " +
                 "FROM usuario u " +
@@ -574,12 +576,13 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    // 4. Formularios asignados a encuestadores en la zona del coordinador
+    // CUARTA CARD:Formularios asignados a encuestadores en la zona del coordinador
     public int getFormulariosAsignadosCoordinador(int idCoordinador) throws SQLException {
-        String sql = "SELECT COUNT(*) " +
-                "FROM enc_has_formulario ehf " +
-                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario " +
-                "WHERE u.idroles = 3 AND u.idzona = (SELECT idzona FROM usuario WHERE idusuario = ?)";
+        String sql = "SELECT COUNT(DISTINCT ehf.idformulario)\n" +
+                "FROM enc_has_formulario ehf\n" +
+                "JOIN usuario u ON ehf.enc_idusuario = u.idusuario\n" +
+                "WHERE u.idroles = 3\n" +
+                "  AND u.idzona = (SELECT idzona FROM usuario WHERE idusuario = ?)\n";
         try (Connection conn = this.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idCoordinador);
@@ -1005,7 +1008,6 @@ public class EstadisticasDAO extends BaseDAO {
 
 
 }
-
 
 
 
