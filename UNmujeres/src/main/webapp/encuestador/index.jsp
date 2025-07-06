@@ -187,6 +187,7 @@
                 <!-- NUEVOS GRÁFICOS -->
                 <div class="row">
                     <!-- Gráfico de Barras: Formularios más respondidos -->
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                     <div class="col-lg-7">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -247,6 +248,7 @@
                 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap" rel="stylesheet">
 
 
+
                 <script>
                     // Datos para los gráficos
                     const formularioLabels = [
@@ -301,13 +303,8 @@
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: { display: false },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            return 'Respuestas: ${context.parsed.y}';
-                                        }
-                                    }
-                                }
+
+
                             },
                             scales: {
                                 x: {
@@ -384,11 +381,7 @@
                             plugins: {
                                 legend: { display: false },
                                 tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            return 'Formularios: ${context.parsed.y}';
-                                        }
-                                    }
+                                    
                                 }
                             },
                             scales: {
@@ -610,5 +603,6 @@
 </div>
 <!-- End of Page Wrapper -->
 <jsp:include page="../footer.jsp" />
+
 </body>
 </html>
