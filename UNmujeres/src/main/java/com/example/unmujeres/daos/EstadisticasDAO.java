@@ -395,28 +395,7 @@ public class EstadisticasDAO extends BaseDAO {
         }
     }
 
-    // 5. Respuestas por zona (últimos 30 días)
-    public Map<String, Integer> getRespuestasPorZona30Dias() throws SQLException {
-        String sql = "SELECT z.nombre, COUNT(rr.idregistro_respuestas) AS total " +
-                "FROM zona z " +
-                "JOIN distritos d ON z.idzona = d.idzona " +
-                "JOIN usuario u ON d.iddistritos = u.iddistritos " +
-                "JOIN enc_has_formulario ehf ON u.idusuario = ehf.enc_idusuario " +
-                "JOIN registro_respuestas rr ON ehf.idenc_has_formulario = rr.idenc_has_formulario " +
-                "WHERE rr.fecha_registro >= CURDATE() - INTERVAL 30 DAY " +
-                "GROUP BY z.nombre";
-        return ejecutarConsultaMapa(sql);
-    }
 
-    // 6. Respuestas por día (última semana)
-    public Map<String, Integer> getRespuestasUltimaSemana() throws SQLException {
-        String sql = "SELECT DATE_FORMAT(fecha_registro, '%Y-%m-%d') AS dia, COUNT(*) AS total " +
-                "FROM registro_respuestas " +
-                "WHERE fecha_registro >= CURDATE() - INTERVAL 7 DAY " +
-                "GROUP BY dia " +
-                "ORDER BY dia";
-        return ejecutarConsultaMapa(sql);
-    }
 
     // 7. Progreso de formularios por zona (%)
     public Map<String, Double> getProgresoFormulariosPorZona() throws SQLException {
@@ -440,18 +419,7 @@ public class EstadisticasDAO extends BaseDAO {
         return resultados;
     }
 
-    // Metodo auxiliar para ejecutar consultas que devuelven mapas clave-valor
-    private Map<String, Integer> ejecutarConsultaMapa(String sql) throws SQLException {
-        Map<String, Integer> resultados = new HashMap<>();
-        try (Connection conn = this.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                resultados.put(rs.getString(1), rs.getInt(2));
-            }
-        }
-        return resultados;
-    }
+
 
 
 
@@ -1008,6 +976,4 @@ public class EstadisticasDAO extends BaseDAO {
 
 
 }
-
-
 
