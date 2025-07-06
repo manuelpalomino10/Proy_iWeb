@@ -190,11 +190,12 @@
 
 
                 <!-- Fila 1 de gráficos -->
-                <div class="row">
+                <div class="row align-items-stretch">
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                     <!-- Respuestas por Zona (Últimos 30 días) -->
-                    <div class="col-xl-6 col-lg-6">
-                        <div class="card shadow mb-4">
+                    <div class="col-xl-8 col-lg-8 col-md-10 mb-4">
+                    <div class="card shadow h-120">
+
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Respuestas por Zona (Completadas vs Borrador)</h6>
                             </div>
@@ -287,16 +288,18 @@
                         });
                     </script>
 
-
+                    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap" rel="stylesheet">
+                    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
                     <!-- Distribución de Usuarios -->
-                    <div class="col-xl-6 col-lg-6">
-                        <div class="card shadow mb-4">
+                    <div class="col-xl-4 col-lg-5 col-md-6 mb-4">
+                    <div class="card shadow h-100">
+
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                 <h6 class="m-0 font-weight-bold text-primary">Distribución de Usuarios</h6>
                             </div>
                             <div class="card-body">
-                                <div class="chart-pie pt-4 pb-2">
-                                    <canvas id="distribucionUsuariosChart" width="300" height="300"></canvas>
+                                <div class="chart-pie pt-4 pb-2" style="width: 100%; max-width: 600px; margin: 0 auto;">
+                                    <canvas id="distribucionUsuariosChart"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -304,11 +307,12 @@
                 </div>
 
                 <!-- Fila 2 de gráficos -->
-                <div class="row">
+                <div class="row align-items-stretch">
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                     <!-- Respuestas por Día (Última Semana) -->
-                    <div class="col-xl-6 col-lg-6">
-                        <div class="card shadow mb-4">
+                    <div class="col-xl-6 col-lg-6 mb-4">
+                        <div class="card shadow h-100">
+
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Top 5 Encuestadores por Formularios Completados</h6>
                             </div>
@@ -384,8 +388,9 @@
                     </script>
 
                     <!-- Progreso de Formularios por Zona (%) -->
-                    <div class="col-xl-6 col-lg-6">
-                        <div class="card shadow mb-4">
+                    <div class="col-xl-6 col-lg-6 mb-4">
+                        <div class="card shadow h-100">
+
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                 <h6 class="m-0 font-weight-bold text-primary">Progreso de Formularios por Zona (%)</h6>
                             </div>
@@ -400,13 +405,34 @@
 
                 <!-- Chart.js -->
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 
                 <script>
 
 
                     // Gráfico de Pastel: Distribución de Usuarios
+                    const totalUsuarios = ${coordinadoresActivos} + ${encuestadoresActivos} + ${usuariosDesactivados};
+
+                    const centerTextPlugin = {
+                        id: 'centerText',
+                        beforeDraw: function(chart) {
+                            const { width, height, chartArea } = chart;
+                            const ctx = chart.ctx;
+                            ctx.restore();
+                            const fontSize = (height / 114).toFixed(2);
+                            ctx.font = (fontSize * 1.9) + "em 'Rubik', sans-serif";
+                            ctx.fillStyle = "#444";
+                            ctx.textBaseline = "middle";
+                            const text = totalUsuarios.toString();
+                            const textX = (chartArea.left + chartArea.right) / 2 - ctx.measureText(text).width / 2;
+                            const textY = (chartArea.top + chartArea.bottom) / 2;
+                            ctx.fillText(text, textX, textY);
+                            ctx.save();
+                        }
+                    };
+
                     const distribucionUsuariosChart = new Chart(document.getElementById('distribucionUsuariosChart'), {
-                        type: 'pie',
+                        type: 'doughnut',
                         data: {
                             labels: ['Coordinadores', 'Encuestadores', 'Desactivados'],
                             datasets: [{
@@ -417,11 +443,29 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
+                            cutout: '60%',
                             plugins: {
-                                legend: { position: 'bottom' }
+                                legend: { position: 'bottom' },
+                                datalabels: {
+                                    color: '#fff',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 16, // Aumentado
+                                        family: 'Rubik'
+                                    },
+                                    textAlign: 'center',
+                                    shadowBlur: 4,
+                                    shadowColor: 'rgba(0, 0, 0, 0.3)', // Sombra opcional
+                                    formatter: function(value) {
+                                        return value;
+                                    }
+                                }
+
                             }
-                        }
+                        },
+                        plugins: [ChartDataLabels, centerTextPlugin]
                     });
+
 
 
 
