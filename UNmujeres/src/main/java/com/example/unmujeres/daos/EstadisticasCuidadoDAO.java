@@ -39,7 +39,8 @@ public class EstadisticasCuidadoDAO extends BaseDAO {
                 "WHERE ehf.idformulario = ? " +
                 "AND s.idseccion >= 4 " +
                 "AND p.tipo_dato = 'combobox' " +
-                "AND r.respuesta IS NOT NULL";
+                "AND r.respuesta IS NOT NULL " +
+                "AND rr.estado = 'C'";
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sqlCombobox)) {
