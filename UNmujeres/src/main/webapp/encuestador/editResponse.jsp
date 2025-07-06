@@ -177,6 +177,11 @@
                                                         %>
                                                     </select>
                                                     <%
+                                                        if (pregunta.getRequerido()) {
+                                                    %>
+                                                    <small class="form-text text-muted">* Respuesta obligatoria.</small>
+                                                    <% } %>
+                                                    <%
                                                     } else {
                                                         String inputType = "text";
                                                         String patron = "";
@@ -184,7 +189,7 @@
                                                         String place = "";
                                                         if ("int".equalsIgnoreCase(pregunta.getTipoDato()) ) {
                                                             inputType = "number";
-                                                            patron = "pattern=\"\\d+\" min=\"0\" max=\"40\" inputmode=\"numeric\"";
+                                                            patron = "pattern=\"\\d+\" min=\"0\" max=\"120\" inputmode=\"numeric\"";
                                                         } else if ("date".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             inputType = "date";
                                                         } else if ("email".equalsIgnoreCase(pregunta.getTipoDato())) {

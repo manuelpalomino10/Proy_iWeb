@@ -1,10 +1,12 @@
 package com.example.unmujeres.beans;
-import java.util.Date;
+import java.time.LocalDateTime;
+//import java.util.Date;
 
 public class RegistroRespuestas {
 
     private int idRegistroRespuestas;
-    private Date fechaRegistro;
+    //private Date fechaRegistro;
+    private LocalDateTime fechaRegistro;
     private String estado;
     private EncHasFormulario encHasFormulario;
 
@@ -19,10 +21,16 @@ public class RegistroRespuestas {
         this.idRegistroRespuestas = idRegistroRespuestas;
     }
 
-    public Date getFechaRegistro() {
+//    public Date getFechaRegistro() {
+//        return fechaRegistro;
+//    }
+//    public void setFechaRegistro(Date fechaRegistro) {
+//        this.fechaRegistro = fechaRegistro;
+//    }
+    public LocalDateTime getFechaRegistro() {
         return fechaRegistro;
     }
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 

@@ -1,6 +1,8 @@
 package com.example.unmujeres.daos;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 import com.example.unmujeres.beans.EncHasFormulario;
@@ -37,7 +39,7 @@ public class RegistroRespuestasDAO extends BaseDAO {
 
                     reg.setEstado(rs.getString("estado"));
                     reg.setIdRegistroRespuestas(rs.getInt("idregistro_respuestas"));
-                    reg.setFechaRegistro(rs.getDate("fecha_registro"));
+                    reg.setFechaRegistro(rs.getTimestamp("fecha_registro").toLocalDateTime());
 
                     // Obtener asignacion por id
                     EncHasFormularioDAO encHasFormularioDAO = new EncHasFormularioDAO();
@@ -72,7 +74,7 @@ public class RegistroRespuestasDAO extends BaseDAO {
                     reg = new RegistroRespuestas();
 
                     reg.setIdRegistroRespuestas(rs.getInt("idregistro_respuestas"));
-                    reg.setFechaRegistro(rs.getDate("fecha_registro"));
+                    reg.setFechaRegistro(rs.getTimestamp("fecha_registro").toLocalDateTime());
                     reg.setEstado(rs.getString("estado"));
 
                     Formulario form = new Formulario();
@@ -174,8 +176,7 @@ public class RegistroRespuestasDAO extends BaseDAO {
 
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            ps.setDate(1, new Date(registro.getFechaRegistro().getTime()));
+            ps.setTimestamp(1, Timestamp.valueOf(registro.getFechaRegistro()));
             ps.setString(2, registro.getEstado());
             ps.setInt(3, registro.getEncHasFormulario().getIdEncHasFormulario());
             ps.executeUpdate();

@@ -18,6 +18,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @MultipartConfig
@@ -140,7 +142,7 @@ public class SubirRegistrosServlet extends HttpServlet {
                 Map<Integer, String> respuestasTexto = new HashMap<>();
                 // Para cada línea, se crea un nuevo registro en la tabla Registro que asocia el idEhf.
                 RegistroRespuestas nuevoRegistro = new RegistroRespuestas();
-                nuevoRegistro.setFechaRegistro(new Date(System.currentTimeMillis()));
+                nuevoRegistro.setFechaRegistro(LocalDateTime.now(ZoneId.of("America/Lima")));
                 nuevoRegistro.setEstado("C"); // Siempre en estado C
 
                 EncHasFormulario ehf = new EncHasFormulario();

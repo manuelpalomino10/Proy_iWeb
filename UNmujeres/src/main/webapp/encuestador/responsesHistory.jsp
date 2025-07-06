@@ -78,7 +78,7 @@
                     <th># de registro</th>
 <%--                    <th >ID de formulario</th>--%>
                     <th>Nombre</th>
-                    <th>Fecha de creación</th>
+                    <th>Fecha y hora de creación</th>
                     <th>Fecha límite</th>
                     <th>Acciones</th>
                   </tr>
@@ -93,8 +93,7 @@
 <%--                    <td><%= item.get("id_formulario") %></td>--%>
                     <td><%= item.get("nombre_formulario") %></td>
                     <td>
-                      <%= new java.text.SimpleDateFormat("dd-MM-yyyy")
-                              .format((java.util.Date) item.get("fecha_registro")) %>
+                      <%= item.get("fecha_registro") %>
                     </td>
                     <td>
                       <%= new java.text.SimpleDateFormat("dd-MM-yyyy")
@@ -135,7 +134,7 @@
 <%--                    <th># de registro</th>--%>
 <%--                    <th>ID de formulario</th>--%>
                     <th>Nombre de formulario</th>
-                    <th>Fecha de registro</th>
+                    <th>Fecha y hora de creación</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -148,8 +147,7 @@
 <%--                    <td><%= item.get("id_formulario") %></td>--%>
                     <td><%= item.get("nombre_formulario") %></td>
                     <td style="white-space: nowrap;">
-                      <%= new java.text.SimpleDateFormat("dd-MM-yyyy")
-                              .format((java.util.Date) item.get("fecha_registro")) %>
+                      <%= item.get("fecha_registro") %>
                     </td>
                   </tr>
                   <%

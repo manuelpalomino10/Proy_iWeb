@@ -16,6 +16,8 @@ import javassist.tools.web.BadHttpRequest;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -186,7 +188,9 @@ public class VerFormulariosServlet extends HttpServlet {
                                 // inicializa un item para agregar a datos
                                 Map<String, Object> item1 = new LinkedHashMap<>();
                                 // 3.5 Informacion de registro
-                                item1.put("fecha_registro", registro.getFechaRegistro());
+                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+                                String fRegFormat = registro.getFechaRegistro().format(formatter);
+                                item1.put("fecha_registro", fRegFormat);
                                 item1.put("id_registro", registro.getIdRegistroRespuestas()); // no se mostrara en vista, pero se usara para editar o descartar
 
                                 // 3.4. Informacion de formulario
@@ -200,7 +204,9 @@ public class VerFormulariosServlet extends HttpServlet {
                                 // inicializa un item para agregar a datos
                                 Map<String, Object> item2 = new LinkedHashMap<>();
                                 // 3.5 Informacion de registro
-                                item2.put("fecha_registro", registro.getFechaRegistro());
+                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+                                String fRegFormat = registro.getFechaRegistro().format(formatter);
+                                item2.put("fecha_registro", fRegFormat);
 
                                 item2.put("id_registro", registro.getIdRegistroRespuestas()); // se deberia mstrar?
 
@@ -570,7 +576,7 @@ public class VerFormulariosServlet extends HttpServlet {
 
                         // 4. Si la validación fue exitosa, crear el registro principal.
                         RegistroRespuestas nuevoRegistro = new RegistroRespuestas();
-                        nuevoRegistro.setFechaRegistro(new Date(System.currentTimeMillis()));
+                        nuevoRegistro.setFechaRegistro(LocalDateTime.now(ZoneId.of("America/Lima")));
                         nuevoRegistro.setEstado(nuevoEstado);
                         nuevoRegistro.setEncHasFormulario(asig);
                         int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);
@@ -630,9 +636,12 @@ public class VerFormulariosServlet extends HttpServlet {
 
         if ("int".equalsIgnoreCase(tipo) || "number".equalsIgnoreCase(tipo)) {
             try {
+                if (!valor.matches("\\d+")) {
+                    throw new NumberFormatException();
+                }
                 int val = Integer.parseUnsignedInt(valor);
-                if (val > 100 ) {
-                    return "Ingrese un número menor a 100";
+                if (val > 120 ) {
+                    return "Ingrese un número menor a 120.";
                 }
             } catch (NumberFormatException e) {
                 return "Debe ingresar un número válido.";
