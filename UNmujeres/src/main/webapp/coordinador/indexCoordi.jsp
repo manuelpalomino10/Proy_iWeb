@@ -220,10 +220,11 @@
                 </div>
                 <!-- Content Row 2: Gráficos -->
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                <div class="row align-items-stretch"> <!-- Fila con altura igualada -->
-                    <!-- Gráfico de barras (izquierda) -->
+                <div class="row align-items-stretch">
+
+                    <!-- Gráfico de barras  -->
                     <div class="col-xl-8 col-lg-7 mb-4">
-                        <div class="card shadow h-100"> <!-- Altura completa -->
+                        <div class="card shadow h-100">
                             <div class="card-header py-3 text-center">
                                 <h6 class="m-0 font-weight-bold text-primary">Respuestas por Formulario</h6>
                             </div>
@@ -275,7 +276,7 @@
                                 ]
                             },
                             options: {
-                                indexAxis: 'y', // <-- Esta línea convierte el gráfico en horizontal
+                                indexAxis: 'y',
                                 responsive: true,
                                 maintainAspectRatio: false,
                                 plugins: {
@@ -326,6 +327,9 @@
 
                     <!-- SEGUNDO GRAFICO - ACTIVOS VS BANEADOS -->
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
                     <div class="col-xl-4 col-lg-5 mb-4">
                         <div class="card shadow h-100"> <!-- Altura completa -->
                             <div class="card-header py-3">
@@ -351,8 +355,10 @@
                 <!-- TERCER GRAFICO - POR ZONA -->
                 <div class="row">
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
                     <div class="col-xl-6 col-lg-6">
-                        <div class="card shadow h-100"> <!-- h-100 fuerza que ambas tarjetas tengan misma altura -->
+                        <div class="card shadow h-100">
                             <div class="card-header py-3 text-center">
                                 <h6 class="m-0 font-weight-bold text-primary">Porcentaje de Formularios</h6>
                             </div>
@@ -363,29 +369,88 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Asegúrate de incluir Chart.js y el plugin de datalabels -->
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
                     <script>
-                        const labelsEstados = ['Completado', 'Borrador', 'No iniciado'];
+                        const labelsEstados = ['Completado', 'Borrador'];
                         const dataEstados = [
                             ${formulariosPorEstado['Completado'] != null ? formulariosPorEstado['Completado'] : 0},
                             ${formulariosPorEstado['Borrador'] != null ? formulariosPorEstado['Borrador'] : 0},
-                            ${formulariosPorEstado['No iniciado'] != null ? formulariosPorEstado['No iniciado'] : 0}
+
                         ];
 
-                        new Chart(document.getElementById("graficoEstados"), {
+                        const totalFormularios = dataEstados.reduce((a, b) => a + b, 0);
+
+                        new Chart(document.getElementById("graficoEstados").getContext('2d'), {
                             type: 'doughnut',
                             data: {
                                 labels: labelsEstados,
                                 datasets: [{
                                     data: dataEstados,
-                                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                                    backgroundColor: ['#28a745', '#ffc107'],
                                 }]
                             },
                             options: {
                                 responsive: true,
-                                maintainAspectRatio: false
-                            }
+                                maintainAspectRatio: false,
+                                cutout: '50%',
+                                plugins: {
+                                    legend: {
+                                        display: true,
+                                        position: 'bottom',
+                                        labels: {
+                                            font: {
+                                                family: 'Rubik, sans-serif',
+                                                weight: 'bold'
+                                            }
+                                        }
+                                    },
+                                    datalabels: {
+                                        color: '#000',
+                                        font: {
+                                            family: 'Rubik, sans-serif',
+                                            weight: 'bold',
+                                            size: 14
+                                        },
+                                        formatter: function(value, context) {
+                                            const total = context.chart.data.datasets[0].data.reduce((a,b) => a + b, 0);
+                                            const porcentaje = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
+                                            return value;
+                                        },
+                                        anchor: 'center',
+                                        align: 'center'
+                                    }
+
+
+                                }
+                            },
+                            plugins: [
+                                ChartDataLabels,
+                                {
+                                    id: 'centerText',
+                                    beforeDraw(chart) {
+                                        const { ctx } = chart;
+                                        const { top, bottom, left, right } = chart.chartArea;
+                                        const x = (left + right) / 2;
+                                        const y = (top + bottom) / 2;
+
+                                        ctx.save();
+                                        ctx.font = 'bold 30px Poppins, sans-serif';
+                                        ctx.fillStyle = '#000';
+                                        ctx.textAlign = 'center';
+                                        ctx.textBaseline = 'middle';
+                                        ctx.fillText(totalFormularios, x, y);
+                                        ctx.restore();
+                                    }
+                                }
+
+
+                            ]
                         });
                     </script>
+
 
 
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -505,6 +570,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 
 <!-- Custom Chart Scripts -->
 <script>
@@ -625,6 +692,11 @@
         console.error("[ERROR] JSP - Canvas myPieChart no encontrado");
     } else {
         try {
+            var total = pieData.reduce((a,b) => a + b, 0);
+
+            // Suma total
+            var total = pieData.reduce((a,b) => a + b, 0);
+
             var myPieChart = new Chart(ctxPie.getContext('2d'), {
                 type: 'doughnut',
                 data: {
@@ -638,16 +710,48 @@
                 },
                 options: {
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    cutout: '50%'
+                    cutout: '50%',
+                    plugins: {
+                        legend: { display: false },
+                        datalabels: {
+                            color: '#000',
+                            font: {
+                                family: 'Rubik, sans-serif',
+                                weight: 'bold',
+                                size: 14
+                            },
+                            formatter: function(value, context) {
 
-                }
+                                return value + '%';
+                            },
+                            anchor: 'center',
+                            align: 'center'
+                        }
+                    }
+                },
+                plugins: [ChartDataLabels,
+                    {
+                        id: 'centerText',
+                        beforeDraw(chart) {
+                            const {ctx, width, height} = chart;
+                            ctx.save();
+                            ctx.font = 'bold 24px Rubik, sans-serif';
+                            ctx.fillStyle = '#000';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+
+                            ctx.restore();
+                        }
+                    }
+                ]
             });
-            console.log("[DEBUG] JSP - Gráfico de torta creado");
+
+            console.log("[DEBUG] JSP - Gráfico de torta creado con total en centro");
         } catch (e) {
             console.error("[ERROR] JSP - Error al crear gráfico de torta: ", e);
         }
     }
+
 </script>
 
 </body>
