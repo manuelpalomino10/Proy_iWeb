@@ -141,16 +141,49 @@
     <!-- Page level plugins -->
     <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap" rel="stylesheet">
+
 
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+
+                const centerTextPlugin = {
+                    id: 'centerText',
+                    beforeDraw(chart) {
+                        const { width, height, chartArea } = chart;
+                        const ctx = chart.ctx;
+                        const dataset = chart.data.datasets[0];
+                        const total = dataset.data.reduce((a, b) => a + b, 0);
+
+                        ctx.save();
+                        const fontSize = (height / 114).toFixed(2);
+                        ctx.font = (fontSize * 1.8) + "em 'Rubik', sans-serif";
+                        ctx.fillStyle = "#444";
+                        ctx.textBaseline = "middle";
+                        const text = total.toString();
+                        const textX = (chartArea.left + chartArea.right) / 2 - ctx.measureText(text).width / 2;
+                        const textY = (chartArea.top + chartArea.bottom) / 2;
+                        ctx.fillText(text, textX, textY);
+                        ctx.restore();
+                    }
+                };
+
                 <c:forEach var="grafico" items="${estadisticas.datosGraficos}">
                 new Chart(document.getElementById('chart_${grafico.key.hashCode()}'), {
-                    type: 'pie',
+                    type: 'doughnut',
                     data: {
-                        labels: [<c:forEach var="entry" items="${grafico.value}" varStatus="loop">'${entry.key}'<c:if test="${!loop.last}">, </c:if></c:forEach>],
+                        labels: [
+                            <c:forEach var="entry" items="${grafico.value}" varStatus="loop">
+                            '${entry.key}'<c:if test="${!loop.last}">, </c:if>
+                            </c:forEach>
+                        ],
                         datasets: [{
-                            data: [<c:forEach var="entry" items="${grafico.value}" varStatus="loop">${entry.value}<c:if test="${!loop.last}">, </c:if></c:forEach>],
+                            data: [
+                                <c:forEach var="entry" items="${grafico.value}" varStatus="loop">
+                                ${entry.value}<c:if test="${!loop.last}">, </c:if>
+                                </c:forEach>
+                            ],
                             backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
                             hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
                             borderWidth: 1
@@ -159,32 +192,31 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        cutout: '60%',
                         plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    afterLabel: function(context) {
-                                        const dataset = context.dataset;
-                                        const total = dataset.data.reduce((a, b) => a + b, 0);
-                                        const value = dataset.data[context.dataIndex];
-                                        const percentage = Math.round((value / total) * 100);
-
-                                    }
-                                }
+                            datalabels: {
+                                color: '#fff',
+                                font: {
+                                    weight: 'bold',
+                                    size: 19,
+                                    family: 'Rubik'
+                                },
+                                formatter: (value) => value
                             },
                             legend: {
                                 position: 'right',
                                 labels: {
-                                    font: {
-                                        size: 12
-                                    },
+                                    font: { size: 12 },
                                     padding: 20
                                 }
                             }
                         }
-                    }
+                    },
+                    plugins: [ChartDataLabels, centerTextPlugin]
                 });
                 </c:forEach>
             });
+
         </script>
 
     <script>
