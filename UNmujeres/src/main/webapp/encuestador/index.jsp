@@ -212,6 +212,7 @@
                     </div>
                 </div>
 
+
                 <div class="row">
                     <!-- Gráfico: Formularios completados por distrito -->
                     <div class="col-xl-6 col-lg-6">
@@ -225,6 +226,8 @@
                         </div>
                     </div>
 
+                    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap" rel="stylesheet">
+                    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
                     <!-- Gráfico: Estado de respuestas -->
                     <div class="col-xl-6 col-lg-6">
                         <div class="card shadow mb-4">
@@ -240,6 +243,9 @@
 
                 <!-- Chart.js -->
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+                <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap" rel="stylesheet">
+
 
                 <script>
                     // Datos para los gráficos
@@ -412,19 +418,55 @@
                         }
                     });
 
+
+
+
+                    const estadoCompletadas = Number("${estadoCompletadas != null ? estadoCompletadas : 0}");
+                    const estadoBorradores = Number("${estadoBorradores != null ? estadoBorradores : 0}");
+                    const totalEstado = estadoCompletadas + estadoBorradores;
+
+                    console.log("estadoCompletadas =", estadoCompletadas);
+                    console.log("estadoBorradores =", estadoBorradores);
+                    console.log("totalEstado =", totalEstado);
+
                     const estadoData = {
                         labels: ['Completadas', 'Borradores'],
                         datasets: [{
                             label: 'Cantidad de respuestas',
-                            data: [
-                                ${estadoCompletadas != null ? estadoCompletadas : 0},
-                                ${estadoBorradores != null ? estadoBorradores : 0}
-                            ],
+                            data: [estadoCompletadas, estadoBorradores],
                             backgroundColor: ['#4CAF50', '#FFC107'],
                             borderColor: ['#388E3C', '#FFA000'],
                             borderWidth: 1
                         }]
                     };
+
+                    const centerTextPlugin = {
+                        id: 'centerText',
+                        beforeDraw: function(chart) {
+                            const ctx = chart.ctx;
+                            const { chartArea } = chart;
+
+                            ctx.save();
+
+                            const text = totalEstado.toString();
+
+                            // Forzamos tamaño sin depender del CSS
+                            let fontSize = Math.min(chart.width, chart.height) / 4;  // Ajusta divisor
+                            ctx.font = `60px 'Rubik', sans-serif`;
+
+                            ctx.fillStyle = "#444";
+                            ctx.textBaseline = "middle";
+                            ctx.textAlign = "center";
+
+                            const textX = (chartArea.left + chartArea.right) / 2;
+                            const textY = (chartArea.top + chartArea.bottom) / 2;
+
+                            ctx.fillText(text, textX, textY);
+
+                            ctx.restore();
+                        }
+                    };
+
 
                     const estadoChart = new Chart(document.getElementById('estadoRespuestasChart'), {
                         type: 'doughnut',
@@ -432,26 +474,29 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
+                            cutout: '60%',
                             plugins: {
                                 legend: {
                                     position: 'bottom',
                                     labels: { color: '#000' }
                                 },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            const dataset = context.dataset;
-                                            const total = dataset.data.reduce((a, b) => a + b, 0);
-                                            const value = dataset.data[context.dataIndex];
-                                            const percentage = Math.round((value / total) * 100);
-                                        }
-
-                                        
+                                datalabels: {
+                                    color: '#fff',
+                                    font: {
+                                        weight: 'bold',
+                                        size: 16
+                                    },
+                                    formatter: function(value) {
+                                        return value;
                                     }
                                 }
                             }
-                        }
+                        },
+                        plugins: [ChartDataLabels, centerTextPlugin]
                     });
+
+
+
 
                     const diaLabels = [
                         <c:forEach items="${respuestasPorDia}" var="dato" varStatus="loop">
