@@ -78,8 +78,7 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("promedioRespuestas", estadisticasDAO.getPromedioRespuestasPorEncuestador());
         request.setAttribute("usuariosDesactivados", estadisticasDAO.getUsuariosDesactivados());
         request.setAttribute("zonaMasActiva", estadisticasDAO.getZonaConMasRespuestas());
-        request.setAttribute("respuestas30Dias", estadisticasDAO.getRespuestasPorZona30Dias());
-        request.setAttribute("respuestasUltimaSemana", estadisticasDAO.getRespuestasUltimaSemana());
+
         request.setAttribute("progresoFormularios", estadisticasDAO.getProgresoFormulariosPorZona());
         request.setAttribute("totalRespuestas", estadisticasDAO.getTotalRespuestas());
 
@@ -214,6 +213,10 @@ public class DashboardServlet extends HttpServlet {
 
     }
 }
+
+
+
+
 
 
 
