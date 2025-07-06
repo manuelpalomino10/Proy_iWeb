@@ -139,7 +139,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            Respuestas Completadas por Zona
+                                            Respuestas Completadas en mi Zona
                                         </div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                                             <c:out value="${formulariosCompletados != null ? formulariosCompletados : '0'}" />
@@ -217,69 +217,192 @@
                             </div>
                         </div>
                     </div>
-
-
-
-
-
                 </div>
                 <!-- Content Row 2: Gráficos -->
-                <div class="row">
-
-                    <!-- Gráfico de Área: Formularios Completados por Zona -->
-                    <div class="col-xl-8 col-lg-7">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Cantidad de Formularios Completados por Zona</h6>
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                <div class="row align-items-stretch"> <!-- Fila con altura igualada -->
+                    <!-- Gráfico de barras (izquierda) -->
+                    <div class="col-xl-8 col-lg-7 mb-4">
+                        <div class="card shadow h-100"> <!-- Altura completa -->
+                            <div class="card-header py-3 text-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Respuestas por Formulario</h6>
                             </div>
-                            <div class="card-body">
-                                <div class="chart-area" style="height: 300px;">
-                                    <canvas id="myAreaChart"></canvas>
+                            <div class="card-body d-flex flex-column">
+                                <div class="flex-grow-1" style="min-height: 300px; overflow-x: auto;">
+                                    <canvas id="graficoFormularios"></canvas>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <script>
+                        const labelsFormularios = [
+                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
+                            '<c:out value="${entry.key}" />',
+                            </c:forEach>
+                        ];
 
-                    <!-- Gráfico de Torta: Porcentaje Activos vs Baneados -->
-                    <div class="col-xl-4 col-lg-5">
-                        <div class="card shadow mb-4">
+                        const datosCompletados = [
+                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
+                            <c:out value="${entry.value['C'] != null ? entry.value['C'] : 0}" />,
+                            </c:forEach>
+                        ];
+
+                        const datosBorradores = [
+                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
+                            <c:out value="${entry.value['B'] != null ? entry.value['B'] : 0}" />,
+                            </c:forEach>
+                        ];
+
+                        const etiquetasVisibles = labelsFormularios.map(nombre => {
+                            return nombre.length > 20 ? nombre.substring(0, 20) + "..." : nombre;
+                        });
+
+                        new Chart(document.getElementById("graficoFormularios"), {
+                            type: 'bar',
+                            data: {
+                                labels: etiquetasVisibles,
+                                datasets: [
+                                    {
+                                        label: 'Completado',
+                                        data: datosCompletados,
+                                        backgroundColor: '#28a745'
+                                    },
+                                    {
+                                        label: 'Borrador',
+                                        data: datosBorradores,
+                                        backgroundColor: '#ffc107'
+                                    }
+                                ]
+                            },
+                            options: {
+                                indexAxis: 'y', // <-- Esta línea convierte el gráfico en horizontal
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: { position: 'top' },
+                                    tooltip: {
+                                        callbacks: {
+                                            title: function(context) {
+                                                const index = context[0].dataIndex;
+                                                return labelsFormularios[index];
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Cantidad de respuestas',
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
+                                        }
+                                    },
+                                    y: {
+                                        stacked: true,
+                                        ticks: {
+                                            autoSkip: false
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Formularios',
+                                            font: {
+                                                size: 14,
+                                                weight: 'bold'
+                                            },
+                                            color: '#007bff'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+
+
+                    <!-- SEGUNDO GRAFICO - ACTIVOS VS BANEADOS -->
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <div class="col-xl-4 col-lg-5 mb-4">
+                        <div class="card shadow h-100"> <!-- Altura completa -->
                             <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-primary">Porcentaje de Encuestadores Activos vs Baneados</h6>
                             </div>
-                            <div class="card-body">
-                                <div class="chart-pie pt-4 pb-2" style="height: 250px;">
+                            <div class="card-body d-flex flex-column">
+                                <div class="chart-pie flex-grow-1 pt-4 pb-2">
                                     <canvas id="myPieChart"></canvas>
                                 </div>
                                 <div class="mt-4 text-center small">
+          <span class="mr-2">
+            <i class="fas fa-circle text-primary"></i> Activos
+          </span>
                                     <span class="mr-2">
-                                        <i class="fas fa-circle text-primary"></i> Activos
-                                    </span>
-                                    <span class="mr-2">
-                                        <i class="fas fa-circle text-warning"></i> Baneados
-                                    </span>
+            <i class="fas fa-circle text-warning"></i> Baneados
+          </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-
+                <!-- TERCER GRAFICO - POR ZONA -->
                 <div class="row">
                     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                    <!-- Gráfico de barras horizontales: Cantidad de respuestas por distrito -->
                     <div class="col-xl-6 col-lg-6">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Respuestas por Distrito</h6>
+                        <div class="card shadow h-100"> <!-- h-100 fuerza que ambas tarjetas tengan misma altura -->
+                            <div class="card-header py-3 text-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Porcentaje de Formularios</h6>
                             </div>
-                            <div class="card-body">
-                                <div class="chart-bar d-flex justify-content-center align-items-center" style="height: 350px;">
-                                    <canvas id="graficoDistrito"></canvas>
+                            <div class="card-body d-flex justify-content-center align-items-center flex-column">
+                                <div class="flex-grow-1 d-flex justify-content-center align-items-center" style="width: 100%;">
+                                    <canvas id="graficoEstados" style="max-height: 350px;"></canvas>
                                 </div>
-
                             </div>
                         </div>
                     </div>
+                    <script>
+                        const labelsEstados = ['Completado', 'Borrador', 'No iniciado'];
+                        const dataEstados = [
+                            ${formulariosPorEstado['Completado'] != null ? formulariosPorEstado['Completado'] : 0},
+                            ${formulariosPorEstado['Borrador'] != null ? formulariosPorEstado['Borrador'] : 0},
+                            ${formulariosPorEstado['No iniciado'] != null ? formulariosPorEstado['No iniciado'] : 0}
+                        ];
+
+                        new Chart(document.getElementById("graficoEstados"), {
+                            type: 'doughnut',
+                            data: {
+                                labels: labelsEstados,
+                                datasets: [{
+                                    data: dataEstados,
+                                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false
+                            }
+                        });
+                    </script>
+
+
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                    <!-- Gráfico de barras horizontales: Cantidad de respuestas por distrito -->
+                    <div class="col-xl-6 col-lg-6">
+                        <div class="card shadow h-100">
+                            <div class="card-header py-3 text-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Respuestas por Distrito</h6>
+                            </div>
+                            <div class="card-body d-flex justify-content-center align-items-center">
+                                <div class="chart-bar" style="width: 100%;">
+                                    <canvas id="graficoDistrito" style="max-height: 350px;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <script>
                         const labelsDistrito = [
                             <c:forEach var="entry" items="${respuestasPorDistrito}">
@@ -340,234 +463,14 @@
                         });
                     </script>
 
-                    <!-- Gráfico de líneas: Evolución de respuestas en el tiempo (últimos 7 días) -->
-                    <div class="col-xl-6 col-lg-6">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Evolución de Respuestas (Últimos Días)</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-area d-flex justify-content-center align-items-center" style="height: 350px;">
-                                    <canvas id="graficoEvolucion"></canvas>
-                                </div>
 
-                            </div>
-                        </div>
-                    </div>
-                    <script>
-                        const labelsEvolucion = [
-                            <c:forEach var="entry" items="${respuestasUltimos7Dias}">
-                            '<c:out value="${entry.key}" />',
-                            </c:forEach>
-                        ];
-                        const dataEvolucion = [
-                            <c:forEach var="entry" items="${respuestasUltimos7Dias}">
-                            <c:out value="${entry.value}" />,
-                            </c:forEach>
-                        ];
 
-                        new Chart(document.getElementById("graficoEvolucion"), {
-                            type: 'line',
-                            data: {
-                                labels: labelsEvolucion,
-                                datasets: [{
-                                    label: 'Respuestas completadas',
-                                    data: dataEvolucion,
-                                    fill: true,
-                                    backgroundColor: 'rgba(75,192,192,0.2)',
-                                    borderColor: 'rgba(75,192,192,1)',
-                                    tension: 0.3
-                                }]
-                            },
-                            options: {
-                                maintainAspectRatio: false,
-                                scales: {
-                                    x: {
-                                        grid: { display: false },
-                                        title: {
-                                            display: true,
-                                            text: 'Fecha',
-                                            font: {
-                                                size: 14,
-                                                weight: 'bold'
-                                            },
-                                            color: '#007bff'
-                                        }
-                                    },
-                                    y: {
-                                        beginAtZero: true,
-                                        grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                                        title: {
-                                            display: true,
-                                            text: 'Cantidad de respuestas',
-                                            font: {
-                                                size: 14,
-                                                weight: 'bold'
-                                            },
-                                            color: '#007bff'
-                                        }
-                                    }
-                                },
-                                plugins: {
-                                    legend: { display: false }
-                                }
-                            }
-                        });
-                    </script>
                 </div>
 
 
 
 
-                <div class="row">
-                    <!-- Gráfico de pastel: Porcentaje de formularios por estado -->
-                    <!-- Gráfico de Porcentaje de Formularios -->
-                    <div class="col-xl-4 col-lg-5">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3 text-center">
-                                <h6 class="m-0 font-weight-bold text-primary">Porcentaje de Formularios</h6>
-                            </div>
-                            <div class="card-body d-flex justify-content-center align-items-center flex-column">
-                                <div style="height: 350px; width: 250px;">
-                                    <canvas id="graficoEstados"></canvas>
-                                </div>
-                                <div class="mt-3 text-center small">
 
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <script>
-                        const labelsEstados = ['Completado', 'Borrador', 'No iniciado'];
-                        const dataEstados = [
-                            ${formulariosPorEstado['Completado'] != null ? formulariosPorEstado['Completado'] : 0},
-                            ${formulariosPorEstado['Borrador'] != null ? formulariosPorEstado['Borrador'] : 0},
-                            ${formulariosPorEstado['No iniciado'] != null ? formulariosPorEstado['No iniciado'] : 0}
-                        ];
-
-                        new Chart(document.getElementById("graficoEstados"), {
-                            type: 'doughnut',
-                            data: {
-                                labels: labelsEstados,
-                                datasets: [{
-                                    data: dataEstados,
-                                    backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false
-                            }
-                        });
-                    </script>
-
-                    <!-- Gráfico de barras apiladas: Respuestas por formulario por tipo -->
-                    <div class="col-xl-8 col-lg-7">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3 text-center">
-                                <h6 class="m-0 font-weight-bold text-primary">Respuestas por Formulario</h6>
-                            </div>
-                            <div class="card-body">
-                                <div style="height: 400px; overflow-x: auto;">
-                                    <canvas id="graficoFormularios" style="min-width: 700px;"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <script>
-                        const labelsFormularios = [
-                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
-                            '<c:out value="${entry.key}" />',
-                            </c:forEach>
-                        ];
-
-                        const datosCompletados = [
-                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
-                            <c:out value="${entry.value['C'] != null ? entry.value['C'] : 0}" />,
-                            </c:forEach>
-                        ];
-
-                        const datosBorradores = [
-                            <c:forEach var="entry" items="${respuestasPorFormularioEstado}">
-                            <c:out value="${entry.value['B'] != null ? entry.value['B'] : 0}" />,
-                            </c:forEach>
-                        ];
-                        const etiquetasVisibles = labelsFormularios.map(nombre => {
-                            return nombre.length > 20 ? nombre.substring(0, 20) + "..." : nombre;
-                        });
-
-                        new Chart(document.getElementById("graficoFormularios"), {
-                            type: 'bar',
-                            data: {
-                                labels: etiquetasVisibles,
-                                datasets: [
-                                    {
-                                        label: 'Completado',
-                                        data: datosCompletados,
-                                        backgroundColor: '#28a745'
-                                    },
-                                    {
-                                        label: 'Borrador',
-                                        data: datosBorradores,
-                                        backgroundColor: '#ffc107'
-                                    }
-                                ]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: { position: 'top' },
-                                    tooltip: {
-                                        callbacks: {
-                                            title: function(context) {
-                                                const index = context[0].dataIndex;
-                                                return labelsFormularios[index];
-                                            }
-                                        }
-                                    }
-                                },
-                                scales: {
-                                    x: {
-                                        stacked: true,
-                                        ticks: {
-                                            maxRotation: 45,
-                                            minRotation: 45,
-                                            autoSkip: false
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'Formularios',
-                                            font: {
-                                                size: 14,
-                                                weight: 'bold'
-                                            },
-                                            color: '#007bff'
-                                        }
-                                    },
-                                    y: {
-                                        stacked: true,
-                                        beginAtZero: true,
-                                        title: {
-                                            display: true,
-                                            text: 'Cantidad de respuestas',
-                                            font: {
-                                                size: 14,
-                                                weight: 'bold'
-                                            },
-                                            color: '#007bff'
-                                        }
-                                    }
-                                }
-                            }
-
-                        });
-
-                    </script>
-
-                </div>
 
 
 
