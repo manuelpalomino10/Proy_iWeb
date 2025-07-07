@@ -30,7 +30,7 @@ public class EncHasFormularioDAO extends BaseDAO {
                     EncHasFormulario a = new EncHasFormulario();
 
                     a.setIdEncHasFormulario(rs.getInt("idenc_has_formulario"));
-                    System.out.println("Se extrajo idehf "+ a.getIdEncHasFormulario());
+                    //System.out.println("Se extrajo idehf "+ a.getIdEncHasFormulario());
                     a.setFechaAsignacion(rs.getDate("fecha_asignacion"));
                     a.setCodigo(rs.getString("codigo"));
 

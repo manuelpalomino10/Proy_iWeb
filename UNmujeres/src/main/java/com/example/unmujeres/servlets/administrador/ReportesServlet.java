@@ -3,7 +3,6 @@ package com.example.unmujeres.servlets.administrador;
 import com.example.unmujeres.beans.Roles;
 import com.example.unmujeres.beans.Usuario;
 import com.example.unmujeres.beans.Zona;
-import com.example.unmujeres.beans.Respuesta;
 import com.example.unmujeres.daos.FormularioDAO;
 import com.example.unmujeres.daos.RolesDAO;
 import com.example.unmujeres.daos.ZonaDAO;
@@ -14,6 +13,8 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -179,7 +180,8 @@ public class ReportesServlet extends HttpServlet {
                     int numeroFilas = 0;
 
                     // Crear un archivo temporal para la descarga
-                    String fileName = "Reporte Formulario"+idForm+".csv";
+                    String fileName = genNombreReporte(idForm);
+                    //String fileName = "Reporte Formulario"+idForm+".csv";
                     File tempFile = File.createTempFile("Reporte_Formulario"+idForm, ".csv");
                     try (BufferedReader br = new BufferedReader(new FileReader(originalFile));
                          PrintWriter pw = new PrintWriter(new FileWriter(tempFile))) {
@@ -189,7 +191,7 @@ public class ReportesServlet extends HttpServlet {
                         // Copiar las primeras 6 líneas sin cambios
                         while ((line = br.readLine()) != null && lineNumber <= 6) {
                             pw.println(line);
-                            System.out.println(line);
+                            //System.out.println(line);
                             lineNumber++;
                         }
 
@@ -198,14 +200,13 @@ public class ReportesServlet extends HttpServlet {
                         StringBuilder rowContent = new StringBuilder();
                         // Definir el delimitador usado en el CSV (por ejemplo, coma)
                         String delimiter = ";";
-
+                        String prevCode = contenido.getFirst().getCodEnc();
                         for (ContenidoReporteDTO resp : contenido) {
                             String respuestaValue = (resp.getRespuesta() == null) ? "" : resp.getRespuesta();
-                            String code = (resp.getCodEnc() == null) ? "" : resp.getCodEnc();
                             if (resp.getIdRegistro() != currentRegistro) {
                                 // Si no es el primer registro, escribir la fila anterior
                                 if (currentRegistro != -1) {
-                                    rowContent.append(delimiter).append(code);
+                                    rowContent.append(delimiter).append(prevCode);
                                     pw.println(rowContent.toString());
                                 }
                                 // Comenzar una nueva línea
@@ -217,10 +218,13 @@ public class ReportesServlet extends HttpServlet {
                             } else {
                                 // Mismo idRegistro: agregar el valor en la siguiente columna
                                 rowContent.append(delimiter).append(respuestaValue);
+                                prevCode = (resp.getCodEnc() == null) ? "" : resp.getCodEnc();
                             }
                         }
                         // Escribir la última línea si existe contenido
                         if (rowContent.length() > 0) {
+                            String lastCode = contenido.getLast().getCodEnc();
+                            rowContent.append(delimiter).append(lastCode);
                             pw.println(rowContent.toString());
                         }
 
@@ -256,7 +260,16 @@ public class ReportesServlet extends HttpServlet {
                     return;
                 }
             break;
+            default:
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
+    }
+
+    private String genNombreReporte(int idF) {
+        LocalDateTime ahora = LocalDateTime.now(ZoneId.of("America/Lima"));
+        String fecha = ahora.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        String hora = ahora.format(DateTimeFormatter.ofPattern("HHmmss"));
+        return "Reporte_Formulario"+idF+"_"+fecha+"_"+hora+".csv";
     }
 
     @Override

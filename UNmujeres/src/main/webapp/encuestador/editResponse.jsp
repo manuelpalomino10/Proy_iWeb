@@ -88,8 +88,9 @@
                         }
                         Map<Integer, String> valoresForm = (Map<Integer, String>) session.getAttribute("valoresFormulario");
                         if (valoresForm != null) {
-                            // Puedes copiar esos datos a un atributo de la request y luego removerlos
-                            //request.setAttribute("valoresFormulario", valoresForm);
+//                            System.out.println("Retribuidos valores form de inputs");
+//                            System.out.println(valoresForm.keySet().toString());
+//                            System.out.println(valoresForm.values().toString());
                             session.removeAttribute("valoresFormulario");
                         }
                     %>
@@ -154,9 +155,6 @@
                                                                 for(OpcionPregunta opcion : opciones) {
                                                                     if(opcion.getPregunta().getIdPregunta() == pregunta.getIdPregunta()) {
                                                                         String selected = null;
-//                                                                        if (respuesta.getRespuesta() != null && respuesta.getRespuesta().equals(opcion.getOpcion())) {
-//                                                                            selected = "selected";
-//                                                                        }
                                                                         if (valoresForm!=null) {
                                                                             if (opcion.getOpcion().equals(valoresForm.get(respuesta.getIdRespuesta()))) {
                                                                                 selected = "selected";
@@ -208,10 +206,11 @@
                                                         }
                                                         String inputValue = "";
                                                         if (valoresForm!=null){
-                                                            inputValue = valoresForm.get(pregunta.getIdPregunta()) != null ? valoresForm.get(respuesta.getIdRespuesta()) : "";
+                                                            inputValue = valoresForm.get(respuesta.getIdRespuesta()) != null ? valoresForm.get(respuesta.getIdRespuesta()) : "";
                                                         } else {
                                                             inputValue = respuesta.getRespuesta()!= null ? respuesta.getRespuesta() : "";
                                                         }
+                                                        System.out.println("Value de input de respuesta "+respuesta.getIdRespuesta()+" es: "+inputValue);
                                                         String inputError= "";
                                                         if (errores!=null) {
                                                             if (errores.containsKey(pregunta.getIdPregunta())) {
@@ -355,7 +354,8 @@
                     errores
                 );
             } else {
-                form.submit();
+                //form.submit();
+                $('#SaveRegModal').modal('show');
             }
         });
 

@@ -172,7 +172,7 @@ public class VerFormulariosServlet extends HttpServlet {
 
                     // 3. lista de borradores
                     for (EncHasFormulario asignacion : asignaciones) {
-                        System.out.println("Asignacion id es: "+asignacion.getIdEncHasFormulario());
+                        //System.out.println("Asignacion id es: "+asignacion.getIdEncHasFormulario());
 
                         // 3.1. Informacion de registro, arreglo de registros en asignacion
                         ArrayList<RegistroRespuestas> registros = registroDAO.getByEhf(asignacion.getIdEncHasFormulario());
@@ -398,18 +398,20 @@ public class VerFormulariosServlet extends HttpServlet {
                                     idRespuesta = Integer.parseUnsignedInt(idStr);
 
                                     if (!idR_preguntaMap.containsKey(idRespuesta)) {
-                                        System.out.println("Mapa de respuestas-preguntas no contiene key ID de respuesta: " + idRespuesta);
+                                        System.err.println("Mapa de respuestas-preguntas no contiene key ID de respuesta: " + idRespuesta);
                                         throw new IllegalArgumentException("Solicitud malformada");
 //                                    } else {
 //                                        System.out.println("Mapa de respuestas-preguntas contiene key ID de respuesta: " + idRespuesta);
 //                                        Pregunta pregunta = idR_preguntaMap.get(idRespuesta);
                                     }
 
+
                                     // 2.2 Validar contenido textual
                                     String[] valores = parametroMap.get(paramName);
                                     String valor = (valores != null && valores.length > 0) ? valores[0] : null;
                                     // Aplica .trim() sólo si el valor no es null
                                     String valorNormalizado = (valor != null) ? valor.trim() : "";
+                                    System.out.println(paramName+" value es: "+valorNormalizado);
 
                                     inputs.put(idRespuesta, valorNormalizado);
 
@@ -430,10 +432,14 @@ public class VerFormulariosServlet extends HttpServlet {
                                     }
                                 } catch (NumberFormatException e) {
                                     System.err.println("ID de pregunta inválido en el parámetro: " + paramName);
-
-                                    return;
+                                    throw new IllegalArgumentException("Solicitud malformada");
                                 }
                             }
+                        }
+                        // 2.3 Validar que no existan duplicados ni sobrantes ni faltantes
+                        if (!inputs.keySet().equals(idR_preguntaMap.keySet())) {
+                            System.err.println("IDs recibidos de respuestas no se igualan a las esperadas (DB)");
+                            throw new IllegalArgumentException("Solicitud malformada");
                         }
 
                         // 3. Si hay errores de validación, reenvía al formulario para que el usuario corrija los datos.
@@ -453,8 +459,8 @@ public class VerFormulariosServlet extends HttpServlet {
 
                     }
 
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
+//                } catch (NumberFormatException e) {
+//                    e.printStackTrace();
                 } catch (IllegalArgumentException | NotFoundException e) {
                     session.setAttribute("error", e.getMessage());
                     //response.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
@@ -467,7 +473,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     return;
                 }
 
-                session.setAttribute("success", "Registro actualizado con éxito");
+                session.setAttribute("success", "Registro actualizado con éxito y guardado como "+acto1);
                 response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
 
                 break;
@@ -526,7 +532,7 @@ public class VerFormulariosServlet extends HttpServlet {
                                     int idPregunta = Integer.parseUnsignedInt(idPregStr);
 
                                     if (!idP_preguntaMap.containsKey(idPregunta)) {
-                                        System.out.println("Mapa de preguntas-preguntas no contiene key ID de pregunta: " + idPregunta);
+                                        System.err.println("Mapa de preguntas-preguntas no contiene key ID de pregunta: " + idPregunta);
                                         throw new IllegalArgumentException("Solicitud malformada");
 //                                    } else {
 //                                        Pregunta pregunta = idP_preguntaMap.get(idPregunta);
@@ -563,6 +569,11 @@ public class VerFormulariosServlet extends HttpServlet {
                                     return;
                                 }
                             }
+                        }
+                        // 2.3 Validar que no existan duplicados ni sobrantes ni faltantes
+                        if (!inputs.keySet().equals(idP_preguntaMap.keySet())) {
+                            System.err.println("IDs recibidos de preguntas no se igualan a las esperadas (DB)");
+                            throw new IllegalArgumentException("Solicitud malformada");
                         }
 
                         // 3. Si hay errores de validación, reenvía al formulario para que el usuario corrija los datos.
@@ -603,7 +614,7 @@ public class VerFormulariosServlet extends HttpServlet {
                     response.sendRedirect(getRedirectUrl(userRole));
                     return;
                 }
-                session.setAttribute("success", "Registro creado con éxito");
+                session.setAttribute("success", "Registro creado con éxito y guardado como "+acto);
 
                 response.sendRedirect(getRedirectUrl(userRole));
 
@@ -648,7 +659,6 @@ public class VerFormulariosServlet extends HttpServlet {
             }
         } else if ("date".equalsIgnoreCase(tipo)) {
             try {
-                System.out.println("Date: " + valor);
                 //DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate.parse(valor.trim(), sqlFormatter);

@@ -340,7 +340,8 @@
                     errores
                 );
             } else {
-                form.submit();
+                //form.submit();
+                $('#SaveRegModal').modal('show');
             }
         });
 
