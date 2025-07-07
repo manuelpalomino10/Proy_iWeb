@@ -146,7 +146,7 @@ INSERT INTO seccion (idseccion, nombre_sec,idformulario) VALUES
 
 -- form 3: Acceso a Educación y Capacitación
 (10, 'Datos Personales y Familiares', 3),
-(11, 'Acceso a Educación Formal', 6),
+(11, 'Acceso a Educación Formal', 3),
 (12, 'Capacitación y Habilidades', 3),
 (13, 'Barreras y Oportunidades', 3),
 -- form 4: Encuesta de Acceso Tecnológico
