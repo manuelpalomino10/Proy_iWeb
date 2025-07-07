@@ -60,7 +60,7 @@
                               <a class="nav-link active" href="#">Personalizar</a>
                           </li>
                           <li class="nav-item">
-                              <a class="nav-link" href="<%=request.getContextPath()%>/administrador/downloadTemp?file=nform"> Descarga plantilla</a>
+                              <a class="nav-link" href="<%=request.getContextPath()%>/administrador/downloadTemp?file=nform">Descargar plantilla</a>
                           </li>
                       </ul>
                   </div>
@@ -117,6 +117,7 @@
                             <div class="form-group col-md-8">
                               <label for="csvFile" class="form-label">Archivo CSV:</label>
                               <input type="file" name="csvFile" id="csvFile" class="form-control" accept=".csv" required/>
+                                <small class="form-text text-muted">* No podrá modificar la plantilla del Formulario una vez creado. Puede <strong>descargar plantilla</strong> de creación</small>
                             </div>
                           </div>
 

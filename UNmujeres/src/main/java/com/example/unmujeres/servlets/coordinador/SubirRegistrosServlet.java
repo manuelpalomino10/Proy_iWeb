@@ -1,8 +1,6 @@
 package com.example.unmujeres.servlets.coordinador;
 
 import com.example.unmujeres.beans.EncHasFormulario;
-import com.example.unmujeres.beans.OpcionPregunta;
-import com.example.unmujeres.beans.Pregunta;
 import com.example.unmujeres.beans.RegistroRespuestas;
 import com.example.unmujeres.beans.Usuario;
 import com.example.unmujeres.daos.EncHasFormularioDAO;
@@ -14,9 +12,9 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import javassist.NotFoundException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -30,7 +28,7 @@ public class SubirRegistrosServlet extends HttpServlet {
     FormularioDAO formularioDAO = new FormularioDAO();
     RegistroRespuestasDAO registroDAO = new RegistroRespuestasDAO();
     RespuestaDAO respuestaDAO = new RespuestaDAO();
-    // otro servlet creo        OpcionPreguntaDAO opcionDAO = new OpcionPreguntaDAO();
+    private static String REPORTES_BASE_PATH;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -46,28 +44,6 @@ public class SubirRegistrosServlet extends HttpServlet {
         int idUser = user.getIdUsuario();
         int userRole = user.getIdroles();
 
-//        String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
-//        RequestDispatcher view;
-//
-//        switch (action) {
-//            case "lista":
-//                try {
-//                    System.out.println("Se consulto lista de asignados de coordi");
-//
-//                    ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idUser);
-//                    ArrayList<Integer> totales = registroDAO.countRegByForm(idUser);
-//                    // 9. Enviar a vista
-//                    request.setAttribute("asignaciones", asignaciones);
-//                    request.setAttribute("totalesRegistros", totales);
-//                    view = request.getRequestDispatcher("/coordinador/listaFormularios.jsp");
-//                    view.forward(request, response);
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    //request.getRequestDispatcher("/WEB-INF/vistas/error.jsp").forward(request, response);
-//                }
-//                break;
-//        }
         response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED,"Método no permitido");
     }
 
@@ -93,10 +69,11 @@ public class SubirRegistrosServlet extends HttpServlet {
         }
 
         int idEhf=-1;
+        EncHasFormulario ehf = null;
         try {
             idEhf = Integer.parseUnsignedInt(idEhfParam);
 
-            EncHasFormulario ehf = ehfDAO.getById(idEhf);
+            ehf = ehfDAO.getById(idEhf);
             if (ehf == null) {
                 throw new NotFoundException("No se encontró formulario");
             } else if (ehf.getUsuario().getIdUsuario() != idUser) {
@@ -127,12 +104,41 @@ public class SubirRegistrosServlet extends HttpServlet {
             return;
         }
 
-        int nRegInsertados = 0;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePart.getInputStream(), "UTF-8"))) {
+        String templateName = "PLANTILLA_UN_Formulario"+ehf.getFormulario().getIdFormulario()+".csv";
+        Path basePath = Paths.get(REPORTES_BASE_PATH);
+        Path filePath = basePath.resolve(templateName).normalize();
+        if (!filePath.startsWith(basePath.toAbsolutePath())) {
+            System.out.println("Plantilla no encontrada por ruta prohibida");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        File template = filePath.toFile();
+        if (!template.exists() || !template.isFile()) {
+            System.out.println("Plantilla no encontrada");
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Plantilla no encontrada");
+        }
 
-            // 3. Saltar las primeras 6 líneas de cabecera
-            for (int i = 0; i < 7; i++) {
-                reader.readLine();
+        int nRegInsertados = 0;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePart.getInputStream(), "UTF-8"));
+             BufferedReader templateReader = new BufferedReader(new FileReader(template))) {
+
+            // Lectura y comparación de cabeceras
+            for (int i = 0; i <= 5; i++) {
+                String uploadedLine = reader.readLine();
+                String templateLine = templateReader.readLine();
+//                System.out.println("Linea de    input: "+uploadedLine);
+//                System.out.println("Linea de template: "+templateLine);
+                if (uploadedLine == null || templateLine == null) {
+//                    System.err.println("Archivo incompleto. Línea " + (i+1) + " faltante. " +
+//                            "Se esperaban 6 líneas de cabecera");
+                    throw new IOException("Cabecera incompleta: línea "+(i+1)+"faltante. Asegúrese de usar el formato correcto.");
+                }
+                if (!uploadedLine.trim().equals(templateLine.trim())) {
+//                    System.err.println("Error en cabecera línea " + (i+1) + ".\n" +
+//                            "Se esperaba: '" + templateLine + "'\n" +
+//                            "Se recibió: '" + uploadedLine + "'");
+                    throw new IOException("Archivo con cabecera incompatible en línea "+(i+1)+". Asegúrese de usar el formato correcto.");
+                }
             }
 
             String line;
@@ -145,8 +151,6 @@ public class SubirRegistrosServlet extends HttpServlet {
                 nuevoRegistro.setFechaRegistro(LocalDateTime.now(ZoneId.of("America/Lima")));
                 nuevoRegistro.setEstado("C"); // Siempre en estado C
 
-                EncHasFormulario ehf = new EncHasFormulario();
-                ehf.setIdEncHasFormulario(idEhf);
                 nuevoRegistro.setEncHasFormulario(ehf);
                 int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);
                 System.out.println("Nuevo Registro id es: "+idRegistro);
@@ -167,23 +171,30 @@ public class SubirRegistrosServlet extends HttpServlet {
                 }
                 respuestaDAO.guardarRespuestas(idRegistro, respuestasTexto);
             }
-            System.out.println("Exito al subir registros por csv");
-            session.setAttribute("success", "Registros importados correctamente");
+
+            if (nRegInsertados > 0) {
+                System.out.println("Exito al subir "+nRegInsertados+" registros por csv");
+                session.setAttribute("success", nRegInsertados+" registros importados correctamente");
+            } else {
+                session.setAttribute("error", "No se encontraron registros para importar.");
+            }
+            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
+            return;
         } catch (SQLException | IOException e) {
             e.printStackTrace();
             session.setAttribute("error", e.getMessage());
             response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
             return;
         } finally {
-            session.setAttribute("success", ""+nRegInsertados+" registros importados correctamente");
-            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
+
         }
 
     }
 
     @Override
     public void init() throws ServletException {
-        // Código de inicialización (opcional)
+        ServletContext ctx = getServletContext();
+        REPORTES_BASE_PATH = ctx.getRealPath("/WEB-INF/reportes");
     }
 
 }
