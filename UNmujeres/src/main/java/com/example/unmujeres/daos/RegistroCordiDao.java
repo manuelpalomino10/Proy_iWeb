@@ -2,10 +2,7 @@ package com.example.unmujeres.daos;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class RegistroCordiDao extends BaseDAO {
     public void nuevoCordi(String nombres, String apellidos, int dni, String correo, int idZona) {
@@ -43,7 +40,7 @@ public class RegistroCordiDao extends BaseDAO {
      * Inserta un coordinador sin contraseña para que pueda activarla luego.
      * El estado se establece en 0 (pendiente) y se almacena el código de verificación.
      */
-    public void insertarPendiente(String nombres, String apellidos, int dni,
+    public int insertarPendiente(String nombres, String apellidos, int dni,
                                   String correo, int idZona, String codigo) throws SQLException {
         String sql = "INSERT INTO usuario " +
                 "(nombres, apellidos, DNI, correo, contraseña, estado, idroles, " +
@@ -51,7 +48,7 @@ public class RegistroCordiDao extends BaseDAO {
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setString(1, nombres);
             ps.setString(2, apellidos);
@@ -66,7 +63,13 @@ public class RegistroCordiDao extends BaseDAO {
             ps.setTimestamp(11, new java.sql.Timestamp(System.currentTimeMillis() + 24L * 60 * 60 * 1000));
 
             ps.executeUpdate();
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
         }
+        throw new SQLException("No se pudo registrar coordinador");
     }
 
 

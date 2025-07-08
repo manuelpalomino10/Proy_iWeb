@@ -1,5 +1,8 @@
 package com.example.unmujeres.servlets.administrador;
+import com.example.unmujeres.beans.Formulario;
 import com.example.unmujeres.beans.Zona;
+import com.example.unmujeres.daos.CoordiGestionEncDAO;
+import com.example.unmujeres.daos.FormularioDAO;
 import com.example.unmujeres.daos.RegistroCordiDao;
 import com.example.unmujeres.daos.administrador.ZonaDao;
 import com.example.unmujeres.utils.EmailUtil;
@@ -77,7 +80,8 @@ public class CrearCordiServlet extends HttpServlet {
           }
 
           String codigo = registroCordiDao.generarCodigoUnico();
-          registroCordiDao.insertarPendiente(nombres, apellidos, dni, correo, idZona, codigo);
+          int idNuevoCordi = registroCordiDao.insertarPendiente(nombres, apellidos, dni, correo, idZona, codigo);
+          asignarNuevoCordi(idNuevoCordi);
 
           // Enviar correo de verificación
           String base = request.getRequestURL().toString()
@@ -110,4 +114,20 @@ public class CrearCordiServlet extends HttpServlet {
           throw new RuntimeException(e);
       }
    }
+
+
+   private void asignarNuevoCordi(int idCordi) {
+       FormularioDAO formularioDAO = new FormularioDAO();
+       ArrayList<Formulario> formularios = formularioDAO.getFormularios();
+
+       for (Formulario form : formularios) {
+           try {
+               CoordiGestionEncDAO asigDAO = new CoordiGestionEncDAO();
+               asigDAO.asignarFormulario(idCordi, form.getIdFormulario());
+           } catch (SQLException e) {
+               throw new RuntimeException(e);
+           }
+       }
+   }
+
 }

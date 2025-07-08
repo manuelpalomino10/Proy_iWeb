@@ -201,4 +201,27 @@ public class FormularioDAO extends BaseDAO {
         throw new SQLException("No se pudo crear un nuevo formulario");
     }
 
+    public ArrayList<Formulario> getFormularios() {
+        ArrayList<Formulario> formularios = new ArrayList<>();
+
+        String sql = "SELECT * FROM formulario";
+        try (Connection con = this.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Formulario formulario = new Formulario();
+                formulario.setIdFormulario(rs.getInt(1));
+//                formulario.setNombre(rs.getString(2));
+//                formulario.setFechaCreacion(rs.getDate(3));
+//                formulario.setFechaLimite(rs.getDate(4));
+
+                formularios.add(formulario);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return formularios;
+    }
+
 }
