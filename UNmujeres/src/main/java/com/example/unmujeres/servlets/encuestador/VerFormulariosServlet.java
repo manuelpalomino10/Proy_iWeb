@@ -8,6 +8,7 @@ import com.example.unmujeres.daos.RegistroRespuestasDAO;
 
 import com.example.unmujeres.beans.*;
 import com.example.unmujeres.daos.*;
+import com.example.unmujeres.dtos.AsignacionDTO;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -15,6 +16,7 @@ import javassist.NotFoundException;
 import javassist.tools.web.BadHttpRequest;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -61,7 +63,7 @@ public class VerFormulariosServlet extends HttpServlet {
         int userRole = user.getIdroles();
         String codEnc = user.getCodEnc();
 
-        ArrayList<EncHasFormulario> asignaciones = ehfDAO.getByUser(idUser);
+        ArrayList<AsignacionDTO> asignaciones = ehfDAO.getByUser(idUser);
 
         String action = request.getParameter("action") == null ? "lista" : request.getParameter("action");
         RequestDispatcher view;
@@ -71,36 +73,31 @@ public class VerFormulariosServlet extends HttpServlet {
                 try {
                     System.out.println("Se consulto lista de asignados");
 
-                    // 2. Inicializa arreglo de datos para vista
+                    // 1. Inicializa arreglo de datos para vista
                     ArrayList<Map<String, Object>> datos = new ArrayList<>();
 
-                    //List<Integer> IDsAsignaciones = new ArrayList<>();
-                    //  para cada asignacion
-                    for (EncHasFormulario asignacion : asignaciones) {
-                        //IDsAsignaciones.add(asignacion.getIdEncHasFormulario());
-                        //System.out.println("\n1. Asignacion extraída: " + asignacion.getIdEncHasFormulario());
-                        // 4. Obtener formulario relacionado por el id, obtenido de la asignacion
-                        Formulario formulario = formularioDAO.getById(asignacion.getFormulario().getIdFormulario());
-                        // si existe formulario y esta activo (formulario.estado=1),
-                        if (formulario != null && formulario.isEstado()) {
+                    // 2. De lo extraido. Para cada asignacion:
+                    for (AsignacionDTO asignacion : asignaciones) {
+                        System.out.println("\n1. Asignacion extraída: " + asignacion.getIdAsignacion());
+                        Formulario formulario = asignacion.getFormulario();
+                        if (formulario != null) {
                             //System.out.println("2. Formulario de asignacion existe y activo: " + formulario.getIdFormulario());
                             // inicializa un item para agregar a datos
                             Map<String, Object> item = new LinkedHashMap<>();
-                            // 5. Informacion de formulario
+                            // 3. Informacion de formulario
                             item.put("id_formulario", formulario.getIdFormulario());
                             item.put("nombre_formulario", formulario.getNombre());
                             item.put("fecha_limite", formulario.getFechaLimite());
                             item.put("registros_esperados", formulario.getRegistrosEsperados());
 
-                            // 7. Datos asignacion ehf
-                            item.put("id_asignacion", asignacion.getIdEncHasFormulario());
+                            // 4. Datos asignacion ehf
+                            item.put("id_asignacion", asignacion.getIdAsignacion());
                             item.put("fecha_asignacion", asignacion.getFechaAsignacion());
                             //System.out.println("3. Fecha de asignacion: " + asignacion.getFechaAsignacion());
 
-                            // 8. Datos registro, arreglo de registros en asignacion
-                            ArrayList<RegistroRespuestas> registros = registroDAO.getByEhf(asignacion.getIdEncHasFormulario());
-                            item.put("registros_completados", registros.size());
-                            //System.out.println("4. Cantidad registros completados: " + registros.size());
+                            // 5. Datos registro: esperados y completados para enc
+                            item.put("registros_completados", asignacion.getTotalRegistros());
+                            item.put("reg_esperados_enc", asignacion.getEsperadosEnc());
 
                             datos.add(item);
                         }
@@ -126,7 +123,7 @@ public class VerFormulariosServlet extends HttpServlet {
                         idFormulario = Integer.parseUnsignedInt(idFormParam1);
 
                         ArrayList<Integer> idsFormAsig = new ArrayList<>();
-                        for (EncHasFormulario asignacion : asignaciones) {
+                        for (AsignacionDTO asignacion : asignaciones) {
                             idsFormAsig.add(asignacion.getFormulario().getIdFormulario());
                         }
                         if (!idsFormAsig.contains(idFormulario)) {
@@ -165,61 +162,54 @@ public class VerFormulariosServlet extends HttpServlet {
             case "historial":
                 System.out.println("Se consulto historial");
                 try {
+                    //1. Obtener registros de Usuario, de formularios activos
+                    ArrayList<RegistroRespuestas> registros = registroDAO.getByUser(idUser);
 
                     // 2. Inicializar arreglos de datos (borradores y completados)
                     ArrayList<Map<String, Object>> datos1 = new ArrayList<>();
                     ArrayList<Map<String, Object>> datos2 = new ArrayList<>();
 
-                    // 3. lista de borradores
-                    for (EncHasFormulario asignacion : asignaciones) {
-                        //System.out.println("Asignacion id es: "+asignacion.getIdEncHasFormulario());
+                    // 3. Separar B y C. Para cada registro:
+                    for (RegistroRespuestas registro : registros) {
+                        Formulario formulario = registro.getEncHasFormulario().getFormulario();
+                        // 3.1. Lista de borradores: validar estado borrador de registro
+                        if ("B".equals(registro.getEstado())) {
+                            // inicializa un item para agregar a datos
+                            Map<String, Object> item1 = new LinkedHashMap<>();
+                            // 3.1.1 Informacion de registro
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+                            String fRegFormat = registro.getFechaRegistro().format(formatter);
+                            item1.put("fecha_registro", fRegFormat);
+                            item1.put("id_registro", registro.getIdRegistroRespuestas()); // no se mostrara en vista, pero se usara para editar o descartar
 
-                        // 3.1. Informacion de registro, arreglo de registros en asignacion
-                        ArrayList<RegistroRespuestas> registros = registroDAO.getByEhf(asignacion.getIdEncHasFormulario());
-                        // 3.2. Obtener formulario relacionado por el id, obtenido de la asignacion
-                        Formulario formulario = formularioDAO.getById(asignacion.getFormulario().getIdFormulario());
-                        //System.out.println("Form id es: "+formulario.getIdFormulario());
+                            // 3.1.2 Informacion de formulario
+                            item1.put("id_formulario", formulario.getIdFormulario());
+                            item1.put("nombre_formulario", formulario.getNombre());
+                            SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yyyy");
+                            String fLimFormat = formato.format(formulario.getFechaLimite());
+                            item1.put("fecha_limite", fLimFormat);
 
-                        // para cada registro
-                        for (RegistroRespuestas registro : registros) {
-                            // 3.3. Validar estado de formulario y estado borrador de registro
-                            if (registro != null && "B".equals(registro.getEstado()) && formulario != null && formulario.isEstado()) {
+                            datos1.add(item1);
+                        // 3.2 Lista de completados: validar estado borrador de registro
+                        } else if ("C".equals(registro.getEstado())) {
+                            // inicializa un item para agregar a datos
+                            Map<String, Object> item2 = new LinkedHashMap<>();
+                            // 3.2.1 Informacion de registro
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+                            String fRegFormat = registro.getFechaRegistro().format(formatter);
+                            item2.put("fecha_registro", fRegFormat);
+                            item2.put("id_registro", registro.getIdRegistroRespuestas()); // se deberia mstrar?
 
-                                // inicializa un item para agregar a datos
-                                Map<String, Object> item1 = new LinkedHashMap<>();
-                                // 3.5 Informacion de registro
-                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-                                String fRegFormat = registro.getFechaRegistro().format(formatter);
-                                item1.put("fecha_registro", fRegFormat);
-                                item1.put("id_registro", registro.getIdRegistroRespuestas()); // no se mostrara en vista, pero se usara para editar o descartar
-
-                                // 3.4. Informacion de formulario
-                                item1.put("id_formulario", formulario.getIdFormulario());
-                                item1.put("nombre_formulario", formulario.getNombre());
-                                item1.put("fecha_limite", formulario.getFechaLimite());
-
-                                datos1.add(item1);
-                            } else if (registro != null && formulario != null && formulario.isEstado() && "C".equals(registro.getEstado())) {
-
-                                // inicializa un item para agregar a datos
-                                Map<String, Object> item2 = new LinkedHashMap<>();
-                                // 3.5 Informacion de registro
-                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-                                String fRegFormat = registro.getFechaRegistro().format(formatter);
-                                item2.put("fecha_registro", fRegFormat);
-
-                                item2.put("id_registro", registro.getIdRegistroRespuestas()); // se deberia mstrar?
-
-                                // 3.4. Informacion de formulario
-                                item2.put("id_formulario", formulario.getIdFormulario());
-                                item2.put("nombre_formulario", formulario.getNombre());
-                                datos2.add(item2);
-                            }
+                            // 3.2.2 Informacion de formulario
+                            item2.put("id_formulario", formulario.getIdFormulario());
+                            item2.put("nombre_formulario", formulario.getNombre());
+                            datos2.add(item2);
                         }
-                        // 9. Pasar a vista
-                        request.setAttribute("drafts", datos1);
-                        request.setAttribute("records", datos2);
                     }
+                    // 4. Pasar a vista
+                    request.setAttribute("drafts", datos1);
+                    request.setAttribute("records", datos2);
+
                     view = request.getRequestDispatcher("/encuestador/responsesHistory.jsp");
                     view.forward(request, response);
                 } catch (Exception e) {

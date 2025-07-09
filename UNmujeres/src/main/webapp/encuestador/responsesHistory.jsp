@@ -75,7 +75,7 @@
                 <table class="table table-bordered" id="tablaDrafts" width="100%" cellspacing="0">
                   <thead>
                   <tr>
-                    <th># de registro</th>
+<%--                    <th># de registro</th>--%>
 <%--                    <th >ID de formulario</th>--%>
                     <th>Nombre</th>
                     <th>Fecha y hora de creación</th>
@@ -89,15 +89,14 @@
                       for (Map<String, Object> item: drafts) {
                   %>
                   <tr>
-                    <td style="width: 90px;"><%= item.get("id_registro") %></td>
+<%--                    <td style="width: 90px;"><%= item.get("id_registro") %></td>--%>
 <%--                    <td><%= item.get("id_formulario") %></td>--%>
                     <td><%= item.get("nombre_formulario") %></td>
                     <td>
                       <%= item.get("fecha_registro") %>
                     </td>
                     <td>
-                      <%= new java.text.SimpleDateFormat("dd-MM-yyyy")
-                              .format((java.util.Date) item.get("fecha_limite")) %>
+                      <%= item.get("fecha_limite") %>
                     </td>
                     <td>
                       <a class="btn btn-sm btn-info" href="<%=request.getContextPath()%>/encuestador/ServletA?action=editar&id=<%=item.get("id_registro")%>">Editar</a>

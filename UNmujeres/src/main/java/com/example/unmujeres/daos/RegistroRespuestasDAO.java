@@ -1,60 +1,13 @@
 package com.example.unmujeres.daos;
 
 import java.sql.*;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 
 import com.example.unmujeres.beans.EncHasFormulario;
 import com.example.unmujeres.beans.Formulario;
-import com.example.unmujeres.beans.Usuario;
 import com.example.unmujeres.beans.RegistroRespuestas;
 
 public class RegistroRespuestasDAO extends BaseDAO {
-
-    public ArrayList<RegistroRespuestas> getByEhf(int idEhf) {
-        ArrayList<RegistroRespuestas> registros = new ArrayList<>();
-
-        String sql = "SELECT " +
-                "    reg.idregistro_respuestas, " +
-                "    reg.fecha_registro, " +
-                "    reg.estado, " +
-                "    ehf.idenc_has_formulario, " +
-                "    ehf.idformulario " +
-                "FROM " +
-                "    registro_respuestas reg " +
-                "INNER JOIN " +
-                "    enc_has_formulario ehf ON reg.idenc_has_formulario = ehf.idenc_has_formulario " +
-                "WHERE " +
-                "    ehf.idenc_has_formulario = ?";
-
-        try (Connection con = this.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql);) {
-            ps.setInt(1, idEhf);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-
-                    RegistroRespuestas reg = new RegistroRespuestas();
-
-                    reg.setEstado(rs.getString("estado"));
-                    reg.setIdRegistroRespuestas(rs.getInt("idregistro_respuestas"));
-                    reg.setFechaRegistro(rs.getTimestamp("fecha_registro").toLocalDateTime());
-
-                    // Obtener asignacion por id
-                    EncHasFormularioDAO encHasFormularioDAO = new EncHasFormularioDAO();
-                    reg.setEncHasFormulario(encHasFormularioDAO.getById(idEhf));
-
-
-                    registros.add(reg);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return registros;
-    }
-
 
     public RegistroRespuestas findEncDraftById(int idReg, int idEnc) {      //Devuelve registro borrador(B) solo si existe y pertenece al encuestador
 
@@ -98,34 +51,41 @@ public class RegistroRespuestasDAO extends BaseDAO {
     }
 
 
-
-
-
-
-
-    public void save(RegistroRespuestas reg) {}
-
-    public ArrayList<Integer> getIDsByUsuario(int idUsuario) {
-        ArrayList<Integer> ids = new ArrayList<>();
-        String sql = "SELECT reg.idregistro_respuestas " +
-                "FROM registro_respuestas reg " +
-                "INNER JOIN enc_has_formulario ehf " +
-                "    ON reg.idenc_has_formulario = ehf.idenc_has_formulario " +
-                "WHERE ehf.enc_idusuario = ?";
+    public ArrayList<RegistroRespuestas> getByUser(int idUsuario) {
+        ArrayList<RegistroRespuestas> registros = new ArrayList<>();
+        String sql = "SELECT reg.idregistro_respuestas, reg.estado, f.idformulario, f.nombre, f.estado AS fEstado, reg.fecha_registro, f.fecha_limite " +
+                "FROM formulario f " +
+                "INNER JOIN enc_has_formulario ehf ON f.idformulario=ehf.idformulario " +
+                "INNER JOIN registro_respuestas reg ON ehf.idenc_has_formulario=reg.idenc_has_formulario " +
+                "WHERE ehf.enc_idusuario = ? AND f.estado=1 " +
+                "GROUP BY reg.idregistro_respuestas ORDER BY reg.fecha_registro DESC, reg.idregistro_respuestas DESC;";
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);) {
             ps.setInt(1, idUsuario);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Integer id = rs.getInt(1);
-                    ids.add(id);
+                    RegistroRespuestas reg = new RegistroRespuestas();
+                    reg.setIdRegistroRespuestas(rs.getInt("idregistro_respuestas"));
+                    reg.setFechaRegistro(rs.getTimestamp("fecha_registro").toLocalDateTime());
+                    reg.setEstado(rs.getString("estado"));
+
+                    EncHasFormulario ehf = new EncHasFormulario();
+                        Formulario form = new Formulario();
+                        form.setIdFormulario(rs.getInt("idformulario"));
+                        form.setNombre(rs.getString("nombre"));
+                        form.setEstado(rs.getBoolean("fEstado"));
+                        form.setFechaLimite(rs.getDate("fecha_limite"));
+                    ehf.setFormulario(form);
+                    reg.setEncHasFormulario(ehf);
+
+                    registros.add(reg);
                 }
             }
         }catch (SQLException e) {
             e.printStackTrace();
         }
-        return ids;
+        return registros;
 
     }
 
@@ -189,47 +149,5 @@ public class RegistroRespuestasDAO extends BaseDAO {
         }
         throw new SQLException("No se pudo crear el registro de respuestas");
     }
-
-
-    public ArrayList<Integer> countRegByForm(int idUser) {
-        String sql = "SELECT " +
-                "   f.idformulario, " +
-                "   f.nombre AS nombre_formulario, " +
-                "   COUNT(rr.idregistro_respuestas) AS total_registros_completados " +
-                "FROM enc_has_formulario ehf_principal " +
-                "JOIN usuario u_principal " +
-                "   ON ehf_principal.enc_idusuario = u_principal.idusuario " +
-                "JOIN formulario f " +
-                "   ON ehf_principal.idformulario = f.idformulario " +
-                "JOIN usuario u_zona " +
-                "   ON u_principal.idzona = u_zona.idzona " +
-                "JOIN enc_has_formulario ehf_zona " +
-                "   ON u_zona.idusuario = ehf_zona.enc_idusuario " +
-                "   AND ehf_principal.idformulario = ehf_zona.idformulario " +
-                "LEFT JOIN registro_respuestas rr " +
-                "   ON ehf_zona.idenc_has_formulario = rr.idenc_has_formulario " +
-                "   AND rr.estado = 'C' " +
-                "WHERE " +
-                "   u_principal.idusuario = ? " +  // Parámetro para el idusuario
-                "GROUP BY " +
-                "   f.idformulario, f.nombre";
-        ArrayList<Integer> totales = new ArrayList<>();
-
-        try (Connection con = this.getConnection();
-            PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setInt(1, idUser);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                totales.add(rs.getInt(3));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return totales;
-    }
-
+    
 }

@@ -5,21 +5,34 @@ import java.util.ArrayList;
 import com.example.unmujeres.beans.EncHasFormulario;
 import com.example.unmujeres.beans.Formulario;
 import com.example.unmujeres.beans.Usuario;
+import com.example.unmujeres.dtos.AsignacionDTO;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class EncHasFormularioDAO extends BaseDAO {
 
-    public ArrayList<EncHasFormulario> getByUser(int idUsuario) {
-        ArrayList<EncHasFormulario> asignaciones = new ArrayList<>();
+    public ArrayList<AsignacionDTO> getByUser(int idUsuario) {
+        ArrayList<AsignacionDTO> listaAsig = new ArrayList<>();
 
-        String sql = "SELECT ehf.* FROM enc_has_formulario ehf " +
-                "INNER JOIN formulario f ON ehf.idformulario=f.idformulario " +
-                "WHERE enc_idusuario = ? AND f.estado=1; ";
+        String sql = "SELECT ehf.idenc_has_formulario, ehf.fecha_asignacion, f.idformulario, f.nombre, COUNT(DISTINCT reg.idregistro_respuestas) AS total_respuestas, " +
+                "    f.registros_esperados / NULLIF(enc_count.encuestadores, 0) AS reg_esperados_enc, " +
+                "    f.fecha_limite, f.registros_esperados " +
+                "FROM formulario f " +
+                "INNER JOIN enc_has_formulario ehf ON f.idformulario = ehf.idformulario " +
+                "INNER JOIN registro_respuestas reg ON ehf.idenc_has_formulario = reg.idenc_has_formulario " +
+                "INNER JOIN ( " +
+                "    SELECT ehf2.idformulario, COUNT(DISTINCT ehf2.enc_idusuario) AS encuestadores " +
+                "    FROM enc_has_formulario ehf2 " +
+                "    INNER JOIN usuario u " +
+                "        ON ehf2.enc_idusuario = u.idusuario " +
+                "        AND u.idroles = 3 " +
+                "    GROUP BY ehf2.idformulario " +
+                ") enc_count ON f.idformulario = enc_count.idformulario " +
+                "WHERE ehf.enc_idusuario = ? AND f.estado = 1 " +
+                "GROUP BY ehf.idenc_has_formulario, f.idformulario, ehf.fecha_asignacion;";
 
         try (Connection con = this.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);) {
@@ -27,25 +40,29 @@ public class EncHasFormularioDAO extends BaseDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    EncHasFormulario a = new EncHasFormulario();
+                    AsignacionDTO a = new AsignacionDTO();
 
-                    a.setIdEncHasFormulario(rs.getInt("idenc_has_formulario"));
-                    //System.out.println("Se extrajo idehf "+ a.getIdEncHasFormulario());
+                    a.setIdAsignacion(rs.getInt("idenc_has_formulario"));
                     a.setFechaAsignacion(rs.getDate("fecha_asignacion"));
-                    a.setCodigo(rs.getString("codigo"));
+                    //a.setCodigo(rs.getString("codigo"));
 
-                    // Obtener formulario por id
-                    FormularioDAO formularioDAO = new FormularioDAO();
-                    a.setFormulario(formularioDAO.getById(rs.getInt("idformulario")));
+                    Formulario formulario = new Formulario();
+                        formulario.setIdFormulario(rs.getInt("idformulario"));
+                        formulario.setNombre(rs.getString("nombre"));
+                        formulario.setFechaLimite(rs.getDate("fecha_limite"));
+                        formulario.setRegistrosEsperados(rs.getInt("registros_esperados"));
+                    a.setFormulario(formulario);
+                    a.setTotalRegistros(rs.getInt("total_respuestas"));
+                    a.setEsperadosEnc(rs.getInt("reg_esperados_enc"));
 
-                    asignaciones.add(a);
+                    listaAsig.add(a);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return asignaciones;
+        return listaAsig;
     }
 
 

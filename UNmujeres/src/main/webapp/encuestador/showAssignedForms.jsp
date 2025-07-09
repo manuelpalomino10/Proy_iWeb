@@ -90,7 +90,7 @@
 <%--                                        <td style="width: 100px;"><%= item.get("id_formulario") %></td>--%>
                                         <td><%= item.get("nombre_formulario") %></td>
                                         <td><%= item.get("registros_completados") %></td>
-                                        <td><%= item.get("registros_esperados") %></td>
+                                        <td><%= item.get("reg_esperados_enc") %></td>
                                         <td style="white-space: nowrap;">
                                             <%= new java.text.SimpleDateFormat("dd-MM-yyyy")
                                                     .format((java.util.Date) item.get("fecha_asignacion")) %>
