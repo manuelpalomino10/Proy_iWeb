@@ -209,14 +209,17 @@ public class NuevoFormServlet extends HttpServlet {
 
                 // Validar tipo de dato
                 String tipo = tipos[i].trim().toLowerCase();
-                if (!"texto".equals(tipo) && !"número".equals(tipo) && !"fecha".equals(tipo) && !"combobox".equals(tipo)
+                if (!"texto".equals(tipo) && !"número grande".equals(tipo)  && !"número".equals(tipo) && !"número pequeño".equals(tipo) && !"fecha".equals(tipo) && !"combobox".equals(tipo)
                         && !"teléfono".equals(tipo) && !"email".equals(tipo) && !"dni".equals(tipo)) {
                     throw new Exception("Tipo de dato inválido: '"+tipo+"' en columna " +tipos[i]);
                 }
 
                 // Mapear tipo a formato BD
                 String tipoBD = switch (tipo) {
-                    case "número" -> "int";
+                    case "texto" -> "String";
+                        case "número" -> "int";
+                    case "número grande" -> "large int";
+                    case "número pequeño" -> "small int";
                     case "fecha" -> "date";
                     case "combobox" -> "combobox";
                     case "teléfono" -> "tel";

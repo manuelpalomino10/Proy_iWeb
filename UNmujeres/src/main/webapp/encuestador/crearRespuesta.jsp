@@ -13,6 +13,8 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.List" %>
 <%@ page import="jakarta.mail.Session" %>
+<%@ page import="java.time.LocalDate" %>
+<%@ page import="java.time.ZoneId" %>
 <%
     // Se obtiene la lista de preguntas y las opciones desde el request.
     ArrayList<Pregunta> preguntas = (ArrayList<Pregunta>) request.getAttribute("preguntas");
@@ -186,11 +188,20 @@
                                 // Para otros tipos definimos el input adecuado; "date" e "int" se manejan, por defecto "text"
                                 String inputType = "text";
                                 String patron = "";
-                                String aviso = (pregunta.getRequerido() ? "* Respuesta obligatoria" : null);
+                                String aviso = (pregunta.getRequerido() ? "* Respuesta obligatoria. " : null);
                                 String place = "";
-                                if ("int".equalsIgnoreCase(pregunta.getTipoDato()) ) {
+                                if ("int".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                    inputType = "number";
+                                    patron = "pattern=\"\\d+\" min=\"0\" max=\"250\" inputmode=\"numeric\"";
+                                    place = "250";
+                                } else if ("large int".equalsIgnoreCase(pregunta.getTipoDato())) {
                                     inputType = "number";
                                     patron = "pattern=\"\\d+\" min=\"0\" max=\"120\" inputmode=\"numeric\"";
+                                    place = "120";
+                                } else if ("small int".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                    inputType = "number";
+                                    patron = "pattern=\"\\d+\" min=\"0\" max=\"20\" inputmode=\"numeric\"";
+                                    place = "20";
                                 } else if ("date".equalsIgnoreCase(pregunta.getTipoDato())) {
                                     inputType = "date";
                                 } else if ("email".equalsIgnoreCase(pregunta.getTipoDato())) {
@@ -200,11 +211,11 @@
                                 } else if ("tel".equalsIgnoreCase(pregunta.getTipoDato())) {
                                     inputType="tel";
                                     patron = "pattern=\"9\\d{8}\" maxlength=\"9\" inputmode=\"numeric\"";
-                                    aviso = "* Número de celular de Perú";
+                                    aviso += "* Número de celular de Perú.";
                                     place = "9xxxxxxxx";
                                 } else if ("dni".equalsIgnoreCase(pregunta.getTipoDato())) {
                                     patron = "pattern=\"\\d{8}\" maxlength=\"8\" inputmode=\"numeric\"";
-                                    aviso = "* DNI";
+                                    aviso += "* DNI peruano.";
                                     place = "12345678";
                                 }
                                 String inputValue = "";
@@ -212,6 +223,8 @@
                                     inputValue = valoresForm.get(pregunta.getIdPregunta()) != null ? valoresForm.get(pregunta.getIdPregunta()) : "";
                                 } else if (pregunta.getEnunciado().contains("persona que encuesta")) {
                                     inputValue = nombre;
+                                } else if (pregunta.getEnunciado().contains("Fecha de la entrevista")) {
+                                    inputValue = LocalDate.now(ZoneId.of("America/Lima")).toString();
                                 }
                                 String inputError= "";
                                 if (errores!=null) {

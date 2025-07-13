@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.*;
 
 @WebServlet(
@@ -78,7 +79,7 @@ public class VerFormulariosServlet extends HttpServlet {
 
                     // 2. De lo extraido. Para cada asignacion:
                     for (AsignacionDTO asignacion : asignaciones) {
-                        System.out.println("\n1. Asignacion extraída: " + asignacion.getIdAsignacion());
+                        //System.out.println("1. Asignacion extraída: " + asignacion.getIdAsignacion());
                         Formulario formulario = asignacion.getFormulario();
                         if (formulario != null) {
                             //System.out.println("2. Formulario de asignacion existe y activo: " + formulario.getIdFormulario());
@@ -533,6 +534,7 @@ public class VerFormulariosServlet extends HttpServlet {
                                     String valor = (valores != null && valores.length > 0) ? valores[0] : null;
                                     // Aplica .trim() sólo si el valor no es null
                                     String valorNormalizado = (valor != null) ? valor.trim() : "";
+                                    System.out.println(paramName+" value es: "+valorNormalizado);
 
                                     inputs.put(idPregunta, valorNormalizado);
 
@@ -641,16 +643,46 @@ public class VerFormulariosServlet extends HttpServlet {
                     throw new NumberFormatException();
                 }
                 int val = Integer.parseUnsignedInt(valor);
+                if (val > 250 ) {
+                    return "Ingrese un número menor a 250.";
+                }
+            } catch (NumberFormatException e) {
+                return "Debe ingresar un número válido.";
+            }
+        } else if ("large int".equalsIgnoreCase(tipo)) {
+            try {
+                if (!valor.matches("\\d+")) {
+                    throw new NumberFormatException();
+                }
+                int val = Integer.parseUnsignedInt(valor);
                 if (val > 120 ) {
-                    return "Ingrese un número menor a 120.";
+                    return "Ingrese un número menor o igual a 120.";
+                }
+            } catch (NumberFormatException e) {
+                return "Debe ingresar un número válido.";
+            }
+        } else if ("small int".equalsIgnoreCase(tipo)) {
+            try {
+                if (!valor.matches("\\d+")) {
+                    throw new NumberFormatException();
+                }
+                int val = Integer.parseUnsignedInt(valor);
+                if (val > 20 ) {
+                    return "Ingrese un número menor o igual a 20.";
                 }
             } catch (NumberFormatException e) {
                 return "Debe ingresar un número válido.";
             }
         } else if ("date".equalsIgnoreCase(tipo)) {
+            System.out.println("En fecha date: "+valor);
+            if (!valor.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                return "Introduzca una fecha válida (dd-mm-yyyy).";
+            }
             try {
                 //DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                        .withResolverStyle(ResolverStyle.SMART)
+                        .withZone(ZoneId.of("America/Lima"));
                 LocalDate.parse(valor.trim(), sqlFormatter);
 
 

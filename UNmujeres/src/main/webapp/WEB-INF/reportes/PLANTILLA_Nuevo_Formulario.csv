@@ -1,6 +1,6 @@
 ﻿Enunciado Pregunta 1;Enunciado Pregunta 2;Enunciado Pregunta 3;Enunciado Pregunta 4;Enunciado Pregunta 5;Enunciado Pregunta 6;Enunciado Pregunta 7;Enunciado Pregunta 8;Enunciado Pregunta 9
 Obligatorio/Opcional;Obligatorio/Opcional;Obligatorio/Opcional;Obligatorio/Opcional;Obligatorio/Opcional;Obligatorio/Opcional;Obligatorio/Opcional;Obligatorio/Opcional;Obligatorio/Opcional
-Texto;Fecha;Teléfono;Email;DNI;Combobox;Número;Texto;Combobox
+Texto;Fecha;Teléfono;Email;DNI;Combobox;Número pequeño;Número grande;Combobox
 A. Nombre de Seccion P1; A. Nombre de Seccion P2; B. Nombre de Seccion P3; B. Nombre de Seccion P4; B. Nombre de Seccion P5;C. Nombre de Seccion P6;C. Nombre de Seccion P7;D. Nombre de Seccion P8;D. Nombre de Seccion P9
-Proporcione ejemplos o indicaciones;DD-MM-YYYY;9xxxxxxxx;xx@gmail.com;N° DNI peruano;Proporciones/opciones/así;1-100;Respuesta corta;Opcion1/Opcion2/Opcion3
+Proporcione ejemplos o indicaciones;DD-MM-YYYY;9xxxxxxxx;xx@gmail.com;N° DNI peruano;Proporciones/opciones/así;0-20;1-120;Opcion1/Opcion2/Opcion3
 INSERTAR DATOS DEBAJO DE ESTA LÍNEA;;;;;;;;
