@@ -192,7 +192,7 @@ public class ReportesServlet extends HttpServlet {
                     try (BufferedReader br = Files.newBufferedReader(plantilla, StandardCharsets.UTF_8);
                          PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp.toFile()), StandardCharsets.UTF_8), true)) {
 
-                        pw.write("\uFEFF");
+                        //pw.write("\uFEFF");
                         for(int i = 0; i < 6; i++) {
                             String header = br.readLine();
                             if(header == null) break;
