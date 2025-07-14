@@ -11,8 +11,12 @@ import com.example.unmujeres.dtos.ReporteDTO;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import javassist.NotFoundException;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -47,8 +51,7 @@ public class ReportesServlet extends HttpServlet {
         String zonaParam = request.getParameter("zona");
         String rolParam = request.getParameter("rol");
         String dateRangeParam = request.getParameter("daterange");
-        System.out.println("rango de fechas: " + dateRangeParam);
-        System.out.println(dateRangeParam);
+        //System.out.println("rango de fechas: " + dateRangeParam);
 
         // Convertir zona y rol a enteros
         int idZona;
@@ -69,7 +72,6 @@ public class ReportesServlet extends HttpServlet {
 
         if ( dateRangeParam != null && !dateRangeParam.trim().isEmpty()) {
             System.out.println("dateRangeParam: " + dateRangeParam);
-            System.out.println("entro ENTRO");
             try {
                 DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -165,6 +167,10 @@ public class ReportesServlet extends HttpServlet {
                     List<ContenidoReporteDTO> contenido = formularioDAO.getContenidoReporte(idForm, idZona, idRol, fi, ff);
                     System.out.println("Numero de respuestas en contenido: " + contenido.size());
 
+                    if (contenido.isEmpty()) {
+                        throw new NotFoundException("No hay registros que exportar");
+                    }
+
                     String csvFilePath = getServletContext().getRealPath("/WEB-INF/reportes/PLANTILLA_UN_Formulario"+idForm+".csv");
                     File originalFile = new File(csvFilePath);
                     if (!originalFile.exists()) {
@@ -181,17 +187,29 @@ public class ReportesServlet extends HttpServlet {
                     // Crear un archivo temporal para la descarga
                     String fileName = genNombreReporte(idForm);
                     //String fileName = "Reporte Formulario"+idForm+".csv";
-                    File tempFile = File.createTempFile("Reporte_Formulario"+idForm, ".csv");
-                    try (BufferedReader br = new BufferedReader(new FileReader(originalFile));
-                         PrintWriter pw = new PrintWriter(new FileWriter(tempFile))) {
-                        String line;
-                        int lineNumber = 0;
+                    //File tempFile = Files.createTempFile("Reporte_Formulario"+idForm, ".csv");
+//                    try (BufferedReader br = new BufferedReader(new FileReader(originalFile));
+//                         PrintWriter pw = new PrintWriter(new FileWriter(tempFile))) {
+//                        String line;
+//                        int lineNumber = 0;
+                    Path plantilla = originalFile.toPath();
+                    Path temp      = Files.createTempFile("Reporte_Formulario"+idForm, ".csv");
+                    try (
+                            BufferedReader br = Files.newBufferedReader(plantilla, StandardCharsets.UTF_8);
+                            PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp.toFile()), StandardCharsets.UTF_8), true)
+                        ) {
 
                         // Copiar las primeras 6 líneas sin cambios
-                        while ((line = br.readLine()) != null && lineNumber <= 6) {
-                            pw.println(line);
-                            //System.out.println(line);
-                            lineNumber++;
+//                        while ((line = br.readLine()) != null && lineNumber <= 6) {
+//                            pw.println(line);
+//                            //System.out.println(line);
+//                            lineNumber++;
+//                        }
+                        pw.write("\uFEFF");
+                        for(int i = 0; i < 6; i++) {
+                            String header = br.readLine();
+                            if(header == null) break;
+                            pw.println(header);
                         }
 
                         // Se recorrerá la lista y se agrupará por idRegistro:
@@ -206,6 +224,7 @@ public class ReportesServlet extends HttpServlet {
                                 // Si no es el primer registro, escribir la fila anterior
                                 if (currentRegistro != -1) {
                                     rowContent.append(delimiter).append(prevCode);
+                                    System.out.println(rowContent);
                                     pw.println(rowContent.toString());
                                 }
                                 // Comenzar una nueva línea
@@ -224,6 +243,7 @@ public class ReportesServlet extends HttpServlet {
                         if (rowContent.length() > 0) {
                             String lastCode = contenido.get(contenido.size()-1).getCodEnc();
                             rowContent.append(delimiter).append(lastCode);
+                            System.out.println(rowContent);
                             pw.println(rowContent.toString());
                         }
 
@@ -231,10 +251,10 @@ public class ReportesServlet extends HttpServlet {
 
                     //session.setAttribute("success", "Reporte generado exitosamente con " + numeroFilas + " registros");
                     // Enviamos el archivo modificado como descarga
-                    response.setContentType("text/csv");
+                    response.setContentType("text/csv; charset=UTF-8");
                     response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
-                    try (FileInputStream fis = new FileInputStream(tempFile);
+                    try (FileInputStream fis = new FileInputStream(temp.toFile());
                             OutputStream os = response.getOutputStream()) {
                         byte[] buffer = new byte[4096];
                         int bytesRead;
@@ -248,7 +268,7 @@ public class ReportesServlet extends HttpServlet {
                         request.getRequestDispatcher("/administrador/ReportesServlet?action=listaReportes").forward(request, response);
                         return;
                     } finally {
-                        tempFile.delete();
+                        temp.toFile().delete();
                     }
 
 
