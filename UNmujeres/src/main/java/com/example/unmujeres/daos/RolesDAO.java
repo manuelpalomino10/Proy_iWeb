@@ -12,7 +12,7 @@ import java.util.List;
 public class RolesDAO extends BaseDAO {
 
     public List<Roles> listarRoles() throws SQLException {
-        String sql = "SELECT idroles, nombre FROM roles ORDER BY idroles";
+        String sql = "SELECT idroles, nombre FROM roles where idroles != 1 ORDER BY idroles";
         List<Roles> zonas = new ArrayList<>();
 
         try (Connection con = this.getConnection();

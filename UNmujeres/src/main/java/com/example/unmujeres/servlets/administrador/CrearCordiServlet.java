@@ -40,20 +40,27 @@ public class CrearCordiServlet extends HttpServlet {
       String correo = request.getParameter("correo");
       String idZonaStr = request.getParameter("idZona");
 
-      if (dniStr == null || dniStr.isEmpty() || correo == null || correo.isEmpty()) {
-          request.setAttribute("error", "Los campos DNI y correo son obligatorios");
+       // Validación de campos vacíos
+       if (nombres == null || nombres.isEmpty() ||
+               apellidos == null || apellidos.isEmpty() ||
+               dniStr == null || correo == null || idZonaStr == null ||
+               dniStr.isEmpty() || correo.isEmpty() || idZonaStr.isEmpty()) {
 
-         // Recargar zonas también en caso de error
-          ZonaDao zonaDao = new ZonaDao();
-          ArrayList<Zona> listaZonas = zonaDao.obtenerZonas();
+           request.setAttribute("error", "Todos los campos son obligatorios.");
+           cargarZonasYValores(request, nombres, apellidos, dniStr, correo, idZonaStr);
+           request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);
+           return;
+       }
 
-          request.setAttribute("listaZonas", listaZonas);
+       // Validación de formato de DNI: exactamente 8 dígitos
+       if (!dniStr.matches("\\d{8}")) {
+           request.setAttribute("error", "El DNI debe tener exactamente 8 dígitos numéricos.");
+           cargarZonasYValores(request, nombres, apellidos, dniStr, correo, idZonaStr);
+           request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);
+           return;
+       }
 
-          request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);
-         return;
-      }
-
-      try {
+       try {
          int dni = Integer.parseInt(dniStr);
          int idZona = Integer.parseInt(idZonaStr);
          RegistroCordiDao registroCordiDao = new RegistroCordiDao();
@@ -91,7 +98,7 @@ public class CrearCordiServlet extends HttpServlet {
                   "<a href='" + link + "'>Verificar correo</a>";
           EmailUtil.sendEmail(correo, "Verificación de cuenta", cuerpo);
 
-         // Redirige al doGet() correctamente usando ruta completa
+         // Redirige al doGet() correctamente usando ruta completo
          response.sendRedirect(request.getContextPath() + "/administrador/CrearCordiServlet?exito=true");
 
       } catch (NumberFormatException e) {
@@ -115,6 +122,25 @@ public class CrearCordiServlet extends HttpServlet {
       }
    }
 
+    // Método de apoyo para evitar duplicación de código
+    private void cargarZonasYValores(HttpServletRequest request, String nombres, String apellidos,
+                                     String dniStr, String correo, String idZonaStr) {
+        try {
+            ZonaDao zonaDao = new ZonaDao();
+            ArrayList<Zona> listaZonas = zonaDao.obtenerZonas();
+            request.setAttribute("listaZonas", listaZonas);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("listaZonas", new ArrayList<Zona>()); // lista vacía como fallback
+            request.setAttribute("error", "No se pudieron cargar las zonas.");
+        }
+
+        request.setAttribute("nombres", nombres);
+        request.setAttribute("apellidos", apellidos);
+        request.setAttribute("DNI", dniStr);
+        request.setAttribute("correo", correo);
+        request.setAttribute("idZonaSeleccionada", idZonaStr);
+    }
 
    private void asignarNuevoCordi(int idCordi) {
        FormularioDAO formularioDAO = new FormularioDAO();

@@ -13,6 +13,7 @@ import jakarta.servlet.annotation.*;
 import javassist.NotFoundException;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -119,7 +120,7 @@ public class SubirRegistrosServlet extends HttpServlet {
         }
 
         int nRegInsertados = 0;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePart.getInputStream(), "UTF-8"));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePart.getInputStream(), StandardCharsets.UTF_8));
              BufferedReader templateReader = new BufferedReader(new FileReader(template))) {
 
             // Lectura y comparación de cabeceras
