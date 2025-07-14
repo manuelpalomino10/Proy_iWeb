@@ -187,24 +187,11 @@ public class ReportesServlet extends HttpServlet {
                     // Crear un archivo temporal para la descarga
                     String fileName = genNombreReporte(idForm);
                     //String fileName = "Reporte Formulario"+idForm+".csv";
-                    //File tempFile = Files.createTempFile("Reporte_Formulario"+idForm, ".csv");
-//                    try (BufferedReader br = new BufferedReader(new FileReader(originalFile));
-//                         PrintWriter pw = new PrintWriter(new FileWriter(tempFile))) {
-//                        String line;
-//                        int lineNumber = 0;
                     Path plantilla = originalFile.toPath();
                     Path temp      = Files.createTempFile("Reporte_Formulario"+idForm, ".csv");
-                    try (
-                            BufferedReader br = Files.newBufferedReader(plantilla, StandardCharsets.UTF_8);
-                            PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp.toFile()), StandardCharsets.UTF_8), true)
-                        ) {
+                    try (BufferedReader br = Files.newBufferedReader(plantilla, StandardCharsets.UTF_8);
+                         PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp.toFile()), StandardCharsets.UTF_8), true)) {
 
-                        // Copiar las primeras 6 líneas sin cambios
-//                        while ((line = br.readLine()) != null && lineNumber <= 6) {
-//                            pw.println(line);
-//                            //System.out.println(line);
-//                            lineNumber++;
-//                        }
                         pw.write("\uFEFF");
                         for(int i = 0; i < 6; i++) {
                             String header = br.readLine();
@@ -224,7 +211,6 @@ public class ReportesServlet extends HttpServlet {
                                 // Si no es el primer registro, escribir la fila anterior
                                 if (currentRegistro != -1) {
                                     rowContent.append(delimiter).append(prevCode);
-                                    System.out.println(rowContent);
                                     pw.println(rowContent.toString());
                                 }
                                 // Comenzar una nueva línea
@@ -243,7 +229,6 @@ public class ReportesServlet extends HttpServlet {
                         if (rowContent.length() > 0) {
                             String lastCode = contenido.get(contenido.size()-1).getCodEnc();
                             rowContent.append(delimiter).append(lastCode);
-                            System.out.println(rowContent);
                             pw.println(rowContent.toString());
                         }
 
