@@ -22,7 +22,13 @@
 
             <div class="container-fluid">
                 <h1 class="h3 mb-4 text-gray-800">Registrar Coordinador Interno</h1>
-
+                <% if (request.getAttribute("error") != null) { %>
+                <div>
+                    <div class="alert alert-danger" role="alert"><%=request.getAttribute("error")%>
+                    </div>
+                </div>
+                <% request.removeAttribute("error"); %>
+                <% } %>
                 <!-- Contenedor del formulario centrado -->
                 <div class="col-lg-10 mx-auto">
                     <div class="card shadow mb-4">
@@ -50,7 +56,7 @@
                                         <label for="DNI">DNI</label>
                                         <input type="text"
                                                class="form-control ${errorDni ? 'is-invalid' : ''}"
-                                               id="DNI" name="DNI"
+                                               id="DNI" name="DNI" pattern="\d{8}" maxlength="8" inputmode="numeric"
                                                value="${DNI != null ? DNI : ''}" required>
                                         <c:if test="${errorDni}">
                                             <div class="invalid-feedback">
