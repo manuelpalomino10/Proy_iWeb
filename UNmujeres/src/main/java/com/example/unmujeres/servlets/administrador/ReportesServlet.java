@@ -118,7 +118,6 @@ public class ReportesServlet extends HttpServlet {
                     List<ReporteDTO> reportes = formularioDAO.getReportes(idZona, idRol, fi, ff);
                     List<Zona> listaZonas = zonaDAO.listarZonas();
                     List<Roles> listaRoles = rolesDAO.listarRoles();
-                    listaRoles.removeFirst(); // remover rol administrador
 
                     // Guardar en el request los datos para la vista
                     request.setAttribute("listaZonas", listaZonas);
