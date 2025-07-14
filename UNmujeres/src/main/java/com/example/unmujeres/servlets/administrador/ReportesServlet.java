@@ -199,7 +199,7 @@ public class ReportesServlet extends HttpServlet {
                         StringBuilder rowContent = new StringBuilder();
                         // Definir el delimitador usado en el CSV (por ejemplo, coma)
                         String delimiter = ";";
-                        String prevCode = contenido.getFirst().getCodEnc();
+                        String prevCode = contenido.get(0).getCodEnc();
                         for (ContenidoReporteDTO resp : contenido) {
                             String respuestaValue = (resp.getRespuesta() == null) ? "" : resp.getRespuesta();
                             if (resp.getIdRegistro() != currentRegistro) {
@@ -222,7 +222,7 @@ public class ReportesServlet extends HttpServlet {
                         }
                         // Escribir la última línea si existe contenido
                         if (rowContent.length() > 0) {
-                            String lastCode = contenido.getLast().getCodEnc();
+                            String lastCode = contenido.get(contenido.size()-1).getCodEnc();
                             rowContent.append(delimiter).append(lastCode);
                             pw.println(rowContent.toString());
                         }
