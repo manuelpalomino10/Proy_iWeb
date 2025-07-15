@@ -105,4 +105,28 @@ public class EncHasFormularioDAO extends BaseDAO {
         return asig;
     }
 
+    public Formulario getAsigByForm(int idFormulario, int idUser) {
+        Formulario formAsig = new Formulario();
+        String sql = "SELECT f.idformulario, f.nombre, ehf.idenc_has_formulario " +
+                "FROM formulario f " +
+                "INNER JOIN enc_has_formulario ehf ON f.idformulario=ehf.idformulario " +
+                "WHERE ehf.enc_idusuario=? AND f.idformulario=? AND f.estado=1 ";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);) {
+
+            ps.setInt(1, idUser);
+            ps.setInt(2, idFormulario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    formAsig.setIdFormulario(rs.getInt("idformulario"));
+                    formAsig.setNombre(rs.getString("nombre"));
+                    System.out.println("Form asignado y existe/ con id: " + rs.getInt("idformulario"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return formAsig;
+    }
 }

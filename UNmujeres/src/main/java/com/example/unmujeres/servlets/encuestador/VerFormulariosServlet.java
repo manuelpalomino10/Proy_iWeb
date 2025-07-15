@@ -123,16 +123,13 @@ public class VerFormulariosServlet extends HttpServlet {
                     try {
                         idFormulario = Integer.parseUnsignedInt(idFormParam1);
 
-                        ArrayList<Integer> idsFormAsig = new ArrayList<>();
-                        for (AsignacionDTO asignacion : asignaciones) {
-                            idsFormAsig.add(asignacion.getFormulario().getIdFormulario());
-                        }
-                        if (!idsFormAsig.contains(idFormulario)) {
+                        Formulario formAsig = ehfDAO.getAsigByForm(idFormulario,idUser);
+                        if (formAsig==null) {
 //                            throw new IllegalArgumentException("No puede crear registros de formularios no asignados");
                             throw new IllegalArgumentException();
-
+                        } else {
+                            idFormulario = formAsig.getIdFormulario();
                         }
-
                     } catch (NumberFormatException e) {
                         System.out.println("Parámetro de form inválido");
                         session.setAttribute("error", "Parámetro de formulario inválido");
@@ -140,7 +137,7 @@ public class VerFormulariosServlet extends HttpServlet {
                         return;
 
                     } catch (IllegalArgumentException e) {
-                    //session.setAttribute("error", e.getMessage());
+                    session.setAttribute("error", e.getMessage());
                     response.sendRedirect(getRedirectUrl(userRole));
                     return;
                     }
