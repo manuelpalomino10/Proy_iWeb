@@ -18,11 +18,11 @@ public class EncHasFormularioDAO extends BaseDAO {
         ArrayList<AsignacionDTO> listaAsig = new ArrayList<>();
 
         String sql = "SELECT ehf.idenc_has_formulario, ehf.fecha_asignacion, f.idformulario, f.nombre, COUNT(DISTINCT reg.idregistro_respuestas) AS total_respuestas, " +
-                "    f.registros_esperados / NULLIF(enc_count.encuestadores, 0) AS reg_esperados_enc, " +
+                "    f.registros_esperados DIV NULLIF(enc_count.encuestadores, 0) AS reg_esperados_enc, " +
                 "    f.fecha_limite, f.registros_esperados " +
                 "FROM formulario f " +
                 "INNER JOIN enc_has_formulario ehf ON f.idformulario = ehf.idformulario " +
-                "INNER JOIN registro_respuestas reg ON ehf.idenc_has_formulario = reg.idenc_has_formulario " +
+                "LEFT JOIN registro_respuestas reg ON ehf.idenc_has_formulario = reg.idenc_has_formulario " +
                 "INNER JOIN ( " +
                 "    SELECT ehf2.idformulario, COUNT(DISTINCT ehf2.enc_idusuario) AS encuestadores " +
                 "    FROM enc_has_formulario ehf2 " +
