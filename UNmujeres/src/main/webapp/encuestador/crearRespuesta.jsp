@@ -188,7 +188,7 @@
                                 // Para otros tipos definimos el input adecuado; "date" e "int" se manejan, por defecto "text"
                                 String inputType = "text";
                                 String patron = "";
-                                String aviso = (pregunta.getRequerido() ? "* Respuesta obligatoria. " : null);
+                                String aviso = (pregunta.getRequerido() ? "* Respuesta obligatoria. " : "");
                                 String place = "";
                                 if ("un medium int".equalsIgnoreCase(pregunta.getTipoDato())) {
                                     inputType = "number";
