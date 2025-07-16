@@ -634,42 +634,74 @@ public class VerFormulariosServlet extends HttpServlet {
 
         valor = valor.trim();
 
-        if ("int".equalsIgnoreCase(tipo) || "number".equalsIgnoreCase(tipo)) {
+        if (tipo.contains("int")) {
+            if (!valor.matches("-?\\d+")) {
+                return "Ingrese un número inválido";
+            }
             try {
-                if (!valor.matches("\\d+")) {
-                    throw new NumberFormatException();
-                }
-                int val = Integer.parseUnsignedInt(valor);
-                if (val > 250 ) {
-                    return "Ingrese un número menor a 250.";
+                int val = Integer.parseInt(valor);
+                switch (tipo) {
+                    case "un medium int":
+                        if (val<0 || val > 500) {
+                            return "Ingrese un número positivo menor o igual a 500.";
+                        }
+                    break;
+                    case "un small int":
+                        if (val<0 || val > 20) {
+                            return "Ingrese un número positivo menor o igual a 20.";
+                        }
+                    break;
+                    case "un large int":
+                        if (val<0 || val > 100_000) {
+                            return "Ingrese un número positivo menor.";
+                        }
+                    break;
+                    case "signed int":
+                        if (val<-100_000 || val > 100_000) {
+                            return "Ingrese un número entre -100 000 y 100 000.";
+                        }
+                    break;
                 }
             } catch (NumberFormatException e) {
                 return "Debe ingresar un número válido.";
             }
-        } else if ("large int".equalsIgnoreCase(tipo)) {
-            try {
-                if (!valor.matches("\\d+")) {
-                    throw new NumberFormatException();
-                }
-                int val = Integer.parseUnsignedInt(valor);
-                if (val > 120 ) {
-                    return "Ingrese un número menor o igual a 120.";
-                }
-            } catch (NumberFormatException e) {
-                return "Debe ingresar un número válido.";
-            }
-        } else if ("small int".equalsIgnoreCase(tipo)) {
-            try {
-                if (!valor.matches("\\d+")) {
-                    throw new NumberFormatException();
-                }
-                int val = Integer.parseUnsignedInt(valor);
-                if (val > 20 ) {
-                    return "Ingrese un número menor o igual a 20.";
-                }
-            } catch (NumberFormatException e) {
-                return "Debe ingresar un número válido.";
-            }
+//        }
+//        if ("un medium int".equalsIgnoreCase(tipo)) {
+//            try {
+//                if (!valor.matches("\\d+")) {
+//                    throw new NumberFormatException();
+//                }
+//                int val = Integer.parseUnsignedInt(valor);
+//                if (val > 500 ) {
+//                    return "Ingrese un número menor o igual a 500.";
+//                }
+//            } catch (NumberFormatException e) {
+//                return "Debe ingresar un número válido.";
+//            }
+//        } else if ("un large int".equalsIgnoreCase(tipo)) {
+//            try {
+//                if (!valor.matches("\\d+")) {
+//                    throw new NumberFormatException();
+//                }
+//                int val = Integer.parseUnsignedInt(valor);
+//                if (val > 100_000 ) {
+//                    return "Ingrese un número menor.";
+//                }
+//            } catch (NumberFormatException e) {
+//                return "Debe ingresar un número válido.";
+//            }
+//        } else if ("un small int".equalsIgnoreCase(tipo)) {
+//            try {
+//                if (!valor.matches("\\d+")) {
+//                    throw new NumberFormatException();
+//                }
+//                int val = Integer.parseUnsignedInt(valor);
+//                if (val > 20 ) {
+//                    return "Ingrese un número menor o igual a 20.";
+//                }
+//            } catch (NumberFormatException e) {
+//                return "Debe ingresar un número válido.";
+//            }
         } else if ("date".equalsIgnoreCase(tipo)) {
             System.out.println("En fecha date: "+valor);
             if (!valor.matches("\\d{4}-\\d{2}-\\d{2}")) {
@@ -715,6 +747,18 @@ public class VerFormulariosServlet extends HttpServlet {
                 }
             } catch (NumberFormatException e) {
                 return "Debe ingresar un número de identificación válido.";
+            }
+        } else if ("decimal2".equalsIgnoreCase(tipo)) {
+            if (!valor.matches("-?\\d+(\\.\\d{1,2})?")) {
+                return "Debe ingresar un número decimal con hasta 2 decimales.";
+            }
+            try {
+                double num = Double.parseDouble(valor);
+                if (num < -100_000 || num > 100_000) {
+                    return "Ingrese un número entre -100000 y 100000.";
+                }
+            } catch (NumberFormatException e) {
+                return "Debe ingresar un número decimal válido.";
             }
         }
 

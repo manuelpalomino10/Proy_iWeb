@@ -209,22 +209,26 @@ public class NuevoFormServlet extends HttpServlet {
 
                 // Validar tipo de dato
                 String tipo = tipos[i].trim().toLowerCase();
-                if (!"texto".equals(tipo) && !"número grande".equals(tipo)  && !"número".equals(tipo) && !"número pequeño".equals(tipo) && !"fecha".equals(tipo) && !"combobox".equals(tipo)
-                        && !"teléfono".equals(tipo) && !"email".equals(tipo) && !"dni".equals(tipo)) {
+                if (!"texto".equals(tipo) && !"número positivo pequeño".equals(tipo) && !"número positivo mediano".equals(tipo)
+                        && !"número positivo grande".equals(tipo) && !"número con signo".equals(tipo)
+                        && !"fecha".equals(tipo) && !"combobox".equals(tipo)
+                        && !"teléfono".equals(tipo) && !"email".equals(tipo) && !"dni".equals(tipo) && !"número decimal".equals(tipo)) {
                     throw new Exception("Tipo de dato inválido: '"+tipo+"' en columna " +tipos[i]);
                 }
 
                 // Mapear tipo a formato BD
                 String tipoBD = switch (tipo) {
-                    case "texto" -> "String";
-                        case "número" -> "int";
-                    case "número grande" -> "large int";
-                    case "número pequeño" -> "small int";
+                    case "texto" -> "text";
                     case "fecha" -> "date";
-                    case "combobox" -> "combobox";
                     case "teléfono" -> "tel";
                     case "email" -> "email";
                     case "dni" -> "dni";
+                    case "combobox" -> "combobox";
+                    case "número positivo pequeño" -> "un small int";
+                    case "número positivo mediano" -> "un medium int";
+                    case "número positivo grande" -> "un large int";
+                    case "número con signo" -> "signed int";
+                    case "número decimal" -> "decimal2";
                     default -> "Default"; // Para texto
                 };
 

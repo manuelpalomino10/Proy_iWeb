@@ -185,24 +185,24 @@
                                                         String patron = "";
                                                         String aviso = (pregunta.getRequerido() ? "* Respuesta obligatoria. " : null);
                                                         String place = "";
-                                                        if ("int".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                                        if ("un medium int".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             inputType = "number";
-                                                            patron = "pattern=\"\\d+\" min=\"0\" max=\"250\" inputmode=\"numeric\"";
-                                                            place = "250";
-                                                        } else if ("large int".equalsIgnoreCase(pregunta.getTipoDato())) {
-                                                            inputType = "number";
-                                                            patron = "pattern=\"\\d+\" min=\"0\" max=\"120\" inputmode=\"numeric\"";
-                                                            place = "120";
-                                                        } else if ("small int".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                                            patron = "pattern=\"\\d+\" min=\"0\" max=\"500\" inputmode=\"numeric\"";
+                                                            place = "500";
+                                                        } else if ("un small int".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             inputType = "number";
                                                             patron = "pattern=\"\\d+\" min=\"0\" max=\"20\" inputmode=\"numeric\"";
                                                             place = "20";
+                                                        } else if ("un large int".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                                            inputType = "number";
+                                                            patron = "pattern=\"\\d+\" min=\"0\" max=\"100000\" inputmode=\"numeric\"";
+                                                            place = "1000";
                                                         } else if ("date".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             inputType = "date";
                                                         } else if ("email".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             inputType = "email";
-                                                            patron = "pattern=\"^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$\"";
-                                                            place = " @gmail.com";
+                                                            patron = "pattern=\"^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$\" inputmode=\"email\"";
+                                                            place = "a@gmail.com";
                                                         } else if ("tel".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             inputType="tel";
                                                             patron = "pattern=\"9\\d{8}\" maxlength=\"9\" inputmode=\"numeric\"";
@@ -212,6 +212,14 @@
                                                             patron = "pattern=\"\\d{8}\" maxlength=\"8\" inputmode=\"numeric\"";
                                                             aviso += "* DNI peruano.";
                                                             place = "12345678";
+                                                        } else if ("signed int".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                                            inputType = "number";
+                                                            patron = "pattern=\"-?\\d+\" min=\"-100000\" max=\"100000\" inputmode=\"numeric\"";
+                                                            place = "-1000";
+                                                        } else if ("decimal2".equalsIgnoreCase(pregunta.getTipoDato())) {
+                                                            inputType = "number";
+                                                            patron = "pattern=\"-?\\d+(\\.\\d{1,2})?\" min=\"-100000\" max=\"100000\" step=\"0.5\" inputmode=\"numeric\"";
+                                                            place = "100.99";
                                                         }
                                                         String inputValue = "";
                                                         if (valoresForm!=null){

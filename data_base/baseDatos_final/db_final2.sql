@@ -184,7 +184,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `iweb_proy`.`pregunta` (
   `idpregunta` INT NOT NULL AUTO_INCREMENT,
   `enunciado` VARCHAR(400) NULL DEFAULT NULL,
-  `tipo_dato` VARCHAR(40) NULL DEFAULT 'char',
+  `tipo_dato` VARCHAR(40) NULL DEFAULT 'text',
   `idseccion` INT NOT NULL,
   `requerido` TINYINT(1) NULL DEFAULT '0',
   PRIMARY KEY (`idpregunta`),
