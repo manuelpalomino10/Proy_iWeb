@@ -183,7 +183,7 @@
                                                     } else {
                                                         String inputType = "text";
                                                         String patron = "";
-                                                        String aviso = (pregunta.getRequerido() ? "* Respuesta obligatoria. " : null);
+                                                        String aviso = (pregunta.getRequerido() ? "* Respuesta obligatoria. " : "");
                                                         String place = "";
                                                         if ("un medium int".equalsIgnoreCase(pregunta.getTipoDato())) {
                                                             inputType = "number";
