@@ -1,6 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.List" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -82,9 +84,10 @@
                                 <div class="form-group">
                                     <label for="idzona">Zona</label>
                                     <select name="idZona" id="idzona" class="form-control w-50" required>
+                                        <option value="">-- Seleccione una zona --</option>
                                         <c:forEach var="zona" items="${listaZonas}">
                                             <option value="${zona.idzona}"
-                                                    <c:if test="${zona.idzona == idZonaSeleccionada || zona.idzona == idZonaSeleccionada + 0}">
+                                                    <c:if test="${zona.idzona == idZonaSeleccionada}">
                                                         selected
                                                     </c:if>>
                                                     ${zona.nombre}
