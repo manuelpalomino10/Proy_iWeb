@@ -47,7 +47,7 @@ public class ZonaDAO extends BaseDAO {
     }
 
     public boolean existeDistritoEnZona(int idDistritos, int idZona) throws SQLException {
-        String sql = "SELECT 1 FROM distrito WHERE iddistritos = ? AND idzona = ?";
+        String sql = "SELECT 1 FROM distritos WHERE iddistritos = ? AND idzona = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idDistritos);

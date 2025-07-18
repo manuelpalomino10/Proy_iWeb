@@ -47,7 +47,7 @@ public class RegistroEncuestadorServlet extends HttpServlet {
         String apellido      = req.getParameter("apellido");
         String dniParam      = req.getParameter("dni");
         String direccion     = req.getParameter("direccion");
-        String distritoParam = req.getParameter("distritos"); // "iddistritos-idzona"
+        String distritoParam = req.getParameter("distrito"); // "iddistritos-idzona"
         String correo        = req.getParameter("correo");
 
         Map<String,String> errores = new HashMap<>();
