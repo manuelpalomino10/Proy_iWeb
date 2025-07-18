@@ -34,4 +34,28 @@ public class ZonaDAO extends BaseDAO {
 
         return zonas;
     }
+
+    public boolean existeZona(int idZona) throws SQLException {
+        String sql = "SELECT 1 FROM zona WHERE idzona = ?";
+        try (Connection con = this.getConnection();
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idZona);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();  // true si encontró un resultado
+            }
+        }
+    }
+
+    public boolean existeDistritoEnZona(int idDistritos, int idZona) throws SQLException {
+        String sql = "SELECT 1 FROM distrito WHERE iddistritos = ? AND idzona = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idDistritos);
+            stmt.setInt(2, idZona);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
 }

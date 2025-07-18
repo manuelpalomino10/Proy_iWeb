@@ -121,7 +121,7 @@ public class SubirRegistrosServlet extends HttpServlet {
 
         int nRegInsertados = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePart.getInputStream(), StandardCharsets.UTF_8));
-             BufferedReader templateReader = new BufferedReader(new FileReader(template))) {
+             BufferedReader templateReader = new BufferedReader(new FileReader(template, StandardCharsets.UTF_8))) {
 
             // Lectura y comparación de cabeceras
             for (int i = 0; i <= 5; i++) {

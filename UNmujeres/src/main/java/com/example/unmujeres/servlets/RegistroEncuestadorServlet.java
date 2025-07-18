@@ -40,17 +40,17 @@ public class RegistroEncuestadorServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        Map<String,String> errores = new HashMap<>();
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         // 1) Recoge parámetros
         String nombre        = req.getParameter("nombre");
         String apellido      = req.getParameter("apellido");
         String dniParam      = req.getParameter("dni");
         String direccion     = req.getParameter("direccion");
-        String distritoParam = req.getParameter("distrito"); // "iddistritos-idzona"
+        String distritoParam = req.getParameter("distritos"); // "iddistritos-idzona"
         String correo        = req.getParameter("correo");
+
+        Map<String,String> errores = new HashMap<>();
 
         // 2) Recargar listas para re-pintar el form si hay errores
         try {
@@ -60,13 +60,21 @@ public class RegistroEncuestadorServlet extends HttpServlet {
             throw new ServletException("Error recargando zonas/distritos", ex);
         }
 
-        // 3) Validaciones
+        // 3) Validacion datos obligatorios
         if (nombre == null || nombre.trim().isEmpty())   errores.put("nombre",   "El nombre es obligatorio");
         if (apellido == null || apellido.trim().isEmpty()) errores.put("apellido", "El apellido es obligatorio");
         if (direccion == null || direccion.trim().isEmpty()) errores.put("direccion","La dirección es obligatoria");
         if (correo == null || correo.trim().isEmpty())     errores.put("correo",   "El correo es obligatorio");
 
-        // DNI
+        //Validación Correo ------------------------------------
+        if (correo != null && !correo.trim().isEmpty()) {
+            String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+            if (!correo.matches(emailRegex)) {
+                errores.put("correo", "El formato del correo no es válido");
+            }
+        }
+
+        // valicación DNI --------------------------------------
         int dni = 0;
         if (dniParam == null || dniParam.trim().isEmpty()) {
             errores.put("dni", "El DNI es obligatorio");
@@ -79,21 +87,39 @@ public class RegistroEncuestadorServlet extends HttpServlet {
             }
         }
 
-        //
-        Integer idDistrito = null, idZona = null;
+        // Validación de zona y distrito desde el parámetro distritoParam
+        ZonaDAO zonaDao = new ZonaDAO();
+        Integer idDistrito = null;
+        Integer idZona = null;
+
         if (distritoParam != null && distritoParam.contains("-")) {
             String[] parts = distritoParam.split("-", 2);
             try {
                 idDistrito = Integer.parseInt(parts[0]);
-                idZona      = Integer.parseInt(parts[1]);
+                idZona     = Integer.parseInt(parts[1]);
+
+                if (!zonaDao.existeZona(idZona)) {
+                    errores.put("zona", "La zona seleccionada no existe");
+                } else if (!zonaDao.existeDistritoEnZona(idDistrito, idZona)) {
+                    errores.put("distritos", "El distrito no pertenece a la zona seleccionada");
+                }
+
             } catch (NumberFormatException e) {
-                errores.put("distrito", "Selecciona un distrito válido");
+                errores.put("distritos", "Selecciona un distrito válido");
+            } catch (SQLException e) {
+                throw new ServletException("Error validando zona y distrito", e);
             }
         } else {
-            errores.put("distrito", "Selecciona un distrito válido");
+            errores.put("distritos", "Selecciona un distrito válido");
         }
 
-        //
+        if (!errores.isEmpty()) {
+            req.setAttribute("errores", errores);
+            req.getRequestDispatcher("Sistema/form.jsp").forward(req, resp);
+            return;
+        }
+
+        //Validación de corrro o DNI ya registrado
         if (errores.isEmpty()) {
             try {
                 if (dao.existeDni(dni))      errores.put("dni",    "El DNI ya está registrado");
@@ -103,7 +129,7 @@ public class RegistroEncuestadorServlet extends HttpServlet {
             }
         }
 
-        //
+        //Envio del formulario si no hay errores
         if (!errores.isEmpty()) {
             req.setAttribute("errores",    errores);
             req.setAttribute("nombre",     nombre);
