@@ -1,12 +1,10 @@
 package com.example.unmujeres.servlets.coordinador;
 
 import com.example.unmujeres.beans.EncHasFormulario;
+import com.example.unmujeres.beans.Pregunta;
 import com.example.unmujeres.beans.RegistroRespuestas;
 import com.example.unmujeres.beans.Usuario;
-import com.example.unmujeres.daos.EncHasFormularioDAO;
-import com.example.unmujeres.daos.FormularioDAO;
-import com.example.unmujeres.daos.RegistroRespuestasDAO;
-import com.example.unmujeres.daos.RespuestaDAO;
+import com.example.unmujeres.daos.*;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -16,9 +14,14 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.*;
 
 @MultipartConfig
@@ -30,6 +33,9 @@ public class SubirRegistrosServlet extends HttpServlet {
     RegistroRespuestasDAO registroDAO = new RegistroRespuestasDAO();
     RespuestaDAO respuestaDAO = new RespuestaDAO();
     private static String REPORTES_BASE_PATH;
+    OpcionPreguntaDAO opcionDAO = new OpcionPreguntaDAO();
+    PreguntaDAO preguntaDAO = new PreguntaDAO();
+    BaseDAO baseDAO = new BaseDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -104,8 +110,8 @@ public class SubirRegistrosServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
             return;
         }
-
-        String templateName = "PLANTILLA_UN_Formulario"+ehf.getFormulario().getIdFormulario()+".csv";
+        int idForm = ehf.getFormulario().getIdFormulario();
+        String templateName = "PLANTILLA_UN_Formulario"+idForm+".csv";
         Path basePath = Paths.get(REPORTES_BASE_PATH);
         Path filePath = basePath.resolve(templateName).normalize();
         if (!filePath.startsWith(basePath.toAbsolutePath())) {
@@ -119,9 +125,19 @@ public class SubirRegistrosServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Plantilla no encontrada");
         }
 
+        // Se recuperan las preguntas y opciones según el formulario
+        ArrayList<Pregunta> preguntas = preguntaDAO.getPreguntasConOpcionesPorFormulario(idForm);
+        Map<Integer, Pregunta> idP_preguntaMap = new HashMap<>();
+        for (Pregunta pregunta : preguntas) {
+            idP_preguntaMap.put(pregunta.getIdPregunta(), pregunta);
+        }
+
         int nRegInsertados = 0;
+        Connection conn = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePart.getInputStream(), StandardCharsets.UTF_8));
              BufferedReader templateReader = new BufferedReader(new FileReader(template, StandardCharsets.UTF_8))) {
+            conn = baseDAO.getConnection();
+            conn.setAutoCommit(false);
 
             // Lectura y comparación de cabeceras
             for (int i = 0; i <= 5; i++) {
@@ -144,7 +160,8 @@ public class SubirRegistrosServlet extends HttpServlet {
 
             String line;
             String delimiter = ";";
-
+            int i=6;
+            Map<Integer, String> errores = new HashMap<>();
             while ((line = reader.readLine()) != null) {
                 Map<Integer, String> respuestasTexto = new HashMap<>();
                 // Para cada línea, se crea un nuevo registro en la tabla Registro que asocia el idEhf.
@@ -153,24 +170,51 @@ public class SubirRegistrosServlet extends HttpServlet {
                 nuevoRegistro.setEstado("C"); // Siempre en estado C
 
                 nuevoRegistro.setEncHasFormulario(ehf);
-                int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);
+//                regs.add(nuevoRegistro);
+                int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);   // int idRegistro = registroDAO.crearRegistroRespuestas(conn,nuevoRegistro);
                 System.out.println("Nuevo Registro id es: "+idRegistro);
                 nRegInsertados++;
 
                 // Se separa la línea en celdas según el delimitador.
                 String[] cells = line.split(delimiter);
-                int preguntaIndex = 1;
+                if (cells.length > preguntas.size()) {
+                    throw new IllegalArgumentException("Número de columnas inconsistente en la línea "+(i+1)+" del archivo CSV");
+                }
+                int preguntaIndex = preguntas.get(0).getIdPregunta();
                 for (String cell : cells) {
+                    Pregunta pregunta = idP_preguntaMap.get(preguntaIndex);
                     String respuesta = cell.trim();
                     // Manejar valores vacíos y placeholder
                     if (respuesta.isEmpty() || respuesta.equals("-")) {
-                        respuestasTexto.put(preguntaIndex, null);
+                        String errorMsg = validarPregunta(pregunta, null);
+                        if (errorMsg != null) {
+                            String eMsg = "(línea "+(i+1)+") "+errorMsg;
+                            errores.put(pregunta.getIdPregunta(), eMsg);
+                        } else {
+                            respuestasTexto.put(preguntaIndex, null);
+                        }
                     } else {
-                        respuestasTexto.put(preguntaIndex, respuesta);
+                        String errorMsg = validarPregunta(pregunta, respuesta);
+                        if (errorMsg != null) {
+                            String eMsg = "(línea "+(i+1)+") "+errorMsg;
+                            errores.put(pregunta.getIdPregunta(), eMsg);
+                        } else {
+                            respuestasTexto.put(preguntaIndex, respuesta);
+                        }
                     }
                     preguntaIndex++;
+                    if(errores.size()==10) {break;}
                 }
-                respuestaDAO.guardarRespuestas(idRegistro, respuestasTexto);
+                if(errores.size()==10) {break;}
+                respuestaDAO.guardarRespuestas(idRegistro, respuestasTexto);  // respuestaDAO.guardarRespuestas(conn,idRegistro, respuestasTexto);
+                i++;
+            }
+
+            if (!errores.isEmpty()) {
+                //request.setAttribute("error", errores);
+                session.setAttribute("validationErrors", errores);
+                response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
+                return;
             }
 
             if (nRegInsertados > 0) {
@@ -181,7 +225,7 @@ public class SubirRegistrosServlet extends HttpServlet {
             }
             response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
             return;
-        } catch (SQLException | IOException e) {
+        } catch (SQLException | IOException | IllegalArgumentException e) {
             e.printStackTrace();
             session.setAttribute("error", e.getMessage());
             response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
@@ -190,6 +234,119 @@ public class SubirRegistrosServlet extends HttpServlet {
 
         }
 
+    }
+
+    // MÉTODO PRIVADO PARA VALIDAR EL VALOR DE UNA PREGUNTA
+    private String validarPregunta(Pregunta pregunta, String valor) {
+        // y, opcionalmente, isRequerida() y getOpciones() (para combobox)
+        String tipo = pregunta.getTipoDato();
+
+        // Si el campo es requerido y el valor es nulo o vacío, se retorna un error.
+        if (pregunta.getRequerido() && (valor == null || valor.trim().isEmpty())) {
+            return "El campo es obligatorio.";
+        }
+
+        // Si el valor no es obligatorio y está vacío, se acepta (retornamos null, sin error)
+        if (valor == null || valor.trim().isEmpty()) {
+            return null;
+        }
+
+        valor = valor.trim();
+
+        if (tipo.contains("int")) {
+            if (!valor.matches("-?\\d+")) {
+                return "Ingrese un número inválido";
+            }
+            try {
+                int val = Integer.parseInt(valor);
+                switch (tipo) {
+                    case "un medium int":
+                        if (val<0 || val > 500) {
+                            return "Ingrese un número positivo menor o igual a 500.";
+                        }
+                        break;
+                    case "un small int":
+                        if (val<0 || val > 20) {
+                            return "Ingrese un número positivo menor o igual a 20.";
+                        }
+                        break;
+                    case "un large int":
+                        if (val<0 || val > 100_000) {
+                            return "Ingrese un número positivo menor.";
+                        }
+                        break;
+                    case "signed int":
+                        if (val<-100_000 || val > 100_000) {
+                            return "Ingrese un número entre -100 000 y 100 000.";
+                        }
+                        break;
+                }
+            } catch (NumberFormatException e) {
+                return "Debe ingresar un número válido.";
+            }
+
+        } else if ("date".equalsIgnoreCase(tipo)) {
+            System.out.println("En fecha date: "+valor);
+            if (!valor.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                return "Introduzca una fecha válida (dd-mm-yyyy).";
+            }
+            try {
+                //DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                        .withResolverStyle(ResolverStyle.SMART)
+                        .withZone(ZoneId.of("America/Lima"));
+                LocalDate.parse(valor.trim(), sqlFormatter);
+
+
+            } catch (DateTimeParseException e) {
+                return "Introduzca una fecha válida (dd-mm-yyyy).";
+            }
+        } else if ("select".equalsIgnoreCase(tipo) || "combobox".equalsIgnoreCase(tipo)) {
+            // Se asume que getOpciones() devuelve una lista de opciones válidas (por ejemplo, List<String>)
+            List<String> opcionesValidas = opcionDAO.getByPreguntaToString(pregunta.getIdPregunta());
+            if (opcionesValidas != null && !opcionesValidas.contains(valor)) {
+                return "La opción seleccionada no es válida.";
+            }
+        } else if ("tel".equalsIgnoreCase(tipo)) {
+            try {
+                Integer.parseUnsignedInt(valor);
+                if (!valor.matches("^9\\d{8}$")) {
+                    return "Ingrese un número de Perú";
+                }
+            } catch (NumberFormatException e) {
+                return "Debe ingresar un teléfono válido.";
+            }
+        } else if ("email".equalsIgnoreCase(tipo)) {
+            String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@" +
+                    "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+            if (!valor.matches(regex)) {
+                return "Ingrese un mail válido";
+            }
+        } else if ("dni".equalsIgnoreCase(tipo)) {
+            try {
+                Integer.parseUnsignedInt(valor);
+                if (!valor.matches("^\\d{8}$")) {
+                    return "Ingrese un DNI de Perú";
+                }
+            } catch (NumberFormatException e) {
+                return "Debe ingresar un número de identificación válido.";
+            }
+        } else if ("decimal2".equalsIgnoreCase(tipo)) {
+            if (!valor.matches("-?\\d+(\\.\\d{1,2})?")) {
+                return "Debe ingresar un número decimal con hasta 2 decimales.";
+            }
+            try {
+                double num = Double.parseDouble(valor);
+                if (num < -100_000 || num > 100_000) {
+                    return "Ingrese un número entre -100000 y 100000.";
+                }
+            } catch (NumberFormatException e) {
+                return "Debe ingresar un número decimal válido.";
+            }
+        }
+
+        // Si no se encontró ningún error, se retorna null.
+        return null;
     }
 
     @Override

@@ -71,6 +71,10 @@ public class VerFormulariosServlet extends HttpServlet {
 
         switch (action) {
             case "lista":
+                if (userRole!=3) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acción inválida");
+                    return;
+                }
                 try {
                     System.out.println("Se consulto lista de asignados");
 
@@ -158,6 +162,10 @@ public class VerFormulariosServlet extends HttpServlet {
                 break;
 
             case "historial":
+                if (userRole!=3) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acción inválida");
+                    return;
+                }
                 System.out.println("Se consulto historial");
                 try {
                     //1. Obtener registros de Usuario, de formularios activos
@@ -265,6 +273,11 @@ public class VerFormulariosServlet extends HttpServlet {
                 break;
 
             case "descartar":
+                if (userRole!=3) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acción inválida");
+                    return;
+                }
+
                 String idRegParam1 = request.getParameter("id");
 
                 //Validar parametro
@@ -301,6 +314,10 @@ public class VerFormulariosServlet extends HttpServlet {
                     response.sendRedirect(request.getContextPath() + "/encuestador/VerFormulariosServlet?action=historial");
                 }
 
+            break;
+
+            default:
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             break;
         }
     }
@@ -387,7 +404,9 @@ public class VerFormulariosServlet extends HttpServlet {
 
                                     if (!idR_preguntaMap.containsKey(idRespuesta)) {
                                         System.err.println("Mapa de respuestas-preguntas no contiene key ID de respuesta: " + idRespuesta);
-                                        throw new IllegalArgumentException("Solicitud malformada");
+//                                        throw new IllegalArgumentException("Solicitud malformada");
+                                        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                                        return;
 //                                    } else {
 //                                        System.out.println("Mapa de respuestas-preguntas contiene key ID de respuesta: " + idRespuesta);
 //                                        Pregunta pregunta = idR_preguntaMap.get(idRespuesta);
@@ -427,7 +446,9 @@ public class VerFormulariosServlet extends HttpServlet {
                         // 2.3 Validar que no existan duplicados ni sobrantes ni faltantes
                         if (!inputs.keySet().equals(idR_preguntaMap.keySet())) {
                             System.err.println("IDs recibidos de respuestas no se igualan a las esperadas (DB)");
-                            throw new IllegalArgumentException("Solicitud malformada");
+                            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                            return;
+//                            throw new IllegalArgumentException("Solicitud malformada");
                         }
 
                         // 3. Si hay errores de validación, reenvía al formulario para que el usuario corrija los datos.
@@ -611,7 +632,7 @@ public class VerFormulariosServlet extends HttpServlet {
 
             default:
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-
+            break;
 
         }
     }
@@ -665,43 +686,7 @@ public class VerFormulariosServlet extends HttpServlet {
             } catch (NumberFormatException e) {
                 return "Debe ingresar un número válido.";
             }
-//        }
-//        if ("un medium int".equalsIgnoreCase(tipo)) {
-//            try {
-//                if (!valor.matches("\\d+")) {
-//                    throw new NumberFormatException();
-//                }
-//                int val = Integer.parseUnsignedInt(valor);
-//                if (val > 500 ) {
-//                    return "Ingrese un número menor o igual a 500.";
-//                }
-//            } catch (NumberFormatException e) {
-//                return "Debe ingresar un número válido.";
-//            }
-//        } else if ("un large int".equalsIgnoreCase(tipo)) {
-//            try {
-//                if (!valor.matches("\\d+")) {
-//                    throw new NumberFormatException();
-//                }
-//                int val = Integer.parseUnsignedInt(valor);
-//                if (val > 100_000 ) {
-//                    return "Ingrese un número menor.";
-//                }
-//            } catch (NumberFormatException e) {
-//                return "Debe ingresar un número válido.";
-//            }
-//        } else if ("un small int".equalsIgnoreCase(tipo)) {
-//            try {
-//                if (!valor.matches("\\d+")) {
-//                    throw new NumberFormatException();
-//                }
-//                int val = Integer.parseUnsignedInt(valor);
-//                if (val > 20 ) {
-//                    return "Ingrese un número menor o igual a 20.";
-//                }
-//            } catch (NumberFormatException e) {
-//                return "Debe ingresar un número válido.";
-//            }
+
         } else if ("date".equalsIgnoreCase(tipo)) {
             System.out.println("En fecha date: "+valor);
             if (!valor.matches("\\d{4}-\\d{2}-\\d{2}")) {

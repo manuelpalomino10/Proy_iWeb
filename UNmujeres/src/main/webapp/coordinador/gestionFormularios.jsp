@@ -2,6 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="com.example.unmujeres.dtos.FormularioDto" %>
 <%@ page import="com.example.unmujeres.beans.Categoria" %>
+<%@ page import="java.util.Map" %>
 
 <%
     ArrayList<FormularioDto> lista = (ArrayList<FormularioDto>) request.getAttribute("lista");
@@ -62,7 +63,25 @@
 
                 <hr/>
 
-                <% if (session.getAttribute("error") != null) { %>
+                <%
+                    Map<Integer, String> errores = (Map<Integer, String>) session.getAttribute("validationErrors");
+                    if (errores != null) {
+                %>
+                <div class="alert alert-danger">
+                    <ul>
+                        <%
+                            for (Map.Entry<Integer, String> entry : errores.entrySet()) {
+                        %>
+                        <li><strong>Pregunta <%= entry.getKey() %>:</strong> <%= entry.getValue() %></li>
+                        <%
+                            }
+                            session.removeAttribute("validationErrors");
+                        %>
+                    </ul>
+                </div>
+
+
+                <%} if (session.getAttribute("error") != null) { %>
                 <div>
                     <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
                     </div>

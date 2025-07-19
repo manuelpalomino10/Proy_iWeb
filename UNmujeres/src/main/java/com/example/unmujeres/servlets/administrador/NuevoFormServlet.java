@@ -213,7 +213,7 @@ public class NuevoFormServlet extends HttpServlet {
                         && !"número positivo grande".equals(tipo) && !"número con signo".equals(tipo)
                         && !"fecha".equals(tipo) && !"combobox".equals(tipo)
                         && !"teléfono".equals(tipo) && !"email".equals(tipo) && !"dni".equals(tipo) && !"número decimal".equals(tipo)) {
-                    throw new Exception("Tipo de dato inválido: '"+tipo+"' en columna " +tipos[i]);
+                    throw new Exception("Tipo de dato inválido: '"+tipo+"' en columna " +(i+1));
                 }
 
                 // Mapear tipo a formato BD
@@ -257,8 +257,8 @@ public class NuevoFormServlet extends HttpServlet {
                 // Procesar opciones si es combobox
                 if ("combobox".equals(tipo)) {
                     String opcionesStr = ejemplos[i].trim();
-                    if (opcionesStr.isEmpty()) {
-                        throw new Exception("Combobox requiere opciones en ejemplo");
+                    if (!opcionesStr.contains("/")) {
+                        throw new Exception("Pregunta en columna "+(i+1)+" requiere al menos dos opciones en fila 5");
                     }
 
                     String[] opciones = opcionesStr.split("/");
@@ -320,7 +320,7 @@ public class NuevoFormServlet extends HttpServlet {
             }
         }
         asignarNuevoForm(nuevoFormulario);
-        session.setAttribute("success", "Nuevo Formulario creado con éxito con "+numPreguntas+" preguntas");
+        session.setAttribute("success", "Nuevo Formulario creado con éxito con "+numPreguntas+" preguntas. Se guardo el archivo CSV subido como plantilla.");
         response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
         return;
 

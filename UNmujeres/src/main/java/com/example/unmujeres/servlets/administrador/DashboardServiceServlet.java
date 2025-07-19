@@ -24,11 +24,13 @@ public class DashboardServiceServlet extends HttpServlet {
 
         try {
 
-            int idFormularioSeleccionado = obtenerIdFormulario(request);
-
-
             List<Formulario> formularios = estadisticasDAO.listarFormulariosActivos();
 
+            int idFormularioSeleccionado = obtenerIdFormulario(request);
+            int idF = idFormularioSeleccionado;
+            if (formularios.stream().noneMatch(f -> f.getIdFormulario() == idF)) {
+                idFormularioSeleccionado=1;
+            }
 
             EstadisticasFormulario estadisticas = estadisticasDAO.obtenerEstadisticasPorFormulario(idFormularioSeleccionado);
 
@@ -47,6 +49,13 @@ public class DashboardServiceServlet extends HttpServlet {
 
     private int obtenerIdFormulario(HttpServletRequest request) {
         String param = request.getParameter("formularioId");
-        return (param != null && !param.isEmpty()) ? Integer.parseInt(param) : 1;
+        if (param != null && !param.isEmpty()) {
+            try {
+                return Integer.parseInt(param);
+            } catch (NumberFormatException e) {
+                return 1;
+            }
+        } else {return 1;}
+//        return (param != null && !param.isEmpty()) ? Integer.parseInt(param) : 1;
     }
 }

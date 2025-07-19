@@ -26,7 +26,7 @@ public class GlobalErrorHandlerFilter implements Filter {
                 int status = responseWrapper.getStatus();
 
                 if (status == HttpServletResponse.SC_NOT_FOUND ||
-                        status == HttpServletResponse.SC_FORBIDDEN) {
+                        status == HttpServletResponse.SC_FORBIDDEN || status == HttpServletResponse.SC_BAD_REQUEST) {
 
                     prepareErrorPage(request, status);
                     request.getRequestDispatcher("/WEB-INF/views/errors/error-handler.jsp")
@@ -56,6 +56,12 @@ public class GlobalErrorHandlerFilter implements Filter {
             case 404:
                 request.setAttribute("tituloError", "Página no encontrada");
                 request.setAttribute("mensajeError", "El recurso solicitado no existe");
+                request.setAttribute("iconoError", "fas fa-file-circle-xmark");
+                break;
+
+            case 400:
+                request.setAttribute("tituloError", "Solicitud inválida");
+                request.setAttribute("mensajeError", "No se puede procesar su solicitud");
                 request.setAttribute("iconoError", "fas fa-file-circle-xmark");
                 break;
 
