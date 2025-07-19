@@ -154,7 +154,7 @@
                                                             if(opciones != null) {
                                                                 for(OpcionPregunta opcion : opciones) {
                                                                     if(opcion.getPregunta().getIdPregunta() == pregunta.getIdPregunta()) {
-                                                                        String selected = null;
+                                                                        String selected = "";
                                                                         if (valoresForm!=null) {
                                                                             if (opcion.getOpcion().equals(valoresForm.get(respuesta.getIdRespuesta()))) {
                                                                                 selected = "selected";

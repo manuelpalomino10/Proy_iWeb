@@ -386,6 +386,7 @@ public class VerFormulariosServlet extends HttpServlet {
                         Map<Integer, String> inputs = new HashMap<>();
 
                         ArrayList<Respuesta> respuestas = respuestaDAO.listaRespuestas(idReg);
+                        int idPrimeraPregunta = respuestas.get(0).getPregunta().getIdPregunta();
                         Map<Integer, Pregunta> idR_preguntaMap = new HashMap<>();
                         for (Respuesta respuesta : respuestas) {
                             idR_preguntaMap.put(respuesta.getIdRespuesta(), respuesta.getPregunta());
@@ -429,13 +430,13 @@ public class VerFormulariosServlet extends HttpServlet {
                                             // Solo validamos si se ingresó algún valor
                                             String errorMsg = validarPregunta(pregunta, valor);
                                             if (errorMsg != null) {
-                                                errores.put(pregunta.getIdPregunta(), errorMsg);
+                                                errores.put(pregunta.getIdPregunta()-idPrimeraPregunta+1, errorMsg);
                                             }
                                         }
                                     } else {
                                         String errorMsg = validarPregunta(pregunta, valor);
                                         if (errorMsg != null) {
-                                            errores.put(pregunta.getIdPregunta(), errorMsg);}
+                                            errores.put(pregunta.getIdPregunta()-idPrimeraPregunta+1, errorMsg);}
                                     }
                                 } catch (NumberFormatException e) {
                                     System.err.println("ID de pregunta inválido en el parámetro: " + paramName);
@@ -528,6 +529,7 @@ public class VerFormulariosServlet extends HttpServlet {
                         //System.out.println("preguntas: " + Arrays.toString(preguntas.toArray()));
 
                         Map<Integer, Pregunta> idP_preguntaMap = new HashMap<>();
+                        int idPrimeraPregunta = preguntas.get(0).getIdPregunta();
                         for (Pregunta pregunta : preguntas) {
                             idP_preguntaMap.put(pregunta.getIdPregunta(), pregunta);
                         }
@@ -563,13 +565,13 @@ public class VerFormulariosServlet extends HttpServlet {
                                             // Solo validamos si se ingresó algún valor
                                             String errorMsg = validarPregunta(pregunta, valor);
                                             if (errorMsg != null) {
-                                                errores.put(pregunta.getIdPregunta(), errorMsg);
+                                                errores.put(pregunta.getIdPregunta()-idPrimeraPregunta+1, errorMsg);
                                             }
                                         }
                                     } else {
                                         String errorMsg = validarPregunta(pregunta, valor);
                                         if (errorMsg != null) {
-                                            errores.put(pregunta.getIdPregunta(), errorMsg);
+                                            errores.put(pregunta.getIdPregunta()-idPrimeraPregunta+1, errorMsg);
                                         }
                                     }
 

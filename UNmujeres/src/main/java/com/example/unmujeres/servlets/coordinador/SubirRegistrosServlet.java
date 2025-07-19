@@ -136,8 +136,6 @@ public class SubirRegistrosServlet extends HttpServlet {
         Connection conn = null;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePart.getInputStream(), StandardCharsets.UTF_8));
              BufferedReader templateReader = new BufferedReader(new FileReader(template, StandardCharsets.UTF_8))) {
-            conn = baseDAO.getConnection();
-            conn.setAutoCommit(false);
 
             // Lectura y comparación de cabeceras
             for (int i = 0; i <= 5; i++) {
@@ -161,7 +159,9 @@ public class SubirRegistrosServlet extends HttpServlet {
             String line;
             String delimiter = ";";
             int i=6;
-            Map<Integer, String> errores = new HashMap<>();
+            Map<Integer, List<String>> errores = new HashMap<>();
+            conn = baseDAO.getConnection();
+            conn.setAutoCommit(false);
             while ((line = reader.readLine()) != null) {
                 Map<Integer, String> respuestasTexto = new HashMap<>();
                 // Para cada línea, se crea un nuevo registro en la tabla Registro que asocia el idEhf.
@@ -170,8 +170,8 @@ public class SubirRegistrosServlet extends HttpServlet {
                 nuevoRegistro.setEstado("C"); // Siempre en estado C
 
                 nuevoRegistro.setEncHasFormulario(ehf);
-//                regs.add(nuevoRegistro);
-                int idRegistro = registroDAO.crearRegistroRespuestas(nuevoRegistro);   // int idRegistro = registroDAO.crearRegistroRespuestas(conn,nuevoRegistro);
+//                regs.add(nuevoRegistro)d;
+                int idRegistro = registroDAO.crearRegTransaccion(conn,nuevoRegistro);   // int idRegistro = registroDAO.crearRegistroRespuestas(conn,nuevoRegistro);
                 System.out.println("Nuevo Registro id es: "+idRegistro);
                 nRegInsertados++;
 
@@ -181,6 +181,7 @@ public class SubirRegistrosServlet extends HttpServlet {
                     throw new IllegalArgumentException("Número de columnas inconsistente en la línea "+(i+1)+" del archivo CSV");
                 }
                 int preguntaIndex = preguntas.get(0).getIdPregunta();
+                int idPrimeraPregunta = preguntas.get(0).getIdPregunta();
                 for (String cell : cells) {
                     Pregunta pregunta = idP_preguntaMap.get(preguntaIndex);
                     String respuesta = cell.trim();
@@ -189,7 +190,9 @@ public class SubirRegistrosServlet extends HttpServlet {
                         String errorMsg = validarPregunta(pregunta, null);
                         if (errorMsg != null) {
                             String eMsg = "(línea "+(i+1)+") "+errorMsg;
-                            errores.put(pregunta.getIdPregunta(), eMsg);
+                            errores
+                                    .computeIfAbsent(pregunta.getIdPregunta()-idPrimeraPregunta+1, k -> new ArrayList<>())
+                                    .add(eMsg);
                         } else {
                             respuestasTexto.put(preguntaIndex, null);
                         }
@@ -197,25 +200,33 @@ public class SubirRegistrosServlet extends HttpServlet {
                         String errorMsg = validarPregunta(pregunta, respuesta);
                         if (errorMsg != null) {
                             String eMsg = "(línea "+(i+1)+") "+errorMsg;
-                            errores.put(pregunta.getIdPregunta(), eMsg);
+                            errores
+                                    .computeIfAbsent(pregunta.getIdPregunta()-idPrimeraPregunta+1, k -> new ArrayList<>())
+                                    .add(eMsg);
                         } else {
                             respuestasTexto.put(preguntaIndex, respuesta);
                         }
                     }
                     preguntaIndex++;
-                    if(errores.size()==10) {break;}
+                    if(errores.size()==5) {break;}
                 }
-                if(errores.size()==10) {break;}
-                respuestaDAO.guardarRespuestas(idRegistro, respuestasTexto);  // respuestaDAO.guardarRespuestas(conn,idRegistro, respuestasTexto);
+                if(errores.size()==5) {break;}
+                respuestaDAO.guardarRespTran(conn,idRegistro,respuestasTexto);  // respuestaDAO.guardarRespuestas(conn,idRegistro, respuestasTexto);
                 i++;
             }
 
             if (!errores.isEmpty()) {
                 //request.setAttribute("error", errores);
                 session.setAttribute("validationErrors", errores);
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    session.setAttribute("error", "Error inesperado al abortar la subida masiva");
+                }
                 response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
                 return;
             }
+            conn.commit();
 
             if (nRegInsertados > 0) {
                 System.out.println("Exito al subir "+nRegInsertados+" registros por csv");
@@ -286,20 +297,26 @@ public class SubirRegistrosServlet extends HttpServlet {
             }
 
         } else if ("date".equalsIgnoreCase(tipo)) {
-            System.out.println("En fecha date: "+valor);
-            if (!valor.matches("\\d{4}-\\d{2}-\\d{2}")) {
-                return "Introduzca una fecha válida (dd-mm-yyyy).";
+//            System.out.println("En fecha date: "+valor);
+            if (!valor.matches("\\d{4}-\\d{2}-\\d{2}") && !valor.matches("\\d{1,2}/\\d{1,2}/\\d{4}")) {
+                return "Introduzca una fecha válida (dd-mm-yyyy o 0d/0m/yyyy) regex.";
             }
             try {
-                //DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                        .withResolverStyle(ResolverStyle.SMART)
-                        .withZone(ZoneId.of("America/Lima"));
-                LocalDate.parse(valor.trim(), sqlFormatter);
-
+                // 2) Escoger formateador según el separador
+                if (valor.contains("-")) {
+                    DateTimeFormatter fmtIso = DateTimeFormatter
+                            .ofPattern("uuuu-MM-dd")
+                            .withResolverStyle(ResolverStyle.SMART);
+                    LocalDate.parse(valor.trim(), fmtIso);
+                } else {
+                    DateTimeFormatter fmtAlt = DateTimeFormatter
+                            .ofPattern("d/M/uuuu")
+                            .withResolverStyle(ResolverStyle.SMART);
+                    LocalDate.parse(valor.trim(), fmtAlt);
+                }
 
             } catch (DateTimeParseException e) {
-                return "Introduzca una fecha válida (dd-mm-yyyy).";
+                return "Introduzca una fecha válida (dd-mm-yyyy o 0d/0m/yyyy).";
             }
         } else if ("select".equalsIgnoreCase(tipo) || "combobox".equalsIgnoreCase(tipo)) {
             // Se asume que getOpciones() devuelve una lista de opciones válidas (por ejemplo, List<String>)

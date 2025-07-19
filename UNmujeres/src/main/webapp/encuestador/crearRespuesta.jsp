@@ -160,7 +160,7 @@
                                     if (opciones != null) {
 
                                         for (OpcionPregunta opcion : opciones) {
-                                            String opcSelected = null;
+                                            String opcSelected = "";
                                             // Se filtran las opciones correspondientes a la pregunta actual
                                             if (opcion.getPregunta().getIdPregunta() == pregunta.getIdPregunta()) {
                                                 if (valoresForm!=null) {

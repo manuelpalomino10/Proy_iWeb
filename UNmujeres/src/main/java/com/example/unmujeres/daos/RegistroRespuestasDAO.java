@@ -149,5 +149,25 @@ public class RegistroRespuestasDAO extends BaseDAO {
         }
         throw new SQLException("No se pudo crear el registro de respuestas");
     }
+
+    public int crearRegTransaccion(Connection conn, RegistroRespuestas registro) throws SQLException {
+        String sql = "INSERT INTO registro_respuestas (fecha_registro, estado, idenc_has_formulario) " +
+                "VALUES (?, ?, ?)";
+
+        try (Connection con = this.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setTimestamp(1, Timestamp.valueOf(registro.getFechaRegistro()));
+            ps.setString(2, registro.getEstado());
+            ps.setInt(3, registro.getEncHasFormulario().getIdEncHasFormulario());
+            ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        throw new SQLException("No se pudo crear el registro de respuestas");
+    }
     
 }

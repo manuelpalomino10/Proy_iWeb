@@ -138,26 +138,24 @@ public class RespuestaDAO extends BaseDAO{
         }
     }
 
-    public void guardarRespuestasOpciones(int idRegistro, Map<Integer, List<Integer>> respuestasOpciones) throws SQLException {
+    public void guardarRespTran(Connection conn, int idRegistro, Map<Integer, String> respuestas) throws SQLException {
         String sql = "INSERT INTO respuesta (respuesta, idpregunta, idregistro_respuestas) " +
                 "VALUES (?, ?, ?)";
 
         try (Connection con = this.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            con.setAutoCommit(false);
-
-            for (Map.Entry<Integer, List<Integer>> entry : respuestasOpciones.entrySet()) {
-                for (Integer idOpcion : entry.getValue()) {
-                    ps.setString(1, String.valueOf(idOpcion)); // Guarda el ID de la opción como respuesta
-                    ps.setInt(2, entry.getKey());
-                    ps.setInt(3, idRegistro);
-                    ps.addBatch();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (Map.Entry<Integer, String> entry : respuestas.entrySet()) {
+                if (entry.getValue() == null) {
+                    ps.setNull(1, java.sql.Types.VARCHAR);
+                } else {
+                    ps.setString(1, entry.getValue());
                 }
+                ps.setInt(2, entry.getKey());
+                ps.setInt(3, idRegistro);
+                ps.addBatch();
             }
 
             ps.executeBatch();
-            con.commit();
 
         } catch (SQLException e) {
             throw e;

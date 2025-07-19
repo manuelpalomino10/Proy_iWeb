@@ -3,6 +3,7 @@
 <%@ page import="com.example.unmujeres.dtos.FormularioDto" %>
 <%@ page import="com.example.unmujeres.beans.Categoria" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="java.util.List" %>
 
 <%
     ArrayList<FormularioDto> lista = (ArrayList<FormularioDto>) request.getAttribute("lista");
@@ -64,15 +65,26 @@
                 <hr/>
 
                 <%
-                    Map<Integer, String> errores = (Map<Integer, String>) session.getAttribute("validationErrors");
+                    Map<Integer, List<String>> errores = (Map<Integer, List<String>>) session.getAttribute("validationErrors");
                     if (errores != null) {
                 %>
                 <div class="alert alert-danger">
                     <ul>
                         <%
-                            for (Map.Entry<Integer, String> entry : errores.entrySet()) {
+                            for (Map.Entry<Integer, List<String>> entry : errores.entrySet()) {
                         %>
-                        <li><strong>Pregunta <%= entry.getKey() %>:</strong> <%= entry.getValue() %></li>
+                        <li><strong>Pregunta <%= entry.getKey() %>:</strong>
+                            <ul>
+                                <%
+                                    // Por cada mensaje de esa pregunta…
+                                    for (String msg : entry.getValue()) {
+                                %>
+                                <li><%= msg %></li>
+                                <%
+                                    }
+                                %>
+                            </ul>
+                        </li>
                         <%
                             }
                             session.removeAttribute("validationErrors");
