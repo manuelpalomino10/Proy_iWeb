@@ -89,7 +89,12 @@
                   <label for="zona" class="form-label">Zona:</label>
                   <select name="zona" id="zona" class="form-control form-select-sm">
                     <option value="0" <%= (zonaSel == 0) ? "selected" : "" %>>Todos</option>
-                    <% for (Zona zona : zonas) { %>
+                    <% String nZonaSel = "";
+                    for (Zona zona : zonas) {
+                        if (zona.getIdzona() == zonaSel) {
+                            nZonaSel= "Zona "+zona.getNombre();
+                        }
+                    %>
                     <option value="<%= zona.getIdzona() %>" <%= (zona.getIdzona() == zonaSel) ? "selected" : "" %>>
                       <%= zona.getNombre() %>
                     </option>
@@ -102,7 +107,12 @@
                   <label for="rol" class="form-label">Rol:</label>
                   <select name="rol" id="rol" class="form-control form-select-sm">
                     <option value="0" <%= (rolSel == 0) ? "selected" : "" %>>Todos</option>
-                    <% for (Roles rol : roles) { %>
+                    <% String nRolSel = "";
+                    for (Roles rol : roles) {
+                        if (rol.getIdRoles() == rolSel) {
+                            nRolSel= "Rol "+rol.getNombre();
+                        }
+                    %>
                     <option value="<%= rol.getIdRoles() %>" <%= (rol.getIdRoles() == rolSel) ? "selected" : "" %>>
                       <%= rol.getNombre() %>
                     </option>
@@ -194,9 +204,11 @@
                   <tr>
                     <td><%=reporte.getNombreFormulario()%></td>
                     <td>
-                        <%=reporte.getIdZona()==0?"Todas las zonas" : reporte.getIdZona()%>
-                        <%=reporte.getIdRol()==0?"Todos los roles" : reporte.getIdRol()%>
-                        <%=reporte.getFechaInicio()==null?"" : reporte.getFechaInicio()%> - <%=reporte.getFechaFin()==null?"" : reporte.getFechaFin()%>
+                        <%=reporte.getIdZona()==0?"Todas las zonas" : nZonaSel%>
+                        <br>
+                        <%=reporte.getIdRol()==0?"Todos los roles" : nRolSel%>
+                        <br>
+                        <%=reporte.getFechaInicio()==null?"" : reporte.getFechaInicio()+" - "%><%=reporte.getFechaFin()==null?"" : reporte.getFechaFin()%>
                     </td>
                     <td><%=reporte.getTotalRegistros()%></td>
                     <td><a class="btn btn-primary" href="<%=request.getContextPath()%>/administrador/ReportesServlet?action=descargar&id_form=<%=reporte.getIdFormulario()%>&zona=<%=reporte.getIdZona()%>&rol=<%=reporte.getIdRol()%>&daterange=<%=dateRange%>">Descargar Reporte</a></td>
