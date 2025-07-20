@@ -150,9 +150,9 @@
       </div>
     </c:if>
 
-    <a href="${pageContext.request.contextPath}/logout"
+    <a href="${pageContext.request.contextPath}/dashboard"
        class="btn btn-primary px-4">
-      <i class="fas fa-home me-2"></i> Volver al inicio
+      <i class="fas fa-home me-2"></i> Volver a Resumen
     </a>
   </div>
 </div>

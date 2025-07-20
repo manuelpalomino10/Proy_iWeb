@@ -97,8 +97,8 @@ public class NuevoFormServlet extends HttpServlet {
                     }
                 }
 
-                if (esperados < 50) {
-                    throw new IllegalArgumentException("Los registros esperados deben ser mayor que 50");
+                if (esperados < 50 || esperados > 50000) {
+                    throw new IllegalArgumentException("Los registros esperados deben ser mayor que 50 y menor que 50000");
                 } else if (!idsCategorias.contains(idCategoria)) {
                     throw new IllegalArgumentException("No existe esa categoría");
                 }
@@ -106,14 +106,14 @@ public class NuevoFormServlet extends HttpServlet {
                 nuevoFormulario.setCategoria(cat);
                 nuevoFormulario.setRegistrosEsperados(esperados);
             } catch (NumberFormatException e) {
-                session.setAttribute("error", "Categoría o cantidad de Registros esperados no válidos");
-                response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
-                //response.sendError(400, "Solicitud malformada");
+//                session.setAttribute("error", "Categoría o cantidad de Registros esperados no válidos");
+//                response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Solicitud malformada");
                 return;
             } catch (IllegalArgumentException e) {
-                session.setAttribute("error", "Solicitud malformada");
-                response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
-                //response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Solicitud malformada");
+//                session.setAttribute("error", "Solicitud malformada");
+//                response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Solicitud malformada");
                 return;
             }
         } else {
@@ -123,8 +123,6 @@ public class NuevoFormServlet extends HttpServlet {
         try {
             if (nombreFormParam==null || nombreFormParam.trim().isEmpty()) {
                 throw new NullPointerException("El formulario debe tener un nombre");
-            } else {
-
             }
             if (fechaLimiteParam ==null || fechaLimiteParam.trim().isEmpty()) {
                 throw new NullPointerException("Tiene que asignar una fecha límite al formulario");
@@ -140,11 +138,14 @@ public class NuevoFormServlet extends HttpServlet {
 
             nuevoFormulario.setNombre(nombreFormParam);
 
-        } catch (IllegalArgumentException | DateTimeParseException e) {
-            session.setAttribute("error", "Solicitud malformada");
+        } catch (IllegalArgumentException e) {
+            session.setAttribute("error", e.getMessage());
             response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
             //response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             return;
+        } catch (DateTimeParseException e) {
+            session.setAttribute("error", "Fecha límite inválida. Use dd/mm/yyyy");
+            response.sendRedirect(request.getContextPath() + "/administrador/NuevoFormServlet");
         }
 
         Part filePart = request.getPart("csvFile");

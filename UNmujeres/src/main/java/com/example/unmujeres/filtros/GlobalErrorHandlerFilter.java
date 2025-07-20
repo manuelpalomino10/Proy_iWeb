@@ -61,7 +61,7 @@ public class GlobalErrorHandlerFilter implements Filter {
 
             case 400:
                 request.setAttribute("tituloError", "Solicitud inválida");
-                request.setAttribute("mensajeError", "No se puede procesar su solicitud");
+                request.setAttribute("mensajeError", "No se puede procesar su solicitud por estar malformada");
                 request.setAttribute("iconoError", "fas fa-file-circle-xmark");
                 break;
 

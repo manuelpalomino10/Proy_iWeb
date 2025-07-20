@@ -114,7 +114,7 @@
                 <h1 class="h3 mb-4 text-gray-800">Gestión de Formularios</h1>
 
                 <form id="filtroCategoriaForm" method="get" action="<%=request.getContextPath()%>/coordinador/GestionFormServlet" class="mb-3">
-                    <div class="form-group">
+                    <div class="form-group col-md-4">
                         <label for="idCategoria">Filtrar por categoría:</label>
                         <select name="idCategoria" id="idCategoria" class="form-control" onchange="document.getElementById('filtroCategoriaForm').submit()">
                             <option value="0" <%= selectedCategoria == 0 ? "selected" : "" %>>Todas las categorías</option>

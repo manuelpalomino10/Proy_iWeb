@@ -188,7 +188,7 @@ public class ReportesServlet extends HttpServlet {
                     String fileName = genNombreReporte(idForm);
                     //String fileName = "Reporte Formulario"+idForm+".csv";
                     Path plantilla = originalFile.toPath();
-                    Path temp      = Files.createTempFile("Reporte_Formulario"+idForm, ".csv");
+                    Path temp = Files.createTempFile("Reporte_Formulario" + idForm, ".csv");
                     try (BufferedReader br = Files.newBufferedReader(plantilla, StandardCharsets.UTF_8);
                          PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp.toFile()), StandardCharsets.UTF_8), true)) {
 
@@ -240,7 +240,7 @@ public class ReportesServlet extends HttpServlet {
                     response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
                     try (FileInputStream fis = new FileInputStream(temp.toFile());
-                            OutputStream os = response.getOutputStream()) {
+                         OutputStream os = response.getOutputStream()) {
                         byte[] buffer = new byte[4096];
                         int bytesRead;
                         while ((bytesRead = fis.read(buffer)) != -1) {
@@ -257,10 +257,15 @@ public class ReportesServlet extends HttpServlet {
                     }
 
 
+                } catch (NotFoundException e) {
+                    session.setAttribute("error", "Error: " + e.getMessage());
+                    request.getRequestDispatcher("/administrador/ReportesServlet?action=listaReportes").forward(request, response);
+                    return;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    session.setAttribute("error", "Error inesperado: " + e.getMessage());
-                    request.getRequestDispatcher("/administrador/ReportesServlet?action=listaReportes").forward(request, response);
+                    response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+//                    session.setAttribute("error", "Error inesperado");
+//                    request.getRequestDispatcher("/administrador/ReportesServlet?action=listaReportes").forward(request, response);
                     return;
                 }
             break;

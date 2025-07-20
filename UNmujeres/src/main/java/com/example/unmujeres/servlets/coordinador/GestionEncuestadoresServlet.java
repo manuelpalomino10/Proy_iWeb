@@ -46,7 +46,7 @@ public class GestionEncuestadoresServlet extends HttpServlet {
         } catch (NumberFormatException ignored) { }
         try {
             if (openId != null && !dao.perteneceACoordinador(openId, coordiId)) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Usuario no encontrado");
                 return;
             }
 
@@ -103,7 +103,8 @@ public class GestionEncuestadoresServlet extends HttpServlet {
 
         try {
             if (!dao.perteneceACoordinador(id, coordiId)) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                System.err.println("Usuario no encontrado en zona de coordi");
                 return;
             }
 

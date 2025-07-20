@@ -10,6 +10,8 @@
 <%@ page import="com.example.unmujeres.dtos.ReporteDTO" %>
 <%@ page import="com.example.unmujeres.beans.Zona" %>
 <%@ page import="com.example.unmujeres.beans.Roles" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="java.time.LocalDate" %>
 
 <%
   List<Zona> zonas = (List<Zona>) request.getAttribute("listaZonas");
@@ -208,7 +210,21 @@
                         <br>
                         <%=reporte.getIdRol()==0?"Todos los roles" : nRolSel%>
                         <br>
-                        <%=reporte.getFechaInicio()==null?"" : reporte.getFechaInicio()+" - "%><%=reporte.getFechaFin()==null?"" : reporte.getFechaFin()%>
+                        <%
+                        DateTimeFormatter dbFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                        String inicioFmt = "";
+                        if (reporte.getFechaInicio() != null && !reporte.getFechaInicio().isEmpty()) {
+                            LocalDate fecha = LocalDate.parse(reporte.getFechaInicio(), dbFormatter);
+                            inicioFmt = fecha.format(displayFormatter);
+                        }
+                        String finFmt = "";
+                        if (reporte.getFechaFin() != null && !reporte.getFechaFin().isEmpty()) {
+                            LocalDate fecha = LocalDate.parse(reporte.getFechaFin(), dbFormatter);
+                            finFmt = fecha.format(displayFormatter);
+                        }
+                        %>
+                        <%=reporte.getFechaInicio()==null?"" : inicioFmt+" - "%><%=reporte.getFechaFin()==null?"" : finFmt%>
                     </td>
                     <td><%=reporte.getTotalRegistros()%></td>
                     <td><a class="btn btn-primary" href="<%=request.getContextPath()%>/administrador/ReportesServlet?action=descargar&id_form=<%=reporte.getIdFormulario()%>&zona=<%=reporte.getIdZona()%>&rol=<%=reporte.getIdRol()%>&daterange=<%=dateRange%>">Descargar Reporte</a></td>

@@ -94,7 +94,7 @@
 
                             <div class="form-group col-md-6">
                                 <label for="esperados" class="form-label">Registros Esperados:</label>
-                                <input type="number" name="esperados" id="esperados" class="form-control" min="50" placeholder="100" />
+                                <input type="number" name="esperados" id="esperados" class="form-control" min="50" max="50000" placeholder="100" />
                             </div>
 
                           </div>
