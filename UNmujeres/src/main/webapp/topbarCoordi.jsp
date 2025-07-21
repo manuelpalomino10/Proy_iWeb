@@ -23,7 +23,7 @@
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                <span class="mr-2 d-none d-md-inline text-gray-600 small">
                     Hola, ${usuario.nombres}
                     <c:choose>
                         <c:when test="${usuario.idroles == 1}"> - Administrador</c:when>

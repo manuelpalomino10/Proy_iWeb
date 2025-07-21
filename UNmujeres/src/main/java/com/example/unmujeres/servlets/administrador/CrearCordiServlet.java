@@ -47,13 +47,15 @@ public class CrearCordiServlet extends HttpServlet {
         String idZonaStr = request.getParameter("idZona");
 
         // --- 1. Validación de campos vacíos ---
-        if (nombres == null || nombres.trim().isEmpty() ||
-                apellidos == null || apellidos.trim().isEmpty() ||
-                dniStr == null || dniStr.trim().isEmpty() ||
-                correo == null || correo.trim().isEmpty() ||
-                idZonaStr == null || idZonaStr.trim().isEmpty()) {
+        boolean valida = false;
+        if (nombres == null || nombres.trim().isEmpty()) {request.setAttribute("errorNombre",   "El nombre es obligatorio"); valida=true;}
+        if (apellidos == null || apellidos.trim().isEmpty()) {request.setAttribute("errorApellido", "El apellido es obligatorio"); valida=true;}
+        if (dniStr == null || dniStr.trim().isEmpty()) {request.setAttribute("ErrorDireccion","La dirección es obligatoria"); valida=true;}
+        if (correo == null || correo.trim().isEmpty()) {request.setAttribute("errorCorreo",   "El correo es obligatorio"); valida=true;}
+        if (idZonaStr == null || idZonaStr.trim().isEmpty()) {request.setAttribute("errorZona",   "La zona es obligatoria"); valida=true;}
 
-            request.setAttribute("error", "Todos los campos son obligatorios.");
+        if (valida){
+            request.setAttribute("error",   "Campo obligatorio vacío.");
             cargarZonasYValores(request, nombres, apellidos, dniStr, correo, idZonaStr);
             request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);
             return;
@@ -67,7 +69,8 @@ public class CrearCordiServlet extends HttpServlet {
 
         // --- 2. Validación de formato de DNI: exactamente 8 dígitos numéricos ---
         if (!dniStr.matches("\\d{8}")) {
-            request.setAttribute("error", "El DNI debe tener exactamente 8 dígitos numéricos.");
+            request.setAttribute("error", "Error de formato del DNI: no tiene 8 dígitos.");
+            request.setAttribute("errorDni", "DNI inválido");
             cargarZonasYValores(request, nombres, apellidos, dniStr, correo, idZonaStr);
             request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);
             return;
@@ -75,7 +78,8 @@ public class CrearCordiServlet extends HttpServlet {
 
         // --- 3. Validación de formato de correo ---
         if (!correo.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
-            request.setAttribute("error", "El correo ingresado no tiene un formato válido.");
+            request.setAttribute("error", "Error de formato del correo.");
+            request.setAttribute("errorCorreo", "Correo inválido");
             cargarZonasYValores(request, nombres, apellidos, dniStr, correo, idZonaStr);
             request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);
             return;
@@ -86,7 +90,8 @@ public class CrearCordiServlet extends HttpServlet {
             dni = Integer.parseInt(dniStr);
         } catch (NumberFormatException e) {
             // Este catch es para el DNI, aunque el regex `\d{8}` ya debería prevenirlo.
-            request.setAttribute("error", "El DNI debe ser un número válido.");
+            request.setAttribute("error", "Error de formato del DNI.");
+            request.setAttribute("errorDni", "DNI no es un número válido.");
             cargarZonasYValores(request, nombres, apellidos, dniStr, correo, idZonaStr);
             request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);
             return;
@@ -94,7 +99,7 @@ public class CrearCordiServlet extends HttpServlet {
 
         int idZona;
         try {
-            idZona = Integer.parseInt(request.getParameter("idZona"));
+            idZona = Integer.parseUnsignedInt(request.getParameter("idZona"));
         } catch (NumberFormatException e) {
             ZonaDao zonaDao = new ZonaDao();
             try {
@@ -102,13 +107,18 @@ public class CrearCordiServlet extends HttpServlet {
             } catch (SQLException ex) {
                 request.setAttribute("error", "Error al obtener zonas: " + ex.getMessage());
             }
-            request.setAttribute("error", "La zona seleccionada no es válida o no existe.");
+            request.setAttribute("error", "La zona seleccionada no es válida.");
+            request.setAttribute("errorZona", "Zona inválida");
 
             // Recupera los datos ingresados y vuelve a colocarlos como atributos
-            request.setAttribute("nombres", request.getParameter("nombres"));
-            request.setAttribute("apellidos", request.getParameter("apellidos"));
-            request.setAttribute("DNI", request.getParameter("DNI"));
-            request.setAttribute("correo", request.getParameter("correo"));
+//            request.setAttribute("nombres", request.getParameter("nombres"));
+//            request.setAttribute("apellidos", request.getParameter("apellidos"));
+//            request.setAttribute("DNI", request.getParameter("DNI"));
+//            request.setAttribute("correo", request.getParameter("correo"));
+            request.setAttribute("nombres", nombres);
+            request.setAttribute("apellidos", apellidos);
+            request.setAttribute("DNI", dni);
+            request.setAttribute("correo", correo);
 
             request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);
             return;
@@ -126,6 +136,7 @@ public class CrearCordiServlet extends HttpServlet {
             boolean zonaExiste = zonaDao.existeZona(idZona); // Asegúrate que este método exista y funcione.
             if (!zonaExiste) { // Si la zona NO existe en la BD, entonces hay un error.
                 request.setAttribute("error", "La zona seleccionada no es válida o no existe.");
+                request.setAttribute("errorZona", "Zona inválida");
                 cargarZonasYValores(request, nombres, apellidos, dniStr, correo, idZonaStr);
                 request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);
                 return;
@@ -137,12 +148,14 @@ public class CrearCordiServlet extends HttpServlet {
             boolean dniExiste = registroCordiDao.existeDni(dni);
 
             if (correoExiste || dniExiste) {
+                request.setAttribute("error", "Datos de nuevo usuario ya existen.");
                 if (correoExiste && dniExiste) {
-                    request.setAttribute("error", "El DNI y el correo ya están registrados.");
+                    request.setAttribute("errorDni", "DNI ya está registrado");
+                    request.setAttribute("errorCorreo", "Correo ya está registrado");
                 } else if (correoExiste) {
-                    request.setAttribute("error", "El correo ya está registrado.");
+                    request.setAttribute("errorCorreo", "DNI ya está registrado");
                 } else { // dniExiste
-                    request.setAttribute("error", "El DNI ya está registrado.");
+                    request.setAttribute("errorDni", "Correo ya está registrado");
                 }
                 cargarZonasYValores(request, nombres, apellidos, dniStr, correo, idZonaStr);
                 request.getRequestDispatcher("/administrador/registrarCordi.jsp").forward(request, response);

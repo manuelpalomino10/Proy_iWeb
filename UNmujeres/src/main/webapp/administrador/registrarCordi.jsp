@@ -40,16 +40,22 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="nombres">Nombres</label>
-                                        <input type="text" class="form-control"
+                                        <input type="text" class="form-control ${errorNombre!=null ? 'is-invalid' : ''}"
                                                id="nombres" name="nombres"
                                                value="${nombres != null ? nombres : ''}" required>
+                                        <c:if test="${errorNombre!= null}">
+                                            <div class="invalid-feedback">${errorNombre}</div>
+                                        </c:if>
                                     </div>
 
                                     <div class="form-group col-md-6">
                                         <label for="apellidos">Apellidos</label>
-                                        <input type="text" class="form-control"
+                                        <input type="text" class="form-control ${errorApellido!=null ? 'is-invalid' : ''}"
                                                id="apellidos" name="apellidos"
                                                value="${apellidos != null ? apellidos : ''}" required>
+                                        <c:if test="${errorApellido!= null}">
+                                            <div class="invalid-feedback">${errorApellido}</div>
+                                        </c:if>
                                     </div>
                                 </div>
 
@@ -57,33 +63,31 @@
                                     <div class="form-group col-md-6">
                                         <label for="DNI">DNI</label>
                                         <input type="text"
-                                               class="form-control ${errorDni ? 'is-invalid' : ''}"
+                                               class="form-control ${errorDni!=null ? 'is-invalid' : ''}"
                                                id="DNI" name="DNI" pattern="\d{8}" maxlength="8" inputmode="numeric"
                                                value="${DNI != null ? DNI : ''}" required>
-                                        <c:if test="${errorDni}">
-                                            <div class="invalid-feedback">
-                                                El DNI ya está registrado.
-                                            </div>
+                                        <c:if test="${errorDni!= null}">
+<%--                                            <div class="invalid-feedback">El DNI ya está registrado.</div>--%>
+                                            <div class="invalid-feedback">${errorDni}</div>
                                         </c:if>
                                     </div>
 
                                     <div class="form-group col-md-6">
                                         <label for="correo">Correo</label>
                                         <input type="email"
-                                               class="form-control ${errorCorreo ? 'is-invalid' : ''}"
+                                               class="form-control ${errorCorreo!=null ? 'is-invalid' : ''}"
                                                id="correo" name="correo"
                                                value="${correo != null ? correo : ''}" required>
-                                        <c:if test="${errorCorreo}">
-                                            <div class="invalid-feedback">
-                                                El correo ya está registrado.
-                                            </div>
+                                        <c:if test="${errorCorreo!= null}">
+<%--                                            <div class="invalid-feedback">El correo ya está registrado.</div>--%>
+                                            <div class="invalid-feedback">${errorCorreo}</div>
                                         </c:if>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="idzona">Zona</label>
-                                    <select name="idZona" id="idzona" class="form-control w-50" required>
+                                    <select name="idZona" id="idzona" class="form-control w-50 ${errorZona!=null ? 'is-invalid' : ''}" required>
                                         <option value="">-- Seleccione una zona --</option>
                                         <c:forEach var="zona" items="${listaZonas}">
                                             <option value="${zona.idzona}"
@@ -93,6 +97,9 @@
                                                     ${zona.nombre}
                                             </option>
                                         </c:forEach>
+                                        <c:if test="${errorZona!= null}">
+                                            <div class="invalid-feedback">${errorZona}</div>
+                                        </c:if>
                                     </select>
                                 </div>
 

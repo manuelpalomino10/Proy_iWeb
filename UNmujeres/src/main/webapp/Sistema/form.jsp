@@ -36,10 +36,10 @@
                 <span class="required-asterisk">*</span>
               </c:if>
             </label>
-            <input id="nombre" name="nombre" type="text" class="form-control form-control-user"
+            <input id="nombre" name="nombre" type="text" class="form-control form-control-user ${errores['nombre'] != null ? "is-invalid" : ''}"
                    value="${param.nombre}" required/>
             <c:if test="${errores['nombre'] != null}">
-              <div class="campo-error">${errores['nombre']}</div>
+              <div class="invalid-feedback">${errores['nombre']}</div>
             </c:if>
           </div>
           <div class="col-sm-6">
@@ -49,10 +49,10 @@
                 <span class="required-asterisk">*</span>
               </c:if>
             </label>
-            <input id="apellido" name="apellido" type="text" class="form-control form-control-user"
+            <input id="apellido" name="apellido" type="text" class="form-control form-control-user ${errores['apellido'] != null ? "is-invalid" : ''}"
                    value="${param.apellido}" required/>
             <c:if test="${errores['apellido'] != null}">
-              <div class="campo-error">${errores['apellido']}</div>
+              <div class="invalid-feedback">${errores['apellido']}</div>
             </c:if>
           </div>
         </div>
@@ -65,10 +65,10 @@
               <span class="required-asterisk">*</span>
             </c:if>
           </label>
-          <input id="dni" name="dni" type="text" class="form-control form-control-user"
+          <input id="dni" name="dni" type="text" class="form-control form-control-user ${errores['dni'] != null ? "is-invalid" : ''}"
                  maxlength="8" value="${param.dni}" required/>
           <c:if test="${errores['dni'] != null}">
-            <div class="campo-error">${errores['dni']}</div>
+            <div class="invalid-feedback">${errores['dni']}</div>
           </c:if>
         </div>
 
@@ -80,10 +80,10 @@
               <span class="required-asterisk">*</span>
             </c:if>
           </label>
-          <input id="direccion" name="direccion" type="text" class="form-control form-control-user"
+          <input id="direccion" name="direccion" type="text" class="form-control form-control-user ${errores['direccion'] != null ? "is-invalid" : ''}"
                  value="${param.direccion}" required/>
           <c:if test="${errores['direccion'] != null}">
-            <div class="campo-error">${errores['direccion']}</div>
+            <div class="invalid-feedback">${errores['direccion']}</div>
           </c:if>
         </div>
 
@@ -97,7 +97,7 @@
                 <span class="required-asterisk">*</span>
               </c:if>
             </label>
-            <select id="zona" name="zona" class="form-control" required>
+            <select id="zona" name="zona" class="form-control ${errores['zona'] != null ? "is-invalid" : ''}" required>
               <option value="" disabled selected>— seleccione zona —</option>
               <c:forEach var="z" items="${listaZonas}">
                 <option value="${z.idzona}"
@@ -107,7 +107,7 @@
               </c:forEach>
             </select>
             <c:if test="${errores['zona'] != null}">
-              <div class="campo-error">${errores['zona']}</div>
+              <div class="invalid-feedback">${errores['zona']}</div>
             </c:if>
           </div>
 
@@ -119,7 +119,7 @@
                 <span class="required-asterisk">*</span>
               </c:if>
             </label>
-            <select id="distrito" name="distrito" class="form-control" required>
+            <select id="distrito" name="distrito" class="form-control ${errores['distrito'] != null ? "is-invalid" : ''}" required>
               <option value="" disabled selected>— seleccione distrito —</option>
               <c:forEach var="d" items="${listaDistritos}">
                 <c:set var="distritoVal" value="${d.iddistritos}-${d.zona_idzona}" />
@@ -131,7 +131,7 @@
               </c:forEach>
             </select>
             <c:if test="${errores['distrito'] != null}">
-              <div class="campo-error">${errores['distrito']}</div>
+              <div class="invalid-feedback">${errores['distrito']}</div>
             </c:if>
           </div>
         </div>
@@ -144,10 +144,10 @@
               <span class="required-asterisk">*</span>
             </c:if>
           </label>
-          <input id="correo" name="correo" type="email" class="form-control form-control-user"
+          <input id="correo" name="correo" type="email" class="form-control form-control-user ${errores['correo'] != null ? "is-invalid" : ''}"
                  value="${param.correo}" required/>
           <c:if test="${errores['correo'] != null}">
-            <div class="campo-error">${errores['correo']}</div>
+            <div class="invalid-feedback">${errores['correo']}</div>
           </c:if>
         </div>
 

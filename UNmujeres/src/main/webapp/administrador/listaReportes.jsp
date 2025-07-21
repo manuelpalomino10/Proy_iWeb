@@ -87,7 +87,7 @@
               <div class="col-12 d-flex align-items-end justify-content-start flex-wrap" style="gap: 1.5rem;">
 
                 <!-- Zona -->
-                <div>
+                <div class="form-row">
                   <label for="zona" class="form-label">Zona:</label>
                   <select name="zona" id="zona" class="form-control form-select-sm">
                     <option value="0" <%= (zonaSel == 0) ? "selected" : "" %>>Todos</option>
@@ -105,7 +105,7 @@
                 </div>
 
                 <!-- Rol -->
-                <div>
+                <div class="form-row">
                   <label for="rol" class="form-label">Rol:</label>
                   <select name="rol" id="rol" class="form-control form-select-sm">
                     <option value="0" <%= (rolSel == 0) ? "selected" : "" %>>Todos</option>
@@ -123,11 +123,12 @@
                 </div>
 
                 <!-- Rango de fechas -->
-                <div>
+                <div class="form-row">
                   <label for="daterange" class="form-label">Rango de fechas:</label>
                   <input type="text" name="daterange" id="daterange"
                          class="form-control form-select-sm"
                          placeholder="DD-MM-YYYY - DD-MM-YYYY"
+                         pattern="^\d{2}-\d{2}-\d{4} - \d{2}-\d{2}-\d{4}$"
                          <%
                            String dateRangeVal;
                            if (dateRange==null) {
@@ -140,43 +141,24 @@
                 </div>
 
                 <!-- Botón -->
-                <div>
-<%--                  <label class="form-label d-block invisible">Filtrar</label> <!-- Invisible label to align -->--%>
+                <div class="form-row align-items-center">
+                <div class="px-2">
                   <button class="btn btn-primary btn-sm" type="submit">
                     <i class="fas fa-filter me-1"></i> Filtrar
                   </button>
                 </div>
 
-                <div>
+                <div class="px-2">
                   <button class="btn-outline-primary btn-circle" onclick="limpiarFormulario()">
                     <i class="fas fa-trash"></i>
                   </button>
+                </div>
                 </div>
 
               </div>
             </form>
           </div>
-
-          <hr/>
-
-          <% if (session.getAttribute("error") != null) { %>
-          <div>
-            <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
-            </div>
-          </div>
-          <% session.removeAttribute("error"); %>
-          <% } %>
-
-          <% if (session.getAttribute("success") != null) { %>
-          <div>
-            <div class="alert alert-success" role="alert"><%=session.getAttribute("success")%>
-            </div>
-          </div>
-          <% session.removeAttribute("success"); %>
-          <% } %>
-
-          </hr>
-
+            <br>
           <!-- DataTales Example -->
           <div class="card shadow mb-4">
             <div class="card-header py-3">

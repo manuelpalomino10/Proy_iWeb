@@ -66,7 +66,7 @@
             border-radius: 0.375rem;
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
             width: 100%;
-            max-width: 28rem;
+            max-width: 35rem;
             margin-left: auto;
             margin-right: auto;
         }

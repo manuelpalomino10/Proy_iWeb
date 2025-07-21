@@ -50,6 +50,24 @@
         <!-- Page Heading -->
         <h1 class="h3 mb-2 text-gray-800">Crear Nuevo Formulario</h1>
 
+          <hr>
+          <% if (session.getAttribute("error") != null) { %>
+          <div>
+              <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
+              </div>
+          </div>
+          <% session.removeAttribute("error"); %>
+          <% } %>
+
+          <% if (session.getAttribute("success") != null) { %>
+          <div>
+              <div class="alert alert-success" role="alert"><%=session.getAttribute("success")%>
+              </div>
+          </div>
+          <% session.removeAttribute("success"); %>
+          <% } %>
+          <hr>
+
           <!-- Contenedor del formulario centrado -->
           <div class="col-lg-10 mx-auto">
               <div class="card shadow mb-4">
@@ -94,7 +112,7 @@
 
                             <div class="form-group col-md-6">
                                 <label for="esperados" class="form-label">Registros Esperados:</label>
-                                <input type="number" name="esperados" id="esperados" class="form-control" min="50" max="50000" placeholder="100" />
+                                <input type="number" name="esperados" id="esperados" class="form-control" min="50" max="50000" step="10" placeholder="100" />
                             </div>
 
                           </div>
@@ -103,12 +121,12 @@
                           <div class="form-row">
                             <div class="form-group col-md-6">
                               <label for="fechaCreacion" class="form-label">Fecha de Creación:</label>
-                              <input type="date" name="fechaCreacion" id="fechaCreacion" class="form-control" placeholder="DD-MM-YYYY" value="<%= LocalDate.now() %>" readonly/>
+                              <input type="date" name="fechaCreacion" id="fechaCreacion" class="form-control" value="<%= LocalDate.now() %>" readonly/>
                             </div>
 
                             <div class="form-group col-md-6">
                                 <label for="fechaLimite" class="form-label">Fecha límite:</label>
-                                <input type="date" name="fechaLimite" id="fechaLimite" class="form-control" placeholder="DD-MM-YYYY" min="<%= LocalDate.now().plusDays(1) %>"/>
+                                <input type="date" name="fechaLimite" id="fechaLimite" class="form-control" min="<%= LocalDate.now().plusDays(1) %>"/>
                             </div>
                           </div>
 
@@ -135,25 +153,6 @@
                   </div>
               </div>
           </div>
-
-        <hr>
-          <% if (session.getAttribute("error") != null) { %>
-        <div>
-          <div class="alert alert-danger" role="alert"><%=session.getAttribute("error")%>
-          </div>
-        </div>
-          <% session.removeAttribute("error"); %>
-          <% } %>
-
-          <% if (session.getAttribute("success") != null) { %>
-        <div>
-          <div class="alert alert-success" role="alert"><%=session.getAttribute("success")%>
-          </div>
-        </div>
-          <% session.removeAttribute("success"); %>
-          <% } %>
-        <hr>
-
       </div>
       <!-- /.container-fluid -->
 
