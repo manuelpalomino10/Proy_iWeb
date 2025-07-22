@@ -145,7 +145,7 @@ public class FormularioDAO extends BaseDAO {
             parametros.add(java.sql.Date.valueOf(fechaInicio));
             parametros.add(java.sql.Date.valueOf(fechaFin));
         }
-        sql.append(" ORDER BY reg.idregistro_respuestas ASC");
+        sql.append(" ORDER BY reg.idregistro_respuestas ASC, idpregunta ASC;");
 
         ArrayList<ContenidoReporteDTO> contenido = new ArrayList<>();
 
