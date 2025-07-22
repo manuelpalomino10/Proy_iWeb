@@ -298,25 +298,25 @@ public class SubirRegistrosServlet extends HttpServlet {
 
         } else if ("date".equalsIgnoreCase(tipo)) {
 //            System.out.println("En fecha date: "+valor);
-            if (!valor.matches("\\d{4}-\\d{2}-\\d{2}") && !valor.matches("\\d{1,2}/\\d{1,2}/\\d{4}")) {
-                return "Introduzca una fecha válida (dd-mm-yyyy o 0d/0m/yyyy) regex.";
+            if (!valor.matches("\\d{2}-\\d{2}-\\d{4}") && !valor.matches("\\d{1,2}/\\d{1,2}/\\d{4}")) {
+                return "Introduzca una fecha válida (dd-mm-yyyy o dd/mm/yyyy).";
             }
             try {
                 // 2) Escoger formateador según el separador
                 if (valor.contains("-")) {
                     DateTimeFormatter fmtIso = DateTimeFormatter
-                            .ofPattern("uuuu-MM-dd")
+                            .ofPattern("dd-MM-uuuu")
                             .withResolverStyle(ResolverStyle.SMART);
                     LocalDate.parse(valor.trim(), fmtIso);
                 } else {
                     DateTimeFormatter fmtAlt = DateTimeFormatter
-                            .ofPattern("d/M/uuuu")
+                            .ofPattern("dd/MM/uuuu")
                             .withResolverStyle(ResolverStyle.SMART);
                     LocalDate.parse(valor.trim(), fmtAlt);
                 }
 
             } catch (DateTimeParseException e) {
-                return "Introduzca una fecha válida (dd-mm-yyyy o 0d/0m/yyyy).";
+                return "Introduzca una fecha válida (dd-mm-yyyy o dd/mm/yyyy).";
             }
         } else if ("select".equalsIgnoreCase(tipo) || "combobox".equalsIgnoreCase(tipo)) {
             // Se asume que getOpciones() devuelve una lista de opciones válidas (por ejemplo, List<String>)

@@ -100,8 +100,8 @@
                           <div class="form-row">
                             <div class="form-group col-md-6">
                                 <label for="idCategoria" class="form-label">Categoría:</label>
-                                <select name="idCategoria" id="idCategoria" class="form-control">
-                                <option <%= (catSel==0) ? "selected" : "" %> >Seleccionar Categoría</option>
+                                <select name="idCategoria" id="idCategoria" class="form-control" required>
+                                <option value="" >Seleccionar Categoría</option>
                                 <% for (Categoria categoria : categorias) { %>
                                 <option value="<%= categoria.getIdCategoria() %>" <%= (categoria.getIdCategoria() == catSel) ? "selected" : "" %>>
                                   <%= categoria.getNombre() %>
@@ -112,7 +112,7 @@
 
                             <div class="form-group col-md-6">
                                 <label for="esperados" class="form-label">Registros Esperados:</label>
-                                <input type="number" name="esperados" id="esperados" class="form-control" min="50" max="50000" step="10" placeholder="100" />
+                                <input type="number" name="esperados" id="esperados" class="form-control" min="50" max="50000" step="10" placeholder="100" required/>
                             </div>
 
                           </div>
@@ -126,7 +126,7 @@
 
                             <div class="form-group col-md-6">
                                 <label for="fechaLimite" class="form-label">Fecha límite:</label>
-                                <input type="date" name="fechaLimite" id="fechaLimite" class="form-control" min="<%= LocalDate.now().plusDays(1) %>"/>
+                                <input type="date" name="fechaLimite" id="fechaLimite" class="form-control" min="<%= LocalDate.now().plusDays(1) %>" required/>
                             </div>
                           </div>
 

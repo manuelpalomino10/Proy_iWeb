@@ -3,7 +3,8 @@ INSERT INTO roles (idroles,nombre) VALUES
 (1, 'Administrador'), (2, 'Coordinador Interno'), (3, 'Encuestador');
 
 INSERT INTO categoria (idcategoria,nombre) VALUES
-(101, 'cat1'), (102, 'cat2'), (103, 'cat3'), (104, 'cat4');
+(101, 'Cuidados y Apoyo Comunitario'), (102, 'Educación y Capacitación'),
+(103, 'Inclusión Digital y Brecha Tecnológica'),(104, 'Oportunidades y Derechos de las Trabajadoras');
 
 INSERT INTO zona (idzona,nombre) VALUES
 (1, 'NORTE'), (2, 'SUR'), (3, 'ESTE'), (4, 'OESTE');
@@ -21,7 +22,7 @@ INSERT INTO distritos(iddistritos,nombre,idzona) VALUES
 (19,'San Juan de Lurigancho',3),(20,'Lurigancho/Chosica',3),(21,'Ate',3),
 (22,'El Agustino',3),(23,'Santa Anita',3),(24,'La Molina',3),(25,'Cieneguilla',3),
 -- OESTE
-(26,'Rimac',4),(27,'Cercado de Lima',4),(28,'Brena',4),(29,'Pueblo Libre',4),
+(26,'Rimac',4),(27,'Cercado de Lima',4),(28,'Breña',4),(29,'Pueblo Libre',4),
 (30,'Magdalena',4),(31,'Jesus Maria',4),(32,'La Victoria',4),(33,'Lince',4),
 (34,'San Isidro',4),(35,'San Miguel',4),(36,'Surquillo',4),(37,'San Borja',4),
 (38,'Santiago de Surco',4),(39,'Barranco',4),(40,'Chorrillos',4),(41,'San Luis',4),
@@ -77,7 +78,7 @@ INSERT INTO enc_has_formulario (idenc_has_formulario,enc_idusuario,idformulario,
 (20, 11, 1, '75318111', '2025-02-11'),
 (21, 11, 7, '95637815', '2025-03-15'),
 (22, 11, 8, '45664168', '2025-02-11'),
--- asignacion para todos los coordis (necesario apra crear respuestas)
+-- asignacion para todos los coordis (necesario para crear respuestas)
 (23, 3, 1, 33333331, '2025-01-02'),
 (25, 3, 3, 33333333, '2025-01-06'),
 (26, 3, 4, 33333334, '2024-11-16'),
@@ -230,26 +231,26 @@ INSERT INTO pregunta (idpregunta, enunciado, tipo_dato, idseccion,requerido) VAL
 			(55, 'Observaciones sobre el acceso a educación', 'text', 13, 0),
 
 -- form 4 con 20 preguntas
-	(56, 'Nombre completo', 'text', 14, 1),
-	(57, 'Número de Identificación', 'dni', 14, 1),
-	(58, 'Género', 'combobox', 14, 1),
-	(59, 'Fecha de Nacimiento', 'date', 14, 1),
-	(60, 'Número de Contacto', 'tel', 14, 1),
-		(61, '¿Tiene acceso a una computadora?', 'combobox', 15, 1),
-		(62, 'Tipo de conexión a internet', 'Default', 15, 0),
-		(63, 'Velocidad de internet (Mbps)', 'un medium int', 15, 0),
-		(64, 'Fecha de última actualización del servicio', 'date', 15, 0),
-		(65, 'Nivel de satisfacción con la conectividad', 'Default', 15, 0),
-			(66, 'Dispositivo principal utilizado', 'combobox', 16, 1),
-			(67, 'Marca y modelo del dispositivo', 'Default', 16, 0),
-			(68, 'Fecha de adquisición', 'date', 16, 0),
-			(69, 'Fecha de compra del dispositivo', 'date', 16, 0),
-			(70, 'Problemas técnicos frecuentes', 'Default', 16, 0),
-				(71, '¿Necesita capacitación en tecnología?', 'combobox', 17, 1),
-				(72, 'Tipo de capacitación solicitada', 'Default', 17, 0),
-				(73, 'Duración preferida de la capacitación (horas)', 'un medium int', 17, 0),
-				(74, 'Fecha deseada para iniciar la capacitación', 'date', 17, 0),
-				(75, 'Comentarios adicionales sobre necesidades', 'Default', 17, 0),
+(56, 'Nombre completo', 'text', 14, 1),
+(57, 'Número de Identificación', 'dni', 14, 1),
+(58, 'Género', 'combobox', 14, 1),
+(59, 'Fecha de Nacimiento', 'date', 14, 1),
+(60, 'Número de Contacto', 'tel', 14, 1),
+	(61, '¿Tiene acceso a una computadora?', 'combobox', 15, 1),
+	(62, 'Tipo de conexión a internet', 'Default', 15, 0),
+	(63, 'Velocidad de internet (Mbps)', 'un medium int', 15, 0),
+	(64, 'Fecha de última actualización del servicio', 'date', 15, 0),
+	(65, 'Nivel de satisfacción con la conectividad', 'Default', 15, 0),
+		(66, 'Dispositivo principal utilizado', 'combobox', 16, 1),
+		(67, 'Marca y modelo del dispositivo', 'Default', 16, 0),
+		(68, 'Fecha de adquisición', 'date', 16, 0),
+		(69, 'Fecha de compra del dispositivo', 'date', 16, 0),
+		(70, 'Problemas técnicos frecuentes', 'Default', 16, 0),
+			(71, '¿Necesita capacitación en tecnología?', 'combobox', 17, 1),
+			(72, 'Tipo de capacitación solicitada', 'Default', 17, 0),
+			(73, 'Duración preferida de la capacitación (horas)', 'un medium int', 17, 0),
+			(74, 'Fecha deseada para iniciar la capacitación', 'date', 17, 0),
+			(75, 'Comentarios adicionales sobre necesidades', 'Default', 17, 0),
 
 -- form 5 con 20 preguntas
 (76, 'Nombre completo', 'text', 18, 1),
