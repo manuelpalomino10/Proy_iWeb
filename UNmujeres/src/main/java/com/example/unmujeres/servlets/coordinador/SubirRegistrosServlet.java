@@ -82,7 +82,7 @@ public class SubirRegistrosServlet extends HttpServlet {
 
             ehf = ehfDAO.getById(idEhf);
             if (ehf == null) {
-                throw new NotFoundException("No se encontró formulario");
+                throw new NotFoundException("No se encontró formulario o esta inactivo");
             } else if (ehf.getUsuario().getIdUsuario() != idUser) {
                 throw new NotFoundException("No se encontró formulario");
             }
@@ -93,6 +93,8 @@ public class SubirRegistrosServlet extends HttpServlet {
             return;
         } catch (NotFoundException e) {
             session.setAttribute("error", e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/coordinador/GestionFormServlet");
+            return;
         }
 
         //Obtención del archivo CSV subido (parámetro"csvFile").
